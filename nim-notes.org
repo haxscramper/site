@@ -1,0 +1,87 @@
+#+TITLE: Nim notes
+#+property: header-args :results verbatim
+
+
+* Questions that I've seen asked very frequently
+
+** Conversions between basic data types
+
+*** Using built-in type conversion or ~strutils~ parsing
+
+Most basic data types can be converted into each other using built-in type
+conversion, or via call to ~parseX()~ procedures defined in the
+~std/strutils~ module.
+
+| from/to   | ~string~ | ~char~         | ~int~          | ~float~          | ~cstring~     |
+| ~string~  |          | ~str[<index>]~ | ~parseInt(<>)~ | ~parseFloat(<>)~ | ~cstring(<>)~ |
+| ~char~    | ~$<>~    |                | ~int(<>)~      |                  |               |
+| ~int~     | ~$<>~    | ~char(<>)~     |                | ~float(<>)~      |               |
+| ~float~   | ~$<>~    |                | ~int(<>)~      |                  |               |
+| ~cstring~ | ~$<>~    |                |                |                  |               |
+
+*** Generic type conversions
+
+Basic built-in generic types can also be converted into each other using
+built-in operators.
+
+**** Operator ~@~ for conversion to sequences
+
+#+begin_src nim
+let arr = [1, 2, 3]
+echo typeof arr
+echo arr
+let sequence = @arr
+echo typeof sequence
+echo sequence
+#+end_src
+
+#+RESULTS:
+: array[0..2, int]
+: [1, 2, 3]
+: seq[int]
+: @[1, 2, 3]
+
+Note that ~@[1, 2, 3]~ used for construction of sequence literals is
+actually an application of prefix ~@~ to the ~[]~ argument.
+
+This operator can also be used for construction of the ~seq[(A, B)]~ from
+array-of-tuples literals.
+
+#+begin_src nim
+let arr = { 1: 2, 3, 4: 5}
+echo typeof arr
+echo arr
+let sequence = @arr
+echo typeof sequence
+echo sequence
+#+end_src
+
+#+RESULTS:
+: array[0..2, (int, int)]
+: [(1, 2), (3, 5), (4, 5)]
+: seq[(int, int)]
+: @[(1, 2), (3, 5), (4, 5)]
+
+* C++ interop
+
+** Compiling nim to shared library and calling it from C++
+
+#+begin_src nim
+proc exportedProc() {.exportc, dynlib.} =
+  echo "test"
+#+end_src
+
+#+begin_src c++
+extern "C" void exportedProc();
+
+int main () {
+    exportedProc();
+}
+#+end_src
+
+#+begin_src bash
+nim cpp --app:lib file.nim
+g++ -L. -lfile main.cpp
+LD_LIBRARY_PATH=(pwd)
+./a.out
+#+end_src
