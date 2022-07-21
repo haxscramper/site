@@ -18,7 +18,7 @@
 вызовы (~call(arg)~ или ~call arg~).
 
 #+caption: Использование макроса как прагмы для функции
-#+begin_src nim
+#+begin_src nim :exports both
 import std/macros
 macro userPragma(arg: untyped): untyped =
   echo treeRepr(arg)
