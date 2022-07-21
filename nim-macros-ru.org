@@ -517,39 +517,6 @@ StmtList
     HiddenCallConv
       Sym "toDerived"
       IntLit 123
-
-nim_src_II5cqK.nim(34, 24) Error: type mismatch: got <typedesc[ref int]>
-but expected one of:
-proc `[]`(n: NimNode; i: BackwardsIndex): NimNode
-  first type mismatch at position: 0
-proc `[]`(n: NimNode; i: int): NimNode
-  first type mismatch at position: 0
-proc `[]`(s: string; i: BackwardsIndex): char
-  first type mismatch at position: 0
-proc `[]`(s: var string; i: BackwardsIndex): var char
-  first type mismatch at position: 0
-proc `[]`[I: Ordinal; T](a: T; i: I): T
-  first type mismatch at position: 0
-proc `[]`[Idx, T; U, V: Ordinal](a: array[Idx, T]; x: HSlice[U, V]): seq[T]
-  first type mismatch at position: 0
-proc `[]`[Idx, T](a: array[Idx, T]; i: BackwardsIndex): T
-  first type mismatch at position: 0
-proc `[]`[Idx, T](a: var array[Idx, T]; i: BackwardsIndex): var T
-  first type mismatch at position: 0
-proc `[]`[T, U: Ordinal](n: NimNode; x: HSlice[T, U]): seq[NimNode]
-  first type mismatch at position: 0
-proc `[]`[T, U: Ordinal](s: string; x: HSlice[T, U]): string
-  first type mismatch at position: 0
-proc `[]`[T; U, V: Ordinal](s: openArray[T]; x: HSlice[U, V]): seq[T]
-  first type mismatch at position: 0
-proc `[]`[T](s: openArray[T]; i: BackwardsIndex): T
-  first type mismatch at position: 0
-proc `[]`[T](s: var openArray[T]; i: BackwardsIndex): var T
-  first type mismatch at position: 0
-template `[]`(s: string; i: int): char
-  first type mismatch at position: 0
-
-expression: `[]`(ref int)
 #+end_example
 
 ** Работа с типизированным синтаксическим деревом
