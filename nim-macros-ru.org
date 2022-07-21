@@ -96,10 +96,10 @@ StmtList
 проверки и принимает преобразованное синтаксическое дерево.
 
 На данный момент структура типизированного синтаксического дерева не
-является частью стабильного API, технически это деталь реализации
-компилятора. Это не означает что это что-то открыто
-нестабильное/экспериментальное - просто никаких четких гарантий по
-структуре нет.
+является частью стабильного API. Технически это деталь реализации
+компилятора - это не означает что это что-то открыто
+нестабильное/экспериментальное - просто никаких официальных гарантий по
+структуре нет, хотя изменения происходят крайне редко.
 
 #+begin_src nim :exports both
 macro withTyped(arg: typed) = echo lispRepr(arg)
@@ -120,21 +120,44 @@ withTyped(echo(12, 32))
 процедура с ~varargs~ аргументами.
 
 В случае в ~untyped~ также можно писать какой-то конкретный тип, для того
-чтобы создавать перегруженные макросы.
+чтобы создавать перегруженные макросы. Однако сам тип аргумента внутри
+макроса все равно будет ~NimNode~
 
 #+begin_src nim :exports both
-macro overloaded(arg: int) = echo "called int: ", lispRepr(arg)
-macro overloaded(arg: string) = echo "called string: ", lispRepr(arg)
+macro overloaded(arg: int) = echo "called int: ", lispRepr(arg), " type: ", typeof(arg)
+macro overloaded(arg: string) = echo "called string: ", lispRepr(arg), " type: ", typeof(arg)
 
 overloaded(12)
 overloaded("string")
 #+end_src
 
 #+RESULTS:
-: called int: (IntLit 12)
-: called string: (StrLit "string")
+: called int: (IntLit 12) type: NimNode
+: called string: (StrLit "string") type: NimNode
+
 
 *** ~static[T]~
+
+~static~ позволяет передавать в макросы /значение/ а не синтаксическое
+дерево - т.е. тип аргумент будет /вычислен/ и передан в макрос как
+значение, а не /скомпилирован/ и передан как дерево.
+
+#+begin_src nim :exports both
+macro withStatic(arg: static[(int, int)]) =
+  echo "static: ", typeof(arg), " ", repr(arg)
+
+macro withTypes(arg: (int, int)) =
+  echo "types: ", typeof(arg), " ", repr(arg)
+
+func returnsTuple(): (int, int) = (123, 3)
+
+withStatic(returnsTuple())
+withTypes(returnsTuple())
+#+end_src
+
+#+RESULTS:
+: static: (int, int) (123, 3)
+: types: NimNode returnsTuple()
 
 ** Порядок раскрытия макросов и выполнения кода на этапе компиляции.
 
@@ -191,12 +214,67 @@ ProcDef
       Empty
 #+end_example
 
+Макрос, использующийся на типе должен возвращать какое-то определение типа
+которое будет потом вставлено обратно в блок ~type~, в противном случае
+произойдет ошибка.
+# каким образом это до сих пор не починили я не знаю, мне кажется там висит
+# где-то репорт от 2017 года где про это говорится.
 
+#+begin_src nim :exports both
+import std/macros
 
+macro user(a: untyped): untyped = echo treeRepr(a)
+
+type SSS {.user.} = object
+#+end_src
+
+#+RESULTS:
+#+begin_example
+TypeDef
+  PragmaExpr
+    Ident "SSS"
+    Pragma
+  Empty
+  ObjectTy
+    Empty
+    Empty
+    Empty
+
+nim_src_iEh4kh.nim(8, 12) Error: illformed AST:
+#+end_example
+
+Для переменных у макроса должно быть три аргумента которые принимают имя
+переменной, ее тип и выражение для инициализации. Как последние два
+опциональны и могут иметь значение ~nil~.
+
+#+begin_src nim :exports both
+macro forLet(varName, varType, varExpr: untyped): untyped =
+  echo "name: ", repr(varName)
+  echo "type: ", repr(varType)
+  echo "expr: ", repr(varExpr)
+
+let test {.forLet.}: int = 12
+#+end_src
+
+#+RESULTS:
+: name: test
+: type: int
+: expr: 12
 
 * Нетипизированные макросы
 
+Нетипизированные макросы в основном используются для реализации DSL, так
+как они позволяют пользователю писать любое синтаксическое дерево которое
+парсер может обработать.
+
 * Типизированные макросы
+
+Есть несколько различных причин по которым вам может потребоваться
+использование типизированного макроса - самой частой является доступ к
+дополнительной информации, которая просто недоступна для нетипизированного
+случая. Второй причиной часто является тот факт что только типизированные
+макросы обеспечивают корректную композицию, так как прежде чем код туда
+попадает он еще раз проходит компиляцию.
 
 Основное отличие типизированных макросов от нетипизированных заключается в
 том, на каком этапе компиляции они выполняются. Типизированные макросы
@@ -215,18 +293,145 @@ ProcDef
 4. может содержать свернутые константные выражения - например ~$(12 + 12)~
    может быть переведено в ~"24"~.
 
-** Для чего нужны типизированные макросы
-
-Есть несколько различных причин по которым вам может потребоваться
-использование типизированного макроса - самой частой является доступ к
-дополнительной информации, которая просто недоступна для нетипизированного
-случая. Второй причиной часто является тот факт что только типизированные
-макросы обеспечивают корректную композицию, так как в связи с п.1,
-структура дерева
-
 ** Структура типизированного синтаксического дерева
 
 *** Ноды символов - ~nnkSym~, ~nnkOpenSymChoice~, ~nnkClosedSymChoice~
+
+Используются для работы с символами - как полностью разрешенными так и
+частичными. В первом случае (полностью разрешенный) символ напрямую связан
+с каким-то элементом в коде - процедурой, типом, модулем и т.д.
+
+#+begin_src nim :exports both
+macro ex(a: typed) = echo lispRepr(a)
+
+ex(`+`)
+
+proc gen[T](a, b: T) =
+  ex(`+`)
+  ex(a + b)
+
+gen(12, 3)
+#+end_src
+
+#+RESULTS:
+: (ClosedSymChoice 20 "+")
+: (OpenSymChoice 20 "+")
+: (Infix (Sym "+") (Sym "a") (Sym "b"))
+
+Например в данном случае идентификатор ~+~ не может быть разрешен в
+конкретный символ так как у него нет аргументов - это может быть ~int +
+int~, ~float + float~ или один из двадцати других перегрузок этого
+оператора (количество доступных перегрузок показано как ~20~). Доступ ко
+всем символам можно получить через оператор ~[]~ или в цикле ~for overload
+in items(a): ...~.
+
+В том случае если идентификатор может быть однозначно разрешен в символ
+(т.е. это не перегруженная процедура, функция и т.д.) то конвертация будет
+проведена.
+
+Тип ноды на второй строке также предназначен для обозначения выборки, но
+так как вызов ~ex~ поставлен внутри generic процедуры то в зависимости от
+того где она будет вызвана могут учитываться все операторы ~+~ которые были
+объявлены позже.
+
+На последней строке оператор был разрешен в конкретный символ так как
+аргументы обоих типов уже известны.
+
+После получения конкретной ноды символа можно узнать его тип (kind) и
+реализацию через ~symKind()~ и ~getImpl()~ соответственно.
+
+#+begin_src nim
+macro getImpl(a: typed) =
+  echo "type: ", symKind(a)
+  echo a.getImpl().treeRepr()
+
+proc singleOverload() = echo 12
+
+getImpl(singleOverload)
+
+type SingleImpl = object
+
+getImpl(SingleImpl)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+type: nskProc
+ProcDef
+  Sym "singleOverload"
+  Empty
+  Empty
+  FormalParams
+    Empty
+  Empty
+  Empty
+  Command
+    Sym "echo"
+    HiddenStdConv
+      Empty
+      Bracket
+        StrLit "12"
+type: nskType
+TypeDef
+  Sym "SingleImpl"
+  Empty
+  ObjectTy
+    Empty
+    Empty
+    Empty
+#+end_example
+
+#+begin_src nim :exports both
+macro getImpl(a: typed) =
+  echo a.getTypeImpl().treeRepr()
+  echo a.getImpl().treeRepr()
+  echo a.getTypeImpl()[1].getTypeImpl().treeRepr()
+
+macro user(a: untyped): untyped = a
+
+type
+  Transformed {.user.} = object
+    field1: int
+    field2: float
+
+getImpl(Transformed)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+BracketExpr
+  Sym "typeDesc"
+  Sym "Transformed"
+TypeDef
+  PragmaExpr
+    Sym "Transformed"
+    Pragma
+  Empty
+  ObjectTy
+    Empty
+    Empty
+    RecList
+      IdentDefs
+        Ident "field1"
+        Sym "int"
+        Empty
+      IdentDefs
+        Ident "field2"
+        Sym "float"
+        Empty
+ObjectTy
+  Empty
+  Empty
+  RecList
+    IdentDefs
+      Sym "field1"
+      Sym "int"
+      Empty
+    IdentDefs
+      Sym "field2"
+      Sym "float"
+      Empty
+#+end_example
 
 ** Работа с типизированным синтаксическим деревом
 
@@ -235,3 +440,8 @@ ProcDef
 *** Трансформация типизированного дерева
 
 *** Работа с типами
+
+# *** ~std/typetraits~
+
+# Этот модуль предоставляет несколько дополнительных процедур для работы с
+# типами как в макросах, так и в обычном пользовательском коде. Например,
