@@ -287,7 +287,8 @@ let test {.forLet.}: int = 12
 
    Т.е. в случае с ~f(g(x))~ сначала будет выполнен ~g(x)~, после чего
    результат его работы будет скомпилирован, и передан как аргумент ~f~
-2. содержит ~nnkSym~ элементы вместо ~nnkIdent~
+2. Идентификаторы в большинстве своем переведены в символы и дерево
+   содержит ~nnkSym~ элементы вместо ~nnkIdent~.
 3. может содержать дополнительные элементы, такие как ~nnkOpenSymChoice~,
    ~nnkClosedSymChoice~, и т.д.
 4. может содержать свернутые константные выражения - например ~$(12 + 12)~
@@ -295,11 +296,20 @@ let test {.forLet.}: int = 12
 
 ** Структура типизированного синтаксического дерева
 
-*** Ноды символов - ~nnkSym~, ~nnkOpenSymChoice~, ~nnkClosedSymChoice~
+*** Символы и ноды символов
 
+Изначально синтаксическое дерево содержит идентификаторы, написанные
+пользователем - ~echo~, ~items~ и т.д. После выполнения семантического
+анализа они конвертируются в конкретные символы которые служат для привязки
+как каким-то элементам, объявленным в коде - процедурой, типом, модулем и
+т.д.
+
+Ноды с типами ~nnkSym~, ~nnkOpenSymChoice~ и ~nnkClosedSymChoice~
 Используются для работы с символами - как полностью разрешенными так и
 частичными. В первом случае (полностью разрешенный) символ напрямую связан
-с каким-то элементом в коде - процедурой, типом, модулем и т.д.
+с каким-то элементом в коде, во втором случае нода описывает /выборку/ из
+нескольких вариантов, которая либо будет разрешена в какой-то один элемент,
+либо так и останется набором вариантов.
 
 #+begin_src nim :exports both
 macro ex(a: typed) = echo lispRepr(a)
@@ -431,6 +441,115 @@ ObjectTy
       Sym "field2"
       Sym "float"
       Empty
+#+end_example
+
+*** ~nnkHidden*~ ноды
+
+#+begin_src nim :exports both
+macro show(idx: static[int], a: typed) =
+  echo "-------------------- ", idx, " --------------------"
+  echo a.treeRepr()
+
+show 1:
+  var f: float = 1
+
+proc withVarArg(a: var int) = discard
+
+var value = 12
+show 2:
+  withVarArg(value)
+
+type Derived = ref object of RootObj
+proc takesBase(base: ref RootObj) = discard
+
+show 3:
+  takesBase(Derived())
+
+show 4:
+  echo 12, 3
+
+converter toDerived(a: int): Derived = discard
+proc takesDerived(d: Derived) = discard
+
+show 5:
+  takesDerived(123)
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+-------------------- 1 --------------------
+StmtList
+  VarSection
+    IdentDefs
+      Sym "f"
+      Sym "float"
+      HiddenStdConv
+        Empty
+        IntLit 1
+-------------------- 2 --------------------
+StmtList
+  Call
+    Sym "withVarArg"
+    HiddenAddr
+      Sym "value"
+-------------------- 3 --------------------
+StmtList
+  Call
+    Sym "takesBase"
+    HiddenSubConv
+      Empty
+      ObjConstr
+        Sym "Derived"
+-------------------- 4 --------------------
+StmtList
+  Command
+    Sym "echo"
+    HiddenStdConv
+      Empty
+      Bracket
+        StrLit "12"
+        StrLit "3"
+-------------------- 5 --------------------
+StmtList
+  Call
+    Sym "takesDerived"
+    HiddenCallConv
+      Sym "toDerived"
+      IntLit 123
+
+nim_src_II5cqK.nim(34, 24) Error: type mismatch: got <typedesc[ref int]>
+but expected one of:
+proc `[]`(n: NimNode; i: BackwardsIndex): NimNode
+  first type mismatch at position: 0
+proc `[]`(n: NimNode; i: int): NimNode
+  first type mismatch at position: 0
+proc `[]`(s: string; i: BackwardsIndex): char
+  first type mismatch at position: 0
+proc `[]`(s: var string; i: BackwardsIndex): var char
+  first type mismatch at position: 0
+proc `[]`[I: Ordinal; T](a: T; i: I): T
+  first type mismatch at position: 0
+proc `[]`[Idx, T; U, V: Ordinal](a: array[Idx, T]; x: HSlice[U, V]): seq[T]
+  first type mismatch at position: 0
+proc `[]`[Idx, T](a: array[Idx, T]; i: BackwardsIndex): T
+  first type mismatch at position: 0
+proc `[]`[Idx, T](a: var array[Idx, T]; i: BackwardsIndex): var T
+  first type mismatch at position: 0
+proc `[]`[T, U: Ordinal](n: NimNode; x: HSlice[T, U]): seq[NimNode]
+  first type mismatch at position: 0
+proc `[]`[T, U: Ordinal](s: string; x: HSlice[T, U]): string
+  first type mismatch at position: 0
+proc `[]`[T; U, V: Ordinal](s: openArray[T]; x: HSlice[U, V]): seq[T]
+  first type mismatch at position: 0
+proc `[]`[T](s: openArray[T]; i: BackwardsIndex): T
+  first type mismatch at position: 0
+proc `[]`[T](s: var openArray[T]; i: BackwardsIndex): var T
+  first type mismatch at position: 0
+template `[]`(s: string; i: int): char
+  first type mismatch at position: 0
+
+expression: `[]`(ref int)
 #+end_example
 
 ** Работа с типизированным синтаксическим деревом
