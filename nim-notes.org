@@ -62,7 +62,40 @@ echo sequence
 : seq[(int, int)]
 : @[(1, 2), (3, 5), (4, 5)]
 
+* General interop
+
+** ~cstring~ aka "compatible" string
+
+Type name ~cstring~ actually stands for the "compatible" string, for the
+reasons that are completely beyond my comprehension. Anyway - it is
+/supposed/ to be a 'universal' type for interop with both JavaScript and
+C/C++ backends - mapping the C's ~char*~ and JS's string types to the same
+nim type. This section covers interaction between ~cstring~ and compiled
+backends - for JavaScript interop you need to look elsewhere.
+
+- [ ] Allocation of the ~cstring~
+- [ ] ~cstring~ lifetime
+- [ ] Implicit conversion to the ~cstring~
+
 * C++ interop
+
+** Wrapping C++ type without default constructor
+
+#+begin_src c++
+class NoDefault {
+    public:
+        NoDefault(int arg) {}
+};
+#+end_src
+
+#+begin_src nim :cmdline --backend=cpp --cc=gcc
+type
+  NoDefault {.importcpp: "NoDefault".} = object
+
+proc initNoDefault(arg: cint): NoDefault {.constructor, importcpp: "NoDefault(@)".}
+#+end_src
+
+#+RESULTS:
 
 ** Compiling nim to shared library and calling it from C++
 
