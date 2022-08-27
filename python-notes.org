@@ -1,0 +1,35 @@
+#+property: header-args:python :results output :eval none
+
+* Python language
+
+* Python implementation details
+
+Python C API
+
+* Python libraries
+
+** Pandas
+
+*** Creating dataframes
+
+#+caption: Create dataframe from a dictionary
+#+begin_src python
+import pandas as pd
+
+# single key-value pairs
+df = pd.DataFrame(
+    {"key1": "value1", "key2": "value2"}.items(), columns=["key", "value"]
+)
+print(df)
+#+end_src
+
+#+RESULTS:
+:     key   value
+: 0  key1  value1
+: 1  key2  value2
+
+*** Filtering and modifying dataframes
+
+
+
+* Python tooling

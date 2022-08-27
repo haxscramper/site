@@ -1,0 +1,507 @@
+* nltk
+
+** POS tag list
+
+- CC :: *conjunction*, *coordinating* & 'n and both but either et for less
+  minus neither nor or plus so therefore times v. versus vs. whether yet
+- CD :: *numeral*, *cardinal* mid-1890 nine-thirty forty-two one-tenth ten
+  million 0.5 one forty- seven 1987 twenty '79 zero two 78-degrees
+  eighty-four IX '60s .025 fifteen 271,124 dozen quintillion DM2,000 ...
+- DT :: *determiner* all an another any both del each either every half la
+  many much nary neither no some such that the them these this those
+- EX :: *existential* there
+- FW :: *foreign word* gemeinschaft hund ich =jeux= =habeas= =Haementeria=
+  Herr K'ang-si vous lutihaw alai je jour objets =salutaris= =fille=
+  =quibusdam= pas trop Monte terram fiche oui =corporis= ...
+- IN :: *preposition or conjunction, subordinating* astride among uppon
+  whether out inside pro despite on by throughout below within for towards
+  near behind atop around if like until below next into if beside ...
+- JJ :: *adjective or numeral, ordinal* third ill-mannered pre-war
+  regrettable oiled calamitous first separable ectoplasmic battery-powered
+  participatory fourth still-to-be-named multilingual multi-disciplinary
+- JJR :: *adjective, comparative* bleaker braver breezier briefer brighter
+  brisker broader bumper busier calmer cheaper choosier cleaner clearer
+  closer colder commoner costlier cozier creamier crunchier cuter ...
+- JJS :: *adjective, superlative* calmest cheapest choicest classiest
+  cleanest clearest closest commonest corniest costliest crassest creepiest
+  crudest cutest darkest deadliest dearest deepest densest dinkiest ...
+- LS :: *list item marker* A A. B B. C C. D E F First G H I J K One
+  SP-44001 SP-44002 SP-44005 SP-44007 Second Third Three Two * a b c d
+  first five four one six three two
+- MD :: *modal auxiliary* can cannot could couldn't dare may might must
+  need ought shall should shouldn't will would
+- NN :: *noun, common, singular or mass* common-carrier cabbage
+  knuckle-duster Casino afghan shed thermostat investment slide humour
+  falloff slick wind hyena override subhumanity machinist ...
+- NNP :: *noun, proper, singular* Motown Venneboerger Czestochwa Ranzer
+  Conchita Trumplane Christos Oceanside Escobar Kreisler Sawyer Cougar
+  Yvette Ervin ODI Darryl CTCA Shannon A.K.C. Meltex Liverpool ...
+- NNPS :: *noun, proper, plural* Americans Americas Amharas Amityvilles
+  Amusements Anarcho-Syndicalists Andalusians Andes Andruses Angels Animals
+  Anthony Antilles Antiques Apache Apaches Apocrypha ...
+- NNS :: *noun, common, plural* undergraduates scotches bric-a-brac
+  products bodyguards facets coasts divestitures storehouses designs clubs
+  fragrances averages subjectivists apprehensions muses factory-jobs ...
+- PDT :: *pre-determiner* all both half many quite such sure this
+- POS :: *genitive marker* ' 's
+- PRP :: *pronoun, personal* hers herself him himself hisself it itself me
+  myself one oneself ours ourselves ownself self she thee theirs them
+  themselves they thou thy us
+- PRP$ :: *pronoun, possessive* her his mine my our ours their thy your
+- RB :: *adverb* occasionally unabatingly maddeningly adventurously
+  professedly stirringly prominently technologically magisterially
+  predominately swiftly fiscally pitilessly
+- RBR :: *adverb, comparative* further gloomier grander graver greater
+  grimmer harder harsher healthier heavier higher however larger later
+  leaner lengthier less- perfectly lesser lonelier longer louder lower more
+- RBS :: *adverb, superlative* best biggest bluntest earliest farthest
+  first furthest hardest heartiest highest largest least less most nearest
+  second tightest worst
+- RP :: *particle* aboard about across along apart around aside at away
+  back before behind by crop down ever fast for forth from go high i.e. in
+  into just later low more off on open out over per pie raising start teeth
+  that through under unto up up-pp upon whole with you
+- SYM :: *symbol* ~% & ' '' ''. ) ). * + ,. < = > @ A[fj] U.S U.S.S.R * **
+  ***~
+- TO :: "to" as preposition or infinitive marker to
+- UH :: *interjection* Goodbye Goody Gosh Wow Jeepers Jee-sus Hubba Hey
+  Kee-reist Oops amen huh howdy uh dammit whammo shucks heck anyways
+  whodunnit honey golly man baby diddle hush sonuvabitch ...
+- VB :: *verb*, *base form* ask assemble assess assign assume atone
+  attention avoid bake balkanize bank begin behold believe bend benefit
+  bevel beware bless boil bomb boost brace break bring broil brush build
+  ...
+- VBD :: *verb*, *past tense* dipped pleaded swiped regummed soaked tidied
+  convened halted registered cushioned exacted snubbed strode aimed adopted
+  belied figgered speculated wore appreciated contemplated ...
+- VBG :: *verb*, *present participle or gerund* telegraphing stirring
+  focusing angering judging stalling lactating hankerin' alleging veering
+  capping approaching traveling besieging encrypting interrupting erasing
+  wincing ...
+- VBN :: *verb*, *past participle* multihulled dilapidated aerosolized
+  chaired languished panelized used experimented flourished imitated
+  reunifed factored condensed sheared unsettled primed dubbed desired ...
+- VBP :: *verb, present tense, not 3rd person singular* predominate wrap
+  resort sue twist spill cure lengthen brush terminate appear tend stray
+  glisten obtain comprise detest tease attract emphasize mold postpone
+  sever return wag ...
+- VBZ :: *verb, present tense, 3rd person singular* bases reconstructs
+  marks mixes displeases seals carps weaves snatches slumps stretches
+  authorizes smolders pictures emerges stockpiles seduces fizzes uses
+  bolsters slaps speaks pleads ...
+- WDT :: *WH-determiner* that what whatever which whichever
+- WP :: *WH-pronoun* that what whatever whatsoever which who whom whosoever
+- WP$ :: *WH-pronoun, possessive* whose
+- WRB :: *Wh-adverb* how however whence whenever where whereby whereever
+  wherein whereof why
+
+** Punctuation naming
+
+Taken from [[https://ell.stackexchange.com/questions/108169/what-do-programmers-call-these-punctuation-marks-parentheses-brackets-ticks][here]] (and slightly modified) - just to be self-consistent.
+
+- general symbols
+  - ~(~ :: open paren
+  - ~)~ :: close paren
+  - ~[~ :: open bracket  or open square bracket
+  - ~]~ :: close bracket or close square bracket
+  - ~{~ :: open curly    or open curly bracket
+  - ~}~ :: close curly   or close curly bracket
+  - ~<~ :: open angle    or open angle bracket   or less than
+  - ~>~ :: close angle   or close angle bracket  or greater than
+  - ~|~ :: pipe
+  - ~"~ :: double quote
+  - ~'~ :: single quote
+  - ~:~ :: colon
+  - ~;~ :: sem     or semicolon
+  - ~!~ :: exclamation mark
+  - ~^~ :: hat     or caret
+  - ~°~ :: degree  or degrees or degree sign
+  - ~#~ :: pound   or number  or sharp  or hash sign
+  - ~`~ :: back tick
+  - ~´~ :: tick
+  - ~§~ :: section sign
+  - ~-~ :: hyphen  or minus
+  - ~_~ :: underline
+  - ~~~ :: tilde
+- some additions
+  - ~([{}])~ :: closing/opening delimiters
+
+* Main parts of the sentence
+
+** noun
+** pronoun
+** verb
+** adjective
+** adverb
+** preposition
+** conjunction
+** interjection
+
+* Times/Tenses
+
+** Past
+*** Past simple
+    Past action, no realtion to any other event. Stating a fact, unspecific time in the past
+
+    ```txt
+    [action]
+               [now]
+    ```
+    - V-ed
+*** Past perfect
+    Activity had finished at certain point in time, in the past.
+
+    ```txt
+    [action] < (point in time)
+                       [now]
+    ```
+    - **had** + V-ed
+    - examples:
+      - I met them **after** they **had divorced**.
+      - Yesterday at 2pm, I had just baked a cake.
+
+    - Usage
+      "Had already X" is used for actions that were started and completed in the past, without specifying a concrete point.
+*** Past perfect progressive
+    Action which started in the past and continued to happen after another action or time in the past. Something in the sentence must be used as a reference point.
+
+    ```txt
+    [action-start] .............
+                         [now]
+    ```
+    - **had been** + V-ing
+    - examples:
+      - Sara **had been working** here **for two weeks** when she had the accident
+*** Past progressive
+    Action that was happening in the past, but no information about it's completion status.
+
+    ```txt
+    ...... [action] .......
+                    [now]
+    ```
+    - **was/were** + V-ing
+    - examples:
+      - Yesterday at 2 pm, I was baking a cake.
+*** Usage
+
+    Something happened: `[past simple]`
+
+    One thing happened after another: `[past simple] after [past perfect]`
+
+    Started after event, and then continued: `[past perfect continious] for X time` (for X time is an example
+*** Extra
+    - Passive voice
+      Created by adding `was` or `were`.
+** Present
+*** Present simple
+    Stating a fact, general unspecified time in the present
+    - V
+*** Present progressive
+    Ongoing action
+    - V-ing
+*** Present perfect
+    Action just finished
+    - Have + V-ed
+    - Usage
+      Modal verb might be used - "could have known", "would have used"
+
+      "Have already X" is used for actions that *just* completed, but were started in the past
+*** Present perfect progressive
+    Continious state of events in the present
+    - Have been + V-ing
+** Future
+*** Future simple
+    Fact about event in the future
+    - Will/would + V
+*** Future progressive
+    Fact about continuous event in the future
+    - Will/would be + V-ing
+*** Future perfect
+    Planning to finish the action at a certain point in the future.
+    - Will/would have + V-ed
+*** Future perfect progressive
+    Point in the future at which action had been going on for some time, but hadn't finished yet.
+    - Will/would have been + V-ing
+*** Usage
+    - will/would
+      The main difference between will and would is that **will is used for real possibilities while would is used for imagined situations in the future**.
+** Inbox
+  - "was integrated" -
+    and the errant Ballantine branch of revision (including the ‘Estella Bolger’ addition) was integrated into the main branch of textual descent
+
+* Punctuation
+** Comma
+
+The comma ~(,)~ is used to show a separation of ideas or elements
+within the structure of a sentence. Additionally, it is used in letter
+writing after the salutation and closing.
+
+*** Before and/or
+
+Called "Oxford comma". Can be used both ways, but you need to choose a way
+you write and don't switch back and forth between with-comman and no-comma
+
+** Semicolon
+
+The semicolon ~(;)~ is used to connect independent clauses. It shows a
+closer relationship between the clauses than a period would show.
+
+#+begin_quote
+Grammatically, the semicolon almost always functions as an equal sign; it
+says that the two parts being joined are relatively equal in their length
+and have the same grammatical structure. Also, the semicolon helps you to
+link two things whose interdependancy you wish to establish. The sentence
+parts on either side of the semicolon tend to "depend on each other" for
+complete meaning. Use the semicolon when you wish to create or emphasize a
+generally equal or even interdependent relationship between two things.
+#+end_quote
+
+[[https://www.e-education.psu.edu/styleforstudents/c2_p5.html][credit:]]
+
+
+In places where you could've written a new sentence, but decided to keep things more "joined"
+
+- Sentence with connector - __and, but, or, nor__, etc.
+
+  #+begin_quote
+  When I finish here, <<and I will soon>, I’ll be glad to help you>; and
+  that is a promise I will keep.
+  #+end_quote
+
+- Colon A colon means “that is to say” or “here’s what I mean.” Colons and
+  semicolons should never be
+
+* Text formatting
+
+- ~_sometext_~ -> _sometext_ :: _underline_ words whose /definition/
+  is important at that moment or they have important structural
+  meaning in given sentence. Second one is mostly related to different
+  proof and theorems there words such as _if, then, where_ and
+  contructs _if we have_ ... _then we will get_ are very important and
+  spotting them easily will increase readablility significantly.
+- ~/sometext/~ -> /sometext/ :: use _italic_ in places where you need
+  to put accent on the /meaning/ of the word or it's intonation.
+- ~*sometext*~ -> *sometext* :: use _bold_ where you need to *draw
+  attention* to the word: don't put too many words at once in
+  accents - it diminishes their value (if all text is accented it is
+  kind of hard to find out /what exactly/ you wanted to draw attention
+  to). To indicate things like raised voice in dialogue, name of the
+  new concept for which you are providing definitions.
+- ~~sometext~~ -> ~sometext~ :: use _monospaced_ in places where text
+  inside signifies some action/command/sequence which has to be used
+  in a particular environment. Things like code snippets, shortcut
+  definitions, names of the functions and classes in documentation.
+- ~=sometext=~ -> =sometext= :: use _verbatim_ in places where you
+  need to show /name/ of some entity. For example names of the
+  programs, terms etc. Basically things that you would put in glossary
+  at the end of the book.
+- ~$sometext$~ -> $sometext$ :: aside from obvious things like inline
+  equations (and similar things that might require sub/super-script)
+  also use _latex_ for things that describe points, set names etc.
+- ~some-thing-that-has-no-word-for-it~ :: If I want to indicate that
+  something is a singular /concept/ I tend to write everything using
+  dashes instead of spaces. It heavily depends on context and can
+  always be replaced with regular sentence but sometimes I feel it
+  might be better to *really* show that this thing is something
+  /singlular/. Kind of hard to describe this one but I think it might
+  be possible to get them meaning of such markup when you encounter
+  it: just try to read it as a long word with only small breaks
+  inbetween, maybe this will do the trick.
+- ~<sometext>~ :: placeholder
+- ~"sometext"~ :: direct speech (speech for example)
+- ~'sometext'~ :: inline quote
+- single tilda: ~~text~ :: means 'approximately'
+- ~WORD:~ :: this markup is derived from Asciidoctor. It serves the
+  same purpose as tags, albeit very specific ones - geared toward use
+  in documentation. In asciidoctor there is only several of them:
+  =NOTE=, =TIP=, =IMPORTANT=, =CAUTION=, =WARNING=.
+  - Emacs' ~hl-todo~ allows to define custom words. They are mostly
+    used in code comments. My configuraion includes
+    - =TODO= - need to do something
+    - =NEXT= - next planned action
+    - =THEM=
+    - =PROG=
+    - =OKAY=
+    - =REVIEW= - architectural/API decision must be reviewed
+    - =IDEA= - potential todo, api improvement etc
+    - =REFACTOR= - this portion of code requies refactoring
+    - =DONT=
+    - =DOC= - documentation-related todo
+    - =FAIL=
+    - =ERROR=
+    - =TEST=
+    - =WARNING= - potential source of errors in the future
+    - =IMPLEMENT=
+    - =DONE=
+    - =NOTE=
+    - =QUESTION= - currently I have little to no idea how this should
+      be handled.
+    - =KLUDGE=
+    - =HACK= - temporary solution that needs to be replaced with more
+      permanent one.
+    - =TEMP=
+    - =FIXME= - code does not work as expected
+    - =XXX=
+    - =XXXX= -
+  - Org-mode also provides customization for todo keywords. My configuration includes:
+    - =TODO=
+    - =LATER=
+    - =NEXT=
+    - =POSTPONED=
+    - =IN_PROGRESS=
+    - =STALLED=
+    - =REVIEW=
+    - =DONE=
+    - =COMPLETED=
+    - =NUKED=
+    - =PARTIALLY=
+    - =CANCELED=
+    - =FAILED=
+    - =FUCKING___DONE=
+  - I also use keywords like this in commit headers.
+    - =!!!= Has breaking change
+    - =>>>= Non-buildable commit that should not be used, but need to be
+      retained for some other purpose. Important intermediate step in
+      refactoring or something similar.
+    - =WIP= Partial implementation of some features. Not all required parts
+      are working, but whatewher is implemented is good enough to commit
+      it.
+    - =???=
+    - =CLEAN= File/code-related cleanup. Not refactoring - just some
+      cosmetic changes.
+    - =FEATURE= New features is implemented
+    - =FIX(type)= :: bug fix text in parenthesis can be any of: =[comp,
+      run, algo, ux]=
+    - =REFACTOR=
+    - =STYLE=
+    - =DOC= Documentation update
+    - =TEST= Change in tests
+    - =HACK=
+    - =REPO= Changes affecting repository. CI configuration, version
+      changes, dependency updates.
+  - RFC 2119 defines several keywords to indicate requirement levels
+    - =MUST=
+    - =MUST NOT=
+    - =REQUIRED=
+    - =SHALL=
+    - =SHALL NOT=
+    - =SHOULD=
+    - =SHOULD NOT=
+    - =RECOMMENDED=
+    - =MAY=
+    - =OPTIONAL=
+  - RFC 6919 further expands list of keywords to indicate requrement
+    levels and provide definition for more specific cases
+    - =MUST (BUT WE KNOW YOU WON'T)=
+    - =SHOULD CONSIDER=
+    - =REALLY SHOULD NOT=
+    - =OUGHT TO=
+    - =WOULD PROBABLY=
+    - =MAY WISH TO=
+    - =COULD=
+    - =POSSIBLE=
+    - =MIGHT=
+
+* Writing different types of text/sentences
+
+** Narration
+
+Consider starting narration sentences with the "Like, What, Who, Where,
+When, How, and Because". Instead of writing "he thought about who might it
+be?" Just write a regular "who might it be" sentence. It is not necessary
+to attach every action to the specific person
+
+
+** Dialogue or direct speech
+
+*** Punctuation and quote placement
+
+Only direct dialogue requires quotation marks. Direct dialogue is
+someone speaking. Indirect dialogue is a report that someone spoke.
+The word that is implied in the example of indirect dialogue.
+
+Single line dialogue is quoted. If dialogue tag comes after quoted
+part it is not capped and punctuation is placed inside of the quotes.
+If tag comes before quoted part both of them are capped and
+punctuation is places outside of the quotes.
+
+ - ~<DT>, "<DIA>."~
+ - ~"<DIA>," <DT>.~
+ - ~"<DIA>," <DT>, <ACT>~
+ - ~<ACT>, <DT>, "<DIA>."~
+ - ~"<DIA>," <DT>, "<DIA>"~
+ - ~"<DIA>," <DT>, <ACT>, "<DIA>"~
+ - ~"<DIA>," <DT>, <ACT>. "<DIA>."~
+ - ~"<DIA>" - <ACT> - "<DIA>."~
+ - ~"<DIA '<quote withing the dialogue>'"~
+
+Where
+
+- ~<DT>~ - dialogue tag is a phrase that precedes, breaks up, or follows a
+  bit of written dialogue and establishes who the speaker is, how they are
+  delivering the dialogue, and whether or not a new speaker is talking
+
+  NOTE: you can google for the "dialogue tags" examples/lists, if you feel
+  like the writing is a bit too repetitive. Surface google search shows
+  that frequent use of "said" is mostly a matter of preferences, but some
+  variation can't hurt.
+
+  - /"I hate this", someone said/. ~DT = someone said~
+
+
+
+- ~<DIA>~ - dialogue itself, direct speech by the person
+- ~<ACT>~ - description of some action
+
+http://theeditorsblog.net/2010/12/08/punctuation-in-dialogue/
+
+* Other things
+
+** Determiner
+
+Some kind of /determiner/ or /quantifier/ is almost always required (except
+with proper nouns, plural nouns, and "uncountable" nouns). Examples of such
+determiners are
+
+- definite article *the*
+- *my*
+- *this*
+- *every*
+- etc. (?)
+
+[[https://dictionary.cambridge.org/grammar/british-grammar/determiners-the-my-some-this][Determiners (the, my, some, this) - English Grammar Today - Cambridge
+Dictionary]]
+
+* Input
+
+- English
+  - Punctuation
+  - Single with plural
+    - After and/or
+      After list of items joined by "and" or "or" plural version of the verb is used.
+
+      "Both A and B are"
+
+      #recheck
+  - Links
+    - https://english.lingolia.com/en/grammar
+  - Writing
+    - People expression description
+    - Describing movements/actions
+    - Interrupting each other in dialogue
+    - Body language in dialogue
+      - "", said <N>, then added, after <V>, ""
+    - Describing emotions in dialogue
+    - Referring to one of the two people
+      Repeatedly writing he/she/name/occupation through the span of the dialogue might become too boring at some point. Need to get more examples of how I can refer to one of the people who are talking at the moment.
+    - Balancing action description
+      - Adding narration to the text
+  - Words and phrases
+  - Sentences to disassemble
+    - It had been suggested that perhaps mere could be a few less dark otters
+  - Articles
+    - "The"
+      - "in both the"
+        Depending on the emphasis I want to put in the sentence, I can use either "in both the" and "in the both". Apparently, usage of "the" in this situation is fully correct.
+    - "A/An"
+    - Situations where I should omit the article

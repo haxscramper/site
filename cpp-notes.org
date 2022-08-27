@@ -1,0 +1,322 @@
+#+PROPERTY: header-args :mkdirp yes
+
+* Links
+
+Interesting articles and/or talks
+
+- [[https://monkeywritescode.blogspot.com/p/c-exceptions-under-hood.html#chapter_n_10][Infinite monkey - Nico Brailovsky's blog: C++ exceptions under the hood]].
+  The article provides a comprehensive description of the C++ exception
+  handling implementation (specifically for the =gcc=). Section 21 is a
+  recap, so if you are looking for a tl;dr version it is also available.
+
+* Terminology
+
+** Covariance, Contravariance, Invariance
+
+- covariant :: if ~A <= B~ then ~I<A> <= I<B>~
+  - *singular* pointers (and references) are covariant - if ~A < B~ then
+    ~A* < B*~ - that's what allows substitution for purposes of
+    polymorphism.
+  - Smart pointers are also covariant - this is made possible via
+    constructors with additional template parameters.
+  - Method arguments are covariant (?)
+- contravariant :: Reversal of the covariance, if ~A <= B~ then ~I<B> <= I<A>~
+  - Method return values are contravariant wrt. to return values (?)
+- bivariant :: if ~A <= B~ then ~I<A> == I<B>~
+- variant :: if covariant, contravariant or bivariant
+- invariant ::  if not variant
+  - templates are invariant
+
+** Abbreviations
+
+- =RTTI= :: Run-Time Type Information
+- =CFI= :: Call Frame Information
+- =LSDA= :: Language-Specific Data Area
+- =CTRP= :: Curiously Recurring Template Pattern
+- =SFINAE= :: Substitution Failure Is Not An Error
+- =ABI= :: Application Binary Interface
+- =ELF= :: Executable Linkable Format
+
+* Clang
+
+** Interesting options
+
+- ~-ccc-print-bindings~
+- ~-ccc-print-phases~
+- ~Xclang~
+  - ~-dump-tokens~
+  - ~-dump-ast~
+- ~-fsyntax-only~
+
+
+* Compilation
+
+** Function declaration attributes
+
+- optimizations - there are several interesting attributes that can be
+  added to the function declaration. Sadly it does not seem to be possible
+  to diagnose violations of the
+  - ~__attribute__((pure))~ function has no side effects and the value
+    returned depends on the arguments /and state of the global variable/,
+    therefore it is safe for the optimizer to elide some calls to it, if the
+    arguments are the same, and the caller /did not do anything to change the
+    state of the globals in between the calls/.
+  - ~__attribute__((const))~ signal to the compiler that function is /pure/
+    and repeated calls with the same arguments might be replaced with the
+    same output. More restrictive version of the ~((pure))~ as even external
+    variable reads should not be performed.
+- General declaration attributes
+  - ~[[deprecated]]~ or ~__attribute__((deprecated))~ (for gcc/clang old)
+  - ~[[nodiscard]]~ - issue warning when function value is discarded
+- Linking and library compilation ~__attribute__((visibility("<type>")))~
+  where ~<type>~ is one of
+  - ~default~ - override changes such as ~-fvisbility=hidden~ that work on
+    the whole program. This is a default state of the symbol and it means
+    "public" for external users.
+  - ~hidden~ - hide symbols from the dynamic table. This is effectively a
+    "private" modifier for symbols in the dynamic libraries.
+
+* Linking, object file manipulation
+
+Linking describes the process of combining multiple object files. Linking
+can be static or dynamic - depending on when the process itself is
+executed.
+
+- Static linking :: In case of the static linking linker takes in a list of
+  the object files that need to be combined together. Each file has some
+  exported symbols (src_cpp{int exported() { return 12; }}) and some
+  missing undefined ones (src_cpp{extern int exported();}). Input files are
+  processed one-by-one and used to modify the /symbol table/ of the linker.
+  1. When new object is found it's exported symbols are added in the table
+     and used to *fix known undefined* symbols. If there are any *new
+     undefined* symbols, they are *recorded* in the table.
+  2. If static library is found it is processed as a collection of object
+     files.
+     1. New symbols are used for fixes
+     2. If there were /any/ new symbols in files then whole library is
+        rescanned again.
+- Dynamic linking :: In case of a dynamic linking functions are loaded from
+  the shared library by an external helper.
+- Dynamic loading :: It is possible to interact with dynamic libraries
+  using ~dlopen~ and ~dlsym~ function and manually search for symbols in
+  it. This method is usually used by the dynamic languages. When using
+  shared libraries in this mode it is necessary to use ~dl~ library (link
+  with it as ~ldl~)
+
+** CLI tools
+
+- ~nm~ :: list symbols in the object files
+  - src_sh{nm -D -C <file>} list symbols and demangle C++ names
+- ~objdump~ :: generic object dumping
+  - src_sh{objdump -C -D -M intel --no-addresses --no-show-rawn-insn
+    <file>} show disassembled code for the binary, using intel syntax,
+    without displaying relative instruction addresses (enabled by default,
+    but pretty noisy for reading)
+  - src_sh{objdump -t} show symbol tables (synonym flag is ~--syms~)
+  - src_sh{objdump -T} show dynamic symbol tables (synonym flag is
+    ~--dynamic-syms~)
+- ~readelf~ :: used to provide full information about ELF binaries. It uses
+  =libelf= library whereas =objdump= uses =BFD=, which is also used by the
+  =ld= linker.
+- ~strings~ :: show printable strings in the binary
+- ~ldd~ :: shared library dependencies
+
+** Static linking details
+
+- Create static library :: Create several object files using src_sh{gcc -c
+  file.c -o result.o} and then combine them in a library using src_sh{ar
+  rcs final.a result-1.o result-2.o}
+- CLI compilation :: Order of passed arguments [[https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking][matters]] - src_sh{clang++
+  file.cpp -lLIB} is ok, but src_sh{clang++ -lLIB file.cpp} is not, because
+  linked will only try to substitute newly discovered symbols in already
+  known placeholders. If new placeholder is discovered linked *won't* go
+  over all known symbols to see if any matches.
+
+  NOTE: It is possible to supply linked libraries more than once in the
+  command line - in case you have a circular dependency.
+
+  From [[https://www.linuxtopia.org/online_books/an_introduction_to_gcc/gccintro_18.html][An Introduction to GCC - Link order of libraries]]
+
+  #+begin_quote
+  The traditional behavior of linkers is to search for external functions
+  from left to right in the libraries specified on the command line. This
+  means that a library containing the definition of a function should
+  appear after any source files or object files which use it. This includes
+  libraries specified with the short-cut -l option.
+  #+end_quote
+- ~static~ modifier :: for the global variables and keywords
+
+  #+begin_src c :tangle tmp/first.c
+  static int value = 0;
+  int get() { return value; }
+  #+end_src
+
+  #+begin_src c :tangle tmp/second.c
+  static int value = 0;
+  extern int get();
+  int main() { return value + get(); }
+  #+end_src
+
+  #+begin_src sh
+  gcc tmp/first.c tmp/second.c
+  #+end_src
+
+** Dynamic linking details
+
+- create dynamic library :: src_sh{gcc -shared file.c -o shared.so}
+- env variables :: ~LD_LIBRARY_PATH~ can be used to set the directory used
+  at /runtime/ for library search. ~LIBRARY_PATH~ is used for
+  /compile-time/ search of the shared libraries.
+
+* Standard library
+
+** ~std::string~
+
+- check if string starts with ~str.rfind("prefix", 0) == 0~ for pre-C++20
+  and ~str.starts_with()~ for C++20 onward.
+
+* Overloading
+
+* Declaration and initialization
+
+* Templates
+
+** Type traits
+
+#+begin_src cpp
+template <[parameters]>
+inline constexpr bool [trait name]_v = [trait name]<[parameters]>::value;
+#+end_src
+
+** SFINAE
+
+*** ODR Violation via default argument override
+
+This will fail to compile because default arguments are not a part of the
+function signature - these two functions are a clear case of the ODR
+violation.
+
+#+begin_src c++
+template <typename T, typename = expr_1()> void func(T t) { ... }
+template <typename T, typename = expr_2()> void func(T t) { ... }
+#+end_src
+
+This can be rewritten into code below (in absence of src_cpp{requires}
+keyword) - in this case SFINAE predicate will be considered a part o the
+signature.
+
+#+begin_src  C++
+template <typename T, expr_1() = nullptr> void func(T t) { ... }
+template <typename T, expr_2() = nullptr> void func(T t) { ... }
+#+end_src
+
+** Concepts
+
+* Things you need to look out for because they might cause bugs
+
+Or the list of things I had to debug at some point in time. Some
+solutions/advices might not be the best, but it worked form me (TM).
+
+** Undefined behavior
+
+- Reading from an uninitialized scalar value
+- Accessing elements out of array bounds
+- Signed value overflow
+- Dereference of the null pointer
+- Infinite loops without side effects
+
+** standard library containers
+
+In general, it seems like a good rule to /get/ data using ~.at()~ and /set/
+data using ~operator[]~.
+
+- ~std::map::operator[]~ inserts an empty value if it is not in the map
+  already. Ideally this should be countered by being const-correct and
+  using method ~.at()~ that is const-correct and does not insert anything.
+  For "get or default" ~operator[]~ is the right choice.
+- ~std::vector~ might relocate, changing addresses of all elements,
+  invalidating old pointers and iterators. If you are facing bug where
+  *changing input size* causes segmentation fault and your code uses
+  pointer to data stored in vectors it might be the cause.
+
+  - ~&vector.back()~ - unsafe, address to the reference, vector might
+    relocate the real object.
+  - ~&(*iterator)~ - unsafe, object pointed to might be relocated, creating
+    danging pointer.
+  - Storing iterators or pointers - unsafe, they might be invalidated.
+
+  IDEA: If you need to have persistent addresses in memory you might use
+  ~std::list~
+
+  QUESTION: Do associative containers (especially bucked-based) suffer from
+  the relocation as well? For example, ~std::unordered_map~ might use
+  buckets (IIRC).
+
+** references
+
+- Returning ~const&~ passed from the argument might lead to dangling
+  references because temporary object is constructed to pass argument to
+  ~const&~.
+
+  #+begin_src cpp
+  struct T { T(const char*) {} };
+  const T& return_value(const T& arg) { return arg; }
+  auto& thing = return_value("argument that will trigger implicit conversion");
+  // now 'thing' might refer to the dangling reference
+  #+end_src
+
+** declaration
+
+Everything that /might/ look like a declaration /will/ be treated as such,
+this is a direct paraphrasing of the quote from the standard. This might
+lead to some annoying entries related to construction of the objects,
+especially in cases where RAII properties are necessary
+(constructor-destructor call pair), but the object itself is not named as a
+variable.
+
+- ~type(name)~ declares the variable ~name~ with type ~type~. This might
+  lead to bugs in cases like ~unique_lock<mutex>(m_mutex)~. Solution is to
+  properly declare the variable ~g(m_mutex)~ or use uniform initialization
+  ~unique_lock<mutext>{m_mutex};~. [[https://youtu.be/lkgszkPnV8g?t=2350][video at 39:28]]
+
+** Threading
+
+- no ~future.get()~ in the critical sections if you are running a recursive
+  ~std::async~ code.
+
+  Probably not the smartest code in the world, but in my case it fitted
+  really nicely in the data I was processing (it was a two-layer data
+  structure), so I naturally went with a recursive async
+
+  #+begin_src cpp
+future<vector<T>> get_main() {
+    future<Q> sub_tasks;
+    // launch sub tasks
+    vector<T> result;
+    for(auto task&: tasks) {
+        scoped_lock lock{mutex};
+        result.push_back(shared_resource.add_results(task.get()));
+    }
+}
+  #+end_src
+- *don't* use explicit ~.lock()~, use RAII. ~lock()~ does not handle
+  exceptions that occur in the critical sections, wrapping everything in
+  ~try {} catch (...) { .unlock(); throw; }~ looks especially ugly and you
+  /will/ forget this anyway. If critical section initializes some data that
+  is not default-constructible and must be used later on, like this
+
+  #+begin_src cpp
+mutex.lock();
+NonDefaultConstructible thing = shared_resource.get();
+mutex.unlock();
+  #+end_src
+
+  It might still be better to handle it via some kind of default-constructible wrapper
+
+  #+begin_src cpp
+optional<T> thing;
+{
+    scoped_lock lock{mutex};
+    thing = shared_resource.get();
+}
+  #+end_src
