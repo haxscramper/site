@@ -1,3 +1,43 @@
+* links
+
+- Find words and phrases in different contexts
+  - [[https://ludwig.guru/][ludwig.guru]] "Ludwig is the first sentence search engine that helps you
+    write better English by giving you contextualized examples taken from
+    reliable sources."
+  - [[https://lengusa.com/][lengusa | Write better English!]]
+  - [[https://www.wordhippo.com/][Thesaurus and Word Tools | WordHippo]]
+  - [[https://skell.sketchengine.eu/#home?lang=en][SKELL]]
+- Dictionaries
+  - Find a word by it's description
+    - [[https://reversedictionary.org/][Reverse Dictionary]] This reverse dictionary allows you to search for words
+      by their definition. Check out RelatedWords.org to get words related to a
+      single word.
+    - [[https://www.onelook.com/thesaurus/][OneLook Thesaurus and Reverse Dictionary]] Enter a word, phrase,
+      description, or pattern above to find synonyms, related words, and much
+      more.
+  - Direct
+    - [[https://www.wordreference.com/][English to French, Italian, German &amp; Spanish Dictionary -
+      WordReference.com]]
+- Translation
+  - [[https://context.reverso.net/translation/][Reverso Context | Translation in context]]
+  - [[https://tr-ex.me/][Online dictionary]] "Tr-ex.me is bilingual contextual dictionary,
+    containing translations of various phrases. For each translation, we
+    have examples of using in various sentences. The examples are taken
+    from millions of texts previously translated ranging from
+    dialogues(subtitles of film), and official documents to multilingual
+    websites."
+  - [[https://www.multitran.com/][Multitran dictionary]]
+  - [[https://glosbe.com/][Glosbe Dictionary - All Languages of the World in One Place]]
+  - [[https://www.linguee.com/][Linguee | Dictionary for German, French, Spanish, and more]]
+- Other
+  - [[https://textranch.com/][Online editing with great prices, great service, great quality! |TextRanch]]
+  - [[https://www.scribbr.com/knowledge-base/][Scribbr Knowledge Base | Free Resources to Help You Graduate]]
+  - [[http://www.plainenglish.co.uk/how-to-write-in-plain-english.html][How to write in plain English]]
+  - [[https://spacy.io/api][Spacy Library Architecture]]
+  - [[https://developers.google.com/style][Google developer documentation style guide]]
+  - Microsoft_Manual_of_Style_for_Technical_Publications,_3rd_edition
+  - The Chicago Manual of Style (coll.)
+
 * nltk
 
 ** POS tag list
@@ -94,6 +134,10 @@
 - WP$ :: *WH-pronoun, possessive* whose
 - WRB :: *Wh-adverb* how however whence whenever where whereby whereever
   wherein whereof why
+
+** POS dependency types
+
+- Comprehensive list [[https://universaldependencies.org/#language-en][Universal Dependencies]]
 
 ** Punctuation naming
 
@@ -471,6 +515,17 @@ determiners are
 
 [[https://dictionary.cambridge.org/grammar/british-grammar/determiners-the-my-some-this][Determiners (the, my, some, this) - English Grammar Today - Cambridge
 Dictionary]]
+
+* Markup languages
+
+** Org-mode
+
+*** Source code block evaluation
+
+- Apply configuration to all source code blocks in the document :: add
+  src_org{#+property: header-args} at the top of the file.
+- Disable evaluation during export :: ~:eval no-export~
+- Export both source code and result :: ~:exports both~
 
 * Input
 

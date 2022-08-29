@@ -1,0 +1,40 @@
+#+PROPERTY: header-args :eval no-export :exports both
+
+* Networking tools
+
+** =iw= and =iwctl=
+
+*** =iwctl= shell
+
+- src_sh{known-networks list}
+- src_sh{station <station> scan} - scan for all networks that can be accessed
+  using station (interface).
+- src_sh{station list} - show all existing stations
+- src_sh{station <station> connect <network>}. The first placeholder comes
+  from the ~station list~ and the second one is from ~station scan~
+
+
+** =ip=
+
+- ~ip link set dev <device> down~
+
+* Music controls - =mpd=, =cmus=
+
+** =mpd=
+
+- src_sh{mpc next} :: switch to the next song
+- src_sh{mpc prev} :: go to the previous song
+- src_sh{mpc toggle} :: pause or stop the current song
+
+** =cmus=
+
+- src_sh{cmus-remote --next} :: go to the next song
+- src_sh{cmus-remote --prev} :: go to the previous song
+- src_sh{cmus-remote --play} :: pause or stop the current song
+
+* Package management
+
+** Arch linux
+
+- src_sh{pacman -Q} :: list all installed packages. src_sh{pacman -Qe} for
+  all explicitly installed packages

@@ -176,9 +176,7 @@ executed.
   and ~str.starts_with()~ for C++20 onward.
 
 * Overloading
-
 * Declaration and initialization
-
 * Templates
 
 ** Type traits
@@ -224,6 +222,8 @@ solutions/advices might not be the best, but it worked form me (TM).
 - Signed value overflow
 - Dereference of the null pointer
 - Infinite loops without side effects
+- Raising an exception from a destructor
+- Division by zero
 
 ** standard library containers
 
@@ -320,3 +320,17 @@ optional<T> thing;
     thing = shared_resource.get();
 }
   #+end_src
+
+* Libraries
+
+** Boost graph
+
+*** Custom =graphml= properties writer
+
+#+begin_src cpp
+boost::write_graphviz(out, g, [&g](std::ostream& os, VDesc vert) {
+    os << "[label=\"" << /* get custom label from vertex */ << "\"]";
+});
+#+end_src
+
+Where ~out~ is an output stream, ~g~ is the graph we are writing out.

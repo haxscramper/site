@@ -31,5 +31,23 @@ print(df)
 *** Filtering and modifying dataframes
 
 
+** =Matplotlib=
+
+*** Create simple plot
+
+A little more verbose plotting setup than usual, but has the same structure
+for multiple subplots.
+
+#+begin_src python
+fig, ax = plt.subplots(figsize=(12, 12))
+# plot something on the `ax`
+fig.savefig("<output file>", dpi=300, bbox_inches="tight")
+#+end_src
+
+*** Using =matplotlib= with pandas
+
+You can either supply series data to the various plotting functions or use
+~.plot()~ method of the dataframe. Latter allows you to supply an optional
+~ax=~ argument to re-use =matplotlib= subplot object.
 
 * Python tooling
