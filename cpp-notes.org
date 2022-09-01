@@ -37,6 +37,18 @@ Interesting articles and/or talks
 - =ABI= :: Application Binary Interface
 - =ELF= :: Executable Linkable Format
 
+** C++ concepts
+
+- translation unit :: A translation unit is for all intents and purposes a
+  file (~.c/.cpp~), after it's finished including all of the header files.
+
+  #+begin_quote
+A translation unit is the basic unit of compilation in C++. It consists of the contents of a single source file, plus the contents of any header files directly or indirectly included by it, minus those lines that were ignored using conditional preprocessing statements.
+
+A single translation unit can be compiled into an object file, library, or executable program.
+  #+end_quote
+
+
 * Clang
 
 ** Interesting options
@@ -94,7 +106,8 @@ executed.
      files.
      1. New symbols are used for fixes
      2. If there were /any/ new symbols in files then whole library is
-        rescanned again.
+        rescanned again. This is done in order to account for links inside
+        of the library (or cycles).
 - Dynamic linking :: In case of a dynamic linking functions are loaded from
   the shared library by an external helper.
 - Dynamic loading :: It is possible to interact with dynamic libraries
@@ -224,6 +237,8 @@ solutions/advices might not be the best, but it worked form me (TM).
 - Infinite loops without side effects
 - Raising an exception from a destructor
 - Division by zero
+- Double freeing memory
+- Writing outside of the allocated block
 
 ** standard library containers
 

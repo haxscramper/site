@@ -2,11 +2,83 @@
 
 * Python language
 
+** Typing
+
+src_python{from typing import * # noqa ignore=F405} to import typing and
+make =pyflakes= shut up about star imports. You can, of course,
+meticulously write ~List, Dict, Set, Optional~ in the result, but I find it
+a bit annoying when it comes to dealing with /most basic data types/.
+
+*** Basic typing types
+
+- basic types :: ~str~, ~int~, ~bool~, ~float~
+- containers :: ~List~, ~Dict~, ~Set~, ~Optional~ for the built-in
+  types. Generic parameters are specified in square brackets ~List[int]~.
+- Sum/Product types :: ~Tuple~, ~Union~, ~Any~ for representing different
+  types in the output. For tuples of a variable size the ellipsis can be
+  used ~tuple[int, ...]~
+- 'meta' mapping types :: ~Mapping~, ~MutableMapping~, ~Sequence~,
+  ~Iterable~ - for types that provide the necessary interface, but are not
+  /exactly/ a ~Dict~ or a ~List~.
+- user-defined types :: ~module.Type~ or simply ~Type~ if the type was
+  imported using star import or defined in the same module.
+  - *for cyclic types* you [[https://peps.python.org/pep-0484/#forward-references][can]] use the string name of the type, such as
+
+    #+begin_src python
+class Tree:
+    def __init__(self, left: 'Tree', right: 'Tree'):
+        self.left = left
+        self.right = right
+    #+end_src
+- Generics :: ~Generic[T]~ and ~TypeVar~
+- other :: ~Callable[[Arg1Type, Arg2Type], ReturnType]~
+  - It is possible to declare the return type of a callable without
+    specifying the call signature by substituting a literal ellipsis for
+    the list of arguments in the type hint: ~Callable[..., ReturnType]~.
+
+*** Writing a 'generic' code
+
+#+begin_src python
+from typing import *
+
+Val = TypeVar("Val")
+class UserDefinedGeneric(Generic[Val]):
+    def method() -> Val:
+        pass # implementation
+#+end_src
+
+~TypeVar~ can also be used to constrain selection of types to a fixed list
+such as ~TypeVar("Val", str, int, SomeUserType)~ or some kind of an upper
+bound via ~=bound~. For example, ~TypeVar("Val", int)~ can only accept
+types that are subtypes of ~int~.
+
+** Debugging and avoiding bugs in the first place
+
+*** Default field values
+
+#+begin_src python
+from typing import List
+class Store:
+    data: List[int] = []
+
+first_store = Store()
+second_store = Store()
+first_store.data.append(12)
+print(second_store.data)
+#+end_src
+
+#+RESULTS:
+: [12]
+
 * Python implementation details
 
 Python C API
 
 * Python libraries
+
+** SQLAlchemy
+
+
 
 ** Pandas
 

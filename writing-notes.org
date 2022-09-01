@@ -1,5 +1,7 @@
 * links
 
+
+
 - Find words and phrases in different contexts
   - [[https://ludwig.guru/][ludwig.guru]] "Ludwig is the first sentence search engine that helps you
     write better English by giving you contextualized examples taken from
@@ -18,6 +20,7 @@
   - Direct
     - [[https://www.wordreference.com/][English to French, Italian, German &amp; Spanish Dictionary -
       WordReference.com]]
+    - [[https://en.wiktionary.org/wiki/Wiktionary:Main_Page][Wiktionary, the free dictionary]]
 - Translation
   - [[https://context.reverso.net/translation/][Reverso Context | Translation in context]]
   - [[https://tr-ex.me/][Online dictionary]] "Tr-ex.me is bilingual contextual dictionary,
@@ -387,6 +390,9 @@ In places where you could've written a new sentence, but decided to keep things 
     - =FIXME= - code does not work as expected
     - =XXX=
     - =XXXX= -
+    - =BUGFIX= - comment related to some piece of code when it is not
+      exactly obvious why it is there (but it was introduces as a fix for
+      some kind of a bug).
   - Org-mode also provides customization for todo keywords. My configuration includes:
     - =TODO=
     - =LATER=
@@ -516,6 +522,12 @@ determiners are
 [[https://dictionary.cambridge.org/grammar/british-grammar/determiners-the-my-some-this][Determiners (the, my, some, this) - English Grammar Today - Cambridge
 Dictionary]]
 
+** Definite article "the"
+
+- when listing multiple things :: ~The <A>, <B>, <C>, <D> and <E>~ - it is
+  not /wrong/ to add an article before each of the ~<A-E>~ in this case,
+  but it is not mandatory either.
+
 * Markup languages
 
 ** Org-mode
@@ -540,6 +552,8 @@ Dictionary]]
       #recheck
   - Links
     - https://english.lingolia.com/en/grammar
+    - https://advice.writing.utoronto.ca/english-language/definite-article/
+    - https://chat.library.berkeleycollege.edu/faq/268679
   - Writing
     - People expression description
     - Describing movements/actions

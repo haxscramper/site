@@ -118,3 +118,61 @@ g++ -L. -lfile main.cpp
 LD_LIBRARY_PATH=(pwd)
 ./a.out
 #+end_src
+
+* Compiler implementation
+
+** Issues
+
+- ~PNode~ type is used everywhere, including the parser, semantic analysis
+  and embedded VM. This means each part of the compiler cannot work with
+  the best data structure for the task and instead forced into to fit into
+  the ~PNode~.
+
+  This is not a "god object" antipattern per se, but in my book it is not
+  that much different.
+
+- C and C++ backends are needlessly different when it comes to derived
+  object handling.
+  - When the *C* backend uses inheritance it is done via object
+    composition, but when a project is compiled via the *C++* backend it is
+    done using native inheritance instead.
+  - This leads two different modes of handling parent fields
+    ~obj.Sup.field~ vs ~obj.field~
+  - Different argument passing - on C++ backend native references are used,
+    further exacerbating the issue and leading to codegen bugs such as
+    ~**&~ being generated
+  - Different handling of the derived object slicing - ~var Base~ is called
+    with ~&derived.Sup~ on the *C* backend and as ~derived~ on the *C++*
+    backend. Latter is made possible due to the ~&~ reference.
+
+    #+begin_src nim
+type
+  Base = object of RootObj
+    field1: int
+
+  Derived = object of Base
+    field2: int
+
+proc passBase(base: var Base) =
+  echo base.field1
+
+var der: Derived
+passBase(der)
+    #+end_src
+
+    For "not a transpiler" compiler nim certainly tries to translate into too
+    many high-level C++ constructs.
+- ~globalError~ and ~ERecoverableError~ for control flow handling - there
+  are around *one hundred* (105 ATTOW) calls to the ~globalError~ that can
+  arbitrarily raise "recoverable" exception during semantic analysis which
+  is then caught in the ~semexpr~ and discarded (~tryExpr~, ~except
+  ERecoverableError: discard~) and [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L361][some]] [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L662][more]] [[https://github.com/nim-lang/Nim/blob/d4c0d35b32e51eae06e65e78c253cdaf8bb42446/compiler/suggest.nim#L614][examples]] of [[https://github.com/nim-lang/Nim/blob/0014b9c48e883d3c04995b9e83bb0f8468a16df6/compiler/semexprs.nim#L2204][this]].
+
+  Exceptions being used for control, discarding exceptions - again, someone
+  (like me) might consider this to be a bad code smell that significantly
+  reduces the readability. Whole codebase turns into spaghetti.
+- Error message formatting is done via ad-hoc mix of [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/lineinfos.nim#L119][enumeration]], [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/ccgexprs.nim#L2459][in-place
+  formatting]], repeated string [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/sigmatch.nim#L2638][copy]]-[[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/sigmatch.nim#L2647][pastes]], random ~const~ string [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/commands.nim#L116][templates]].
+  There are hundred of different diagnostics compiler might produce, but in
+  order to figure out where something might be formatted your best bet is
+  to just ~rg~ over the whole code and edit a random string.
