@@ -1,0 +1,104 @@
+#+title: SQLite operations
+#+property: header-args:sqlite :db /tmp/org-tmp.sqlite :colnames yes :exports both :eval no-export
+
+#+name: import_org_table
+#+begin_src sqlite
+drop table if exists $sqlname;
+create table $sqlname($columns);
+.mode csv $sqlname
+.import $orgtable $sqlname
+#+end_src
+
+* Org-mode integration
+
+#+caption: Import org-mode table as an SQL one
+#+begin_example
+,#+NAME: tableexample
+| id |  n |
+|----+----|
+|  1 |  5 |
+|  2 |  9 |
+|  3 | 10 |
+|  4 |  9 |
+|  5 | 10 |
+
+,#+name: import_org_table
+,#+begin_src sqlite :db /tmp/org-tmp.sqlite :colnames yes :results none
+drop table if exists testtable;
+create table testtable(id int, n int);
+.mode csv testtable
+.import $orgtable testtable
+,#+end_src
+
+,#+call: import_org_table(orgtable=tableexample)
+
+,#+RESULTS:
+#+end_example
+
+* Joins
+
+#+name: customer_table
+| ID | Name             |
+|----+------------------|
+|  1 | Mark Twain       |
+|  2 | Jack London      |
+|  3 | Alice Walker     |
+|  4 | John Steinbeck   |
+|  5 | Ernest Hemingway |
+
+#+name: orders_table
+| ID | CustomerID | ProductID | Amount |
+|----+------------+-----------+--------|
+|  1 |          3 |        25 |      3 |
+|  2 |          2 |        55 |      8 |
+|  3 |          5 |         8 |      2 |
+|  4 |          1 |         4 |      2 |
+
+#+call: import_org_table(orgtable=customer_table, sqlname="customer", columns="ID, Name")
+
+#+RESULTS:
+
+#+call: import_org_table(orgtable=orders_table, sqlname="_order", columns="ID, CustomerID, ProductId, Amount")
+
+#+RESULTS:
+
+#+caption: Inner join - does not retain 'outer' rows if 'inner' does not have mappings to them
+#+begin_src sqlite
+select * from customer inner join _order on customer.id = _order.CustomerID;
+#+end_src
+
+#+RESULTS:
+| ID | Name             | ID | CustomerID | ProductId | Amount |
+|----+------------------+----+------------+-----------+--------|
+|  1 | Mark Twain       |  4 |          1 |         4 |      2 |
+|  2 | Jack London      |  2 |          2 |        55 |      8 |
+|  3 | Alice Walker     |  1 |          3 |        25 |      3 |
+|  5 | Ernest Hemingway |  3 |          5 |         8 |      2 |
+
+#+caption: Left outer join - retains 'left' table rows if 'outer' ones are missing
+#+begin_src sqlite
+select * from customer left outer join _order on customer.id = _order.CustomerID;
+#+end_src
+
+#+RESULTS:
+| ID | Name             | ID | CustomerID | ProductId | Amount |
+|----+------------------+----+------------+-----------+--------|
+|  1 | Mark Twain       |  4 |          1 |         4 |      2 |
+|  2 | Jack London      |  2 |          2 |        55 |      8 |
+|  3 | Alice Walker     |  1 |          3 |        25 |      3 |
+|  4 | John Steinbeck   |    |            |           |        |
+|  5 | Ernest Hemingway |  3 |          5 |         8 |      2 |
+
+* Integration with other languages
+
+** Using SQLite as a serialization format with DOD approach
+
+*** Mapping sequence members
+
+*** Mapping tree structures
+
+** C++
+
+** Nim
+
+** Python
