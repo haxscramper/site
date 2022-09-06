@@ -21,6 +21,8 @@
     - [[https://www.wordreference.com/][English to French, Italian, German &amp; Spanish Dictionary -
       WordReference.com]]
     - [[https://en.wiktionary.org/wiki/Wiktionary:Main_Page][Wiktionary, the free dictionary]]
+    - [[https://dictionary.reverso.net/english-cobuild/][English dictionary | Learn English | Reverso]] get a simple definition
+      of a word.
 - Translation
   - [[https://context.reverso.net/translation/][Reverso Context | Translation in context]]
   - [[https://tr-ex.me/][Online dictionary]] "Tr-ex.me is bilingual contextual dictionary,
@@ -40,6 +42,17 @@
   - [[https://developers.google.com/style][Google developer documentation style guide]]
   - Microsoft_Manual_of_Style_for_Technical_Publications,_3rd_edition
   - The Chicago Manual of Style (coll.)
+  - [[https://painintheenglish.com/forum][Discussion Forum — Pain in the English]]
+
+    =Adblock= rules for their shitty popups:
+
+    #+begin_example
+||painintheenglish.com/img/proofreader-popup.png$image
+||painintheenglish.com/img/proofreader-bubble.png$image
+painintheenglish.com###fixedHeader > .blurbGroup
+painintheenglish.com###popBottom
+    #+end_example
+
 
 * nltk
 
@@ -190,18 +203,20 @@ Taken from [[https://ell.stackexchange.com/questions/108169/what-do-programmers-
 *** Past simple
     Past action, no realtion to any other event. Stating a fact, unspecific time in the past
 
-    ```txt
+    #+begin_example
     [action]
                [now]
-    ```
+
+    #+end_example
+
     - V-ed
 *** Past perfect
     Activity had finished at certain point in time, in the past.
 
-    ```txt
+    #+begin_example
     [action] < (point in time)
                        [now]
-    ```
+    #+end_example
     - **had** + V-ed
     - examples:
       - I met them **after** they **had divorced**.
@@ -212,20 +227,20 @@ Taken from [[https://ell.stackexchange.com/questions/108169/what-do-programmers-
 *** Past perfect progressive
     Action which started in the past and continued to happen after another action or time in the past. Something in the sentence must be used as a reference point.
 
-    ```txt
+    #+begin_example
     [action-start] .............
                          [now]
-    ```
+    #+end_example
     - **had been** + V-ing
     - examples:
       - Sara **had been working** here **for two weeks** when she had the accident
 *** Past progressive
     Action that was happening in the past, but no information about it's completion status.
 
-    ```txt
+    #+begin_example
     ...... [action] .......
                     [now]
-    ```
+    #+end_example
     - **was/were** + V-ing
     - examples:
       - Yesterday at 2 pm, I was baking a cake.
@@ -287,6 +302,16 @@ writing after the salutation and closing.
 
 Called "Oxford comma". Can be used both ways, but you need to choose a way
 you write and don't switch back and forth between with-comman and no-comma
+
+*** That/which in restrictive and non-restrictive commas
+
+*Restrictive* clause - removing it will significantly alter meaning of a
+sentence (such clauses /restricts/ the meaning). Restrictive clauses are
+not set off by commas, usually (?) start with "that".
+
+*Nonrestrictive* clause - can be removed without altering the sentence
+meaning too much. Nonrestrictive clauses are offset by commas, sort of like
+parentheses, and usually start with "which".
 
 ** Semicolon
 
@@ -371,18 +396,22 @@ In places where you could've written a new sentence, but decided to keep things 
     - =OKAY=
     - =REVIEW= - architectural/API decision must be reviewed
     - =IDEA= - potential todo, api improvement etc
-    - =REFACTOR= - this portion of code requies refactoring
+    - =REFACTOR= - this portion of code requires refactoring
     - =DONT=
     - =DOC= - documentation-related todo
     - =FAIL=
     - =ERROR=
-    - =TEST=
+    - =TEST= -
     - =WARNING= - potential source of errors in the future
-    - =IMPLEMENT=
-    - =DONE=
-    - =NOTE=
-    - =QUESTION= - currently I have little to no idea how this should
-      be handled.
+    - =IMPLEMENT= - functionality has not been fully implemented yet and
+      needs more attention later on.
+    - =DONE= - task has been completed
+    - =NOTE= - useful information for the reader or self-note that I should
+      keep in mind later on.
+    - =QUESTION= - currently I have little to no idea how this should be
+      handled or the code is not exactly clear. This tag can be used as a
+      reviewer guide. Person reading the diff can see a newly introduced
+      question and might even provide an explanation.
     - =KLUDGE=
     - =HACK= - temporary solution that needs to be replaced with more
       permanent one.
@@ -393,14 +422,18 @@ In places where you could've written a new sentence, but decided to keep things 
     - =BUGFIX= - comment related to some piece of code when it is not
       exactly obvious why it is there (but it was introduces as a fix for
       some kind of a bug).
-  - Org-mode also provides customization for todo keywords. My configuration includes:
+  - Org-mode also provides customization for todo keywords. My
+    configuration includes:
     - =TODO=
     - =LATER=
     - =NEXT=
     - =POSTPONED=
     - =IN_PROGRESS=
     - =STALLED=
-    - =REVIEW=
+    - =REVIEW= - take a second look at the problem, try to evaluate it from
+      a different perspective. When written in the PR can bee seen as an
+      annotation for the reviewer to pay more attention to the specific
+      piece of code.
     - =DONE=
     - =COMPLETED=
     - =NUKED=
@@ -426,7 +459,9 @@ In places where you could've written a new sentence, but decided to keep things 
     - =STYLE=
     - =DOC= Documentation update
     - =TEST= Change in tests
-    - =HACK=
+    - =HACK= - Implementation quality leaves a lot to be desired, but at
+      least the code works. Sometimes used to annotate a quick and dirty
+      solution to preexisting problem that had to be fixed anyway.
     - =REPO= Changes affecting repository. CI configuration, version
       changes, dependency updates.
   - RFC 2119 defines several keywords to indicate requirement levels
@@ -453,6 +488,14 @@ In places where you could've written a new sentence, but decided to keep things 
     - =MIGHT=
 
 * Writing different types of text/sentences
+
+** A vs B
+
+- "should probably" VS "probably should" :: Both are completely correct,
+  but have slightly different emphasis. "I should probably do X" emphasizes
+  more that X is the thing you should probably be doing. "I probably should
+  do X" emphasizes more that you should probably be doing something, and
+  that thing is X. [[https://forum.wordreference.com/threads/i-should-probably-i-probably-should.2653618/][source]]
 
 ** Narration
 

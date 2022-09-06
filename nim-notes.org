@@ -66,11 +66,11 @@ echo sequence
 
 ** ~cstring~ aka "compatible" string
 
-Type name ~cstring~ actually stands for the "compatible" string, for the
-reasons that are completely beyond my comprehension. Anyway - it is
-/supposed/ to be a 'universal' type for interop with both JavaScript and
-C/C++ backends - mapping the C's ~char*~ and JS's string types to the same
-nim type. This section covers interaction between ~cstring~ and compiled
+Type name  ~cstring~ actually stands  for the "compatible" string,  for the
+reasons  that  are completely  beyond  my  comprehension.  Anyway -  it  is
+/supposed/ to  be a 'universal' type  for interop with both  JavaScript and
+C/C++ backends - mapping the C's ~char*~  and JS's string types to the same
+nim type.  This section covers  interaction between ~cstring~  and compiled
 backends - for JavaScript interop you need to look elsewhere.
 
 - [ ] Allocation of the ~cstring~
@@ -123,26 +123,26 @@ LD_LIBRARY_PATH=(pwd)
 
 ** Issues
 
-- ~PNode~ type is used everywhere, including the parser, semantic analysis
-  and embedded VM. This means each part of the compiler cannot work with
-  the best data structure for the task and instead forced into to fit into
+- ~PNode~ type is used everywhere,  including the parser, semantic analysis
+  and embedded  VM. This means each  part of the compiler  cannot work with
+  the best data structure for the task  and instead forced into to fit into
   the ~PNode~.
 
-  This is not a "god object" antipattern per se, but in my book it is not
+  This is not a  "god object" antipattern per se, but in my  book it is not
   that much different.
 
-- C and C++ backends are needlessly different when it comes to derived
+- C and  C++ backends  are needlessly  different when  it comes  to derived
   object handling.
-  - When the *C* backend uses inheritance it is done via object
+  - When  the  *C*   backend  uses  inheritance  it  is   done  via  object
     composition, but when a project is compiled via the *C++* backend it is
     done using native inheritance instead.
-  - This leads two different modes of handling parent fields
+  - This   leads   two   different   modes  of   handling   parent   fields
     ~obj.Sup.field~ vs ~obj.field~
   - Different argument passing - on C++ backend native references are used,
-    further exacerbating the issue and leading to codegen bugs such as
+    further  exacerbating the  issue and  leading to  codegen bugs  such as
     ~**&~ being generated
   - Different handling of the derived object slicing - ~var Base~ is called
-    with ~&derived.Sup~ on the *C* backend and as ~derived~ on the *C++*
+    with ~&derived.Sup~  on the *C* backend  and as ~derived~ on  the *C++*
     backend. Latter is made possible due to the ~&~ reference.
 
     #+begin_src nim
@@ -160,19 +160,74 @@ var der: Derived
 passBase(der)
     #+end_src
 
-    For "not a transpiler" compiler nim certainly tries to translate into too
-    many high-level C++ constructs.
-- ~globalError~ and ~ERecoverableError~ for control flow handling - there
-  are around *one hundred* (105 ATTOW) calls to the ~globalError~ that can
-  arbitrarily raise "recoverable" exception during semantic analysis which
-  is then caught in the ~semexpr~ and discarded (~tryExpr~, ~except
+    For "not a  transpiler" compiler nim certainly tries  to translate into
+    too many high-level C++ constructs.
+- ~globalError~ and  ~ERecoverableError~ for control flow  handling - there
+  are around *one hundred* (105 ATTOW)  calls to the ~globalError~ that can
+  arbitrarily raise "recoverable" exception  during semantic analysis which
+  is  then  caught  in  the ~semexpr~  and  discarded  (~tryExpr~,  ~except
   ERecoverableError: discard~) and [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L361][some]] [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L662][more]] [[https://github.com/nim-lang/Nim/blob/d4c0d35b32e51eae06e65e78c253cdaf8bb42446/compiler/suggest.nim#L614][examples]] of [[https://github.com/nim-lang/Nim/blob/0014b9c48e883d3c04995b9e83bb0f8468a16df6/compiler/semexprs.nim#L2204][this]].
 
   Exceptions being used for control, discarding exceptions - again, someone
-  (like me) might consider this to be a bad code smell that significantly
+  (like me) might  consider this to be a bad  code smell that significantly
   reduces the readability. Whole codebase turns into spaghetti.
-- Error message formatting is done via ad-hoc mix of [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/lineinfos.nim#L119][enumeration]], [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/ccgexprs.nim#L2459][in-place
+- Error message formatting is done  via ad-hoc mix of [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/lineinfos.nim#L119][enumeration]], [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/ccgexprs.nim#L2459][in-place
   formatting]], repeated string [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/sigmatch.nim#L2638][copy]]-[[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/sigmatch.nim#L2647][pastes]], random ~const~ string [[https://github.com/nim-lang/Nim/blob/0f555110e6dc54b5564c1c8e5c77b67631588f59/compiler/commands.nim#L116][templates]].
   There are hundred of different diagnostics compiler might produce, but in
-  order to figure out where something might be formatted your best bet is
+  order to figure  out where something might be formatted  your best bet is
   to just ~rg~ over the whole code and edit a random string.
+- Reliance on the one-character variable names  such as ~a~, ~p~, ~n~, ~c~,
+  ~s~ or two-character ones such as  ~sl~ in critically important code. Not
+  commenting said code  in any way besides superficial  annotations that do
+  not describe  the structure  itself. Prime  example -  one-char [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L121-L124][variables]]
+  followed by two  nested loops that introduce [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L155][more]] than  [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L177][shadow]] them. This
+  part of  the compiler serves as  a main semantic analysis  entry point if
+  I'm not  mistaken -  I'm writing  this while I'm  trying to  decipher its
+  purpose, so I might be a big wrong.
+
+  #+caption: Number of the standalone one-character identifiers in ~*.nim~ files
+  #+begin_src sh
+# Nim/compiler on  devel via 👑 v1.6.0 took 2ms
+# ❯ rg -g "*.nim" '[\s(.\[][a-z][\s)=.:\[\]]' | wc -l
+33732
+  #+end_src
+  - [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][sigmatch.paramTypesMatch]]   has   a   total  of   *NINE*   one-character
+    variables -  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][m]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][f]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][a]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2220][x]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2221][y]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2222][z]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2218][c]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2237][r]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2227][i]], all  involved in  a complex
+    algorithm of best  candidate argument search - that's about  a third of
+    an english  alphabet. Good  to know the  algorithm complexity  has such
+    robust limiting  mechanism - at most  you can write code  that is three
+    times as complex, not more.
+- Endless sea  of magical  indices for subnode  access operation  - ~n[0]~,
+  ~n[1]~ and so on. It is almost impossible to know what is going on in the
+  code unless you have good understanding of all the inputs of a particular
+  function, which is, in a lot of situations, rather hard to achieve.
+
+  #+begin_src sh
+Nim/compiler on  devel via 👑 v1.6.0
+❯ rg -g "*.nim" '\[\d+\]' | wc -l
+4536
+  #+end_src
+- ~sizeof(lexer.Token)~ -> 72
+- Large number  of 'convenience'  templates that (1)  do not  specify their
+  argument types,  (2) implicitly  capture something  (or expect)  from the
+  environment . Examples include both [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L258][tokenEnd]], [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L283][eatChar]], [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L269][tokenEndPrevious]] -
+  which are not so bad, and [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/vm.nim#L78][vm.stackTrace]] which injects ~return~, obscuring
+  the control flow each time it is used in the code.
+- Proliferation  of   hard-to-spot  hacks   that  are  at   best  sparingly
+  documented,  at worst  require a  lot of  guesswork got  figure out.  For
+  example, [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L887][lexer.getSymbol]] [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L923][uses]]  enum ~ord()~ and ~PIdent~  id addition (or
+  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L934][subtraction]])  in order  to figure  out  the kind  of the  token. Why  are
+  identifier  ids are  guaranteed to  be  mapped to  tokens? Maybe  because
+  ~newIdentCache~   [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/idents.nim#L114][fills  ids]]   at  the   start  with   values  from   the
+  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/wordrecg.nim#L17][~TSpecialWord~]]? But how latter enum is  related to the [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L37][~TokenKind~]] we are
+  trying to figure out? (they /look/ similar, but is that intentional?) Why
+  do we need to [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L896][hash]] the token  value in the ~getSymbol~? Why do hashing in
+  the ~getOperator~? Can't we just  keep a map ~token-string -> token-kind~
+  conversion?
+
+  Kludges are thrown on each other all over the place ~Token.iNumber~ is an
+  integer  literal  of  a  token,  according  to  the  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L101][documentation]]  (BTW,
+  single-hash-comments are  not processed  by the  documentation generator,
+  yet compiler  uses them for docs  anyway - as  you can see in  the linked
+  file), but it is also a (1) place to [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L441][split]] user numerical literals at and
+  a (2) [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L1094][number]] of newlines in the comment token
