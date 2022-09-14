@@ -48,7 +48,6 @@ A translation unit is the basic unit of compilation in C++. It consists of the c
 A single translation unit can be compiled into an object file, library, or executable program.
   #+end_quote
 
-
 * Clang
 
 ** Interesting options
@@ -59,7 +58,6 @@ A single translation unit can be compiled into an object file, library, or execu
   - ~-dump-tokens~
   - ~-dump-ast~
 - ~-fsyntax-only~
-
 
 * Compilation
 
@@ -222,6 +220,13 @@ template <typename T, expr_2() = nullptr> void func(T t) { ... }
 #+end_src
 
 ** Concepts
+
+* Tools
+
+** =Cmake=
+
+- Get current project directory :: ~${CMAKE_SOURCE_DIR}~
+- ~include()~ vs ~add_subdirectory()~ :: [[https://levelup.gitconnected.com/cmake-variable-scope-f062833581b7][article]]
 
 * Things you need to look out for because they might cause bugs
 

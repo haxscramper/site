@@ -6,12 +6,17 @@
 
 *** =iwctl= shell
 
+Commands  can be  inputted either  in  the running  =iwctl= shell  or in  a
+regular shell (as src_sh{iwctl <command>}).
+
 - src_sh{known-networks list}
 - src_sh{station <station> scan} - scan for all networks that can be accessed
   using station (interface).
 - src_sh{station list} - show all existing stations
 - src_sh{station <station> connect <network>}. The first placeholder comes
   from the ~station list~ and the second one is from ~station scan~
+
+
 
 
 ** =ip=
