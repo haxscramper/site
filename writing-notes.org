@@ -555,7 +555,6 @@ When, How, and Because". Instead of writing "he thought about who might it
 be?" Just write a regular "who might it be" sentence. It is not necessary
 to attach every action to the specific person
 
-
 ** Dialogue or direct speech
 
 *** Punctuation and quote placement
@@ -598,6 +597,101 @@ Where
 - ~<ACT>~ - description of some action
 
 http://theeditorsblog.net/2010/12/08/punctuation-in-dialogue/
+
+** Commit messages
+
+In  addition general  guidelines  such  as 50/72  line  width  limit it  is
+important to consider the content of the  message and how it relates to the
+code  changes. Obviously  rubbish such  as  ~fixes #1231~  should never  be
+written under any  circumstances, but there are some more  rules that could
+help compose a good text that would be useful for a reader.
+
+-----
+
+I  think  writing  commit  message and  incrementally  updating  it  (using
+src_sh{git  commit  --amend}  to  change the  text  and  src_sh{git  commit
+--extend} to add new changes) is a  good way to ensure no important changes
+are missed in  the log. It does not  have to be a perfect  message from the
+start, things can be refined later on.
+
+-----
+
+Some common patterns I've seen (or wrote myself) in different logs that can
+be trivially improved (with examples from said logs).
+
+- "Correctly handle   X" or "Handle  X in Y"   ::  Commonly seen  in bugfix
+  commits. Should contain description of what was wrong in the first place.
+  - /"3a59838  Correctly parse  big ident  words like  `NOTE`"/. Apparently
+    this is something parser-related and  if the change is relatively small
+    it should probably be enough to just provide before/after description:
+
+    #+begin_quote
+The parser  incorrectly handled input such  as `"NOTE"` - instead  of being
+recognized as  big ident  it was  converted into  a <something  else>. This
+commit improves the edge case and adds tests.
+    #+end_quote
+
+    A bit boiler-plate-y, but has the before/after component.
+- "Fix <subsystem name>  bug" :: Large  number of commits are bug fixes and
+  there are several major categories of bugs[fn:bugs-636] - "Not handled an
+  edge case", ""
+
+  - /"fixes #18665 DFA generator  bug (#18676)"/. Assuming ~#12345~ rubbish
+    has been magically  replaced we are effectively looking  at the /"fixes
+    DFA  generator bug"/.  Looking  at  the issue  tracker  I  was able  to
+    discover the  original issue description  which turned out to  be /"ref
+    field in object set to nil by compiler when used with copy hook"/
+
+    The change itself  is rather trivial - adding five  lines to some file.
+    Commits like these  are among the most annoying to  create when writing
+    something - after all the change is "simple" - just a minor bug that we
+    fixed and  it should be "obvious"  to anyone who is  familliar with the
+    subject area what went wrong in here, right?
+
+    My  answer to  this is  no  - that's  not  right. Obviously  it is  not
+    required to write  a while dissertation detailing the pros  and cons of
+    each  and every  trivial patch,  but gaps  like these  might eventually
+    combine into  something much nastier,  where some  part of a  system is
+    looks like a patchwork of unrelated changes.
+
+    If I  were to re-write  the commit message  I probably would  have used
+    this instead:
+
+    #+begin_quote
+Handle ref fields in the copy hook
+
+Previously any[fn:1] ref fields was set to  nil by the compiler when it was
+used with a copy hook. This commit <actual change description>
+    #+end_quote
+
+    Effectively you  can write the  code comment in the  change description
+    part  - why  some logic  is added  in the  code and  what edge  case it
+    considers.
+
+    # FIXME the text is pretty  badly structured without actual explanation
+    # of the changes done - things  need to be concrete here, otherwise all
+    # of  this is  just a  random metal  constructions that  can hardly  be
+    # applied in the real use case.
+    #
+    #
+    # https://github.com/nim-lang/Nim/commit/bc14b773
+    # https://github.com/nim-lang/Nim/issues/18665
+
+    [fn:1] Whether  the bug was  triggered by  every single "ref  field" or
+    only by a select few is also something that could be added.
+
+- "Update <X>" :: TODO
+- "Disable <X> if <Y>" :: TODO
+- "Add <X>" :: TODO
+
+
+
+[fn:bugs-636]   Quick google  search  reveals categories  such as  "Logic",
+"Programming", "Security", but  I will be using  an informal categorization
+that is mostly rooted in the  bug *fix descriptions* rather than underlying
+problem categorization.
+
+[fn:any-663] 
 
 * Other things
 
