@@ -1,0 +1,90 @@
+#+title: Programming notes
+
+Notes related to programming in general, not tied to a particular language.
+
+* Simpler low-level code patterns
+
+Avoid overly smart and  'compact' - I've seen this advice  many times and I
+generally agree  with it,  but almost always  it leans  towards suggestions
+about higher-level constructions, closer to the application's architecture.
+These are  very important  since bad  practices on a  large scale  are much
+harder  to deal  with. But  it  is also  important  to look  at the  *code*
+patterns.
+
+** Structured control flow
+
+Prefer  to  structure  the  program  in  a  way  that  makes  less  use  of
+unstructured  control  flow  constructs   -  ~break~,  ~continue~,  ~goto~,
+multiple ~return~ statements, ~throw/raise~ for  control flow. It makes the
+code harder to read.
+
+In cases  when use of  said language  constructs will instead  increase the
+readability (e.g.  in decently nested ~while-if-break~  pattern where usage
+of multiple flags  will needlessly increase the mutable state  of the code)
+try avoid "skewed" control flow handling:
+
+#+caption: Implicitly relying on 'break' to change the control flow
+#+begin_src cpp
+if (CONDITION) {
+    break;
+}
+IF_TRUE;
+#+end_src
+
+could be rewritten as
+
+#+caption: More explicit this-or-that in the code
+#+begin_src cpp
+if (CONDITION) {
+    break;
+} else {
+    IF_TRUE;
+}
+#+end_src
+
+** Don't randomly switch brace styles
+
+This is mostly  related to the C family of  languages, which allow omitting
+curly braces around the body of the ~if~, ~for~, ~while~ and ~do~. Not only
+this can lead to bugs it also creates and inconsistent-looking code. If you
+don't want to  use braces you can  switch to one of the  few languages that
+are indentation-based.
+
+- Some modern languages have already considered supporting this feature but
+  rejected it (Rust - [[https://github.com/rust-lang/rfcs/issues/1616][rejected]], Zig had this built-in, but decided to add a
+  separate [[https://github.com/ziglang/zig/issues/35][check]] instead). There is an  [[https://www.imperialviolet.org/2014/02/22/applebug.html][article]] where this feature led to a
+  bug.
+- Ambiguous ~else~ attachment, although if you have a code like this
+
+  #+caption: Fist attachment variant
+  #+begin_src  cpp
+if (one)
+    if (two)
+        foo();
+    else
+        bar();
+  #+end_src
+
+  And wonder whether it might be parsed as this instead
+
+  #+caption: Second else attachment variant
+  #+begin_src cpp
+if(one)
+    if(two)
+        foo();
+else
+    bar();
+  #+end_src
+
+  Your first reaction  (hopefully) would be to add curly  braces anyway. If
+  you  want to  avoid braces  so badly  I suggest  looking for  a different
+  language to code in.
+- Linters have sophisticated rules  ([[https://eslint.org/docs/latest/rules/curly][eslint]]) for handling different styles.
+  If you are  aiming for the maintainable and  as-simple-as-possible code I
+  suggest  not  trading a  hypothetical  readability  improvement for  code
+  consistency. You can  of course write a long-winded  guidelines that will
+  cover all  possible cases  ... but  enforcing a  single handling  is much
+  easier.
+
+# TODO cite the apple  `if` patch bug, maybe there are  more cases that are
+# less known
