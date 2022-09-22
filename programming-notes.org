@@ -18,10 +18,10 @@ unstructured  control  flow  constructs   -  ~break~,  ~continue~,  ~goto~,
 multiple ~return~ statements, ~throw/raise~ for  control flow. It makes the
 code harder to read.
 
-In cases  when use of  said language  constructs will instead  increase the
-readability (e.g.  in decently nested ~while-if-break~  pattern where usage
-of multiple flags  will needlessly increase the mutable state  of the code)
-try avoid "skewed" control flow handling:
+In cases when the use of said language constructs will instead increase the
+readability (e.g.  in decently nested  code that uses  the ~while-if-break~
+pattern the  usage of multiple  flags will needlessly increase  the mutable
+state of the code) try avoid "skewed" control flow handling:
 
 #+caption: Implicitly relying on 'break' to change the control flow
 #+begin_src cpp
