@@ -85,6 +85,22 @@ else
   consistency. You can  of course write a long-winded  guidelines that will
   cover all  possible cases  ... but  enforcing a  single handling  is much
   easier.
+  - =clang-tidy= has ~readability-braces-around-statements~  check that can
+    be enforced and applied automatically.
+    - src_sh{clang-tidy -fix
+      -checks="readability-braces-around-statements"} - on
+      a single  file. Clang-tidy  requires a  correct translation  unit for
+      processing  - which  means  build system  configuration  needs to  be
+      present    (~-p    <dir>~    to    provide    directory    containing
+      ~compile_options.json~) or supplied explicitly (~-- <options...>~)
+    - src_sh{fd -e cpp -e hpp -e c -e h -x clang-tidy -fix
+      -checks="readability-braces-around-statements" '{}'} to apply
+      recursively on all ~hpp/h/cpp/c~ files in the directory.
+    - =clang-tidy= 'FIXIT' applications  don't generate perfectly formatted
+      code -  you might want to  use src_sh{fd -e cpp  -e hpp -e c  -e h -x
+      clang-format  -i  '{}'} to  recursively  reformat  all files  in  the
+      directory.
+  - =clang-format= has ~InsertBraces~ option starting from v15
 
 # TODO cite the apple  `if` patch bug, maybe there are  more cases that are
 # less known

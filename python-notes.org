@@ -4,8 +4,8 @@
 
 ** Typing
 
-src_python{from typing import * # noqa ignore=F405} to import typing and
-make =pyflakes= shut up about star imports. You can, of course,
+src_python{from typing  import * #  noqa ignore=F405} to import  typing and
+make  =pyflakes=  shut   up  about  star  imports.  You   can,  of  course,
 meticulously write ~List, Dict, Set, Optional~ in the result, but I find it
 a bit annoying when it comes to dealing with /most basic data types/.
 
@@ -47,9 +47,9 @@ class UserDefinedGeneric(Generic[Val]):
         pass # implementation
 #+end_src
 
-~TypeVar~ can also be used to constrain selection of types to a fixed list
-such as ~TypeVar("Val", str, int, SomeUserType)~ or some kind of an upper
-bound via ~=bound~. For example, ~TypeVar("Val", int)~ can only accept
+~TypeVar~ can also be used to constrain  selection of types to a fixed list
+such as ~TypeVar("Val",  str, int, SomeUserType)~ or some kind  of an upper
+bound  via ~=bound~.  For example,  ~TypeVar("Val", int)~  can only  accept
 types that are subtypes of ~int~.
 
 ** Debugging and avoiding bugs in the first place
@@ -100,8 +100,33 @@ print(df)
 : 0  key1  value1
 : 1  key2  value2
 
+#+caption: Create dataframe from a CSV file
+#+begin_src python
+df = pd.read_csv("file.csv")
+#+end_src
+
 *** Filtering and modifying dataframes
 
+*** Grouping dataframe data
+
+- Convert  normalized  one-to-many   dataset  back  to  dataframe-of-lists:
+  ~df.groupby("Key").agg(newname=("Value", lambda x: list(x)))~
+
+  #+caption: Original table
+  | "Key" | "Value" |
+  |-------+---------|
+  | A     |       1 |
+  | A     |       2 |
+  | B     |       5 |
+  | B     |       5 |
+  | B     |       4 |
+  | C     |       6 |
+
+  #+caption: New, rearranged dataframe
+  | "Key" | "newname" |
+  | A     | [1,2]     |
+  | B     | [5,5,4]   |
+  | C     | [6]       |
 
 ** =Matplotlib=
 

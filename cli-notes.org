@@ -1,5 +1,26 @@
 #+PROPERTY: header-args :eval no-export :exports both
 
+* Modern replacement for the old CLI tools
+
+- grep -> ack, rg
+- find -> fd
+- sed -> sd
+
+* Debugging and tracing tools
+
+** =strace=
+
+- Thread/process-related
+  - ~-f~ follow threads created by a process
+  - ~-p <PID>~ attach =strace= to a running process with specified ID.
+- Trace-related
+  - ~-e  <trace>~ or  ~-e  trace=<trace1>,<trace2>~ to  trace  one or  more
+    different traces.
+  - ~-o <file>~ - save trace to an output file
+  - ~-t~ include timestamps in the traces
+  - Grep  trace output  ~strace  <args...> 2>&1  | grep  <args  ...>~ -  by
+    default, =strace= outputs the trace into the stderr, not stdout.
+
 * Networking tools
 
 ** =iw= and =iwctl=
