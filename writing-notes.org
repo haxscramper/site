@@ -9,6 +9,7 @@
   - [[https://lengusa.com/][lengusa | Write better English!]]
   - [[https://www.wordhippo.com/][Thesaurus and Word Tools | WordHippo]]
   - [[https://skell.sketchengine.eu/#home?lang=en][SKELL]]
+  - [[https://writebetter.io/][WriteBetter &#8211; A linguistic search engine]]
 - Dictionaries
   - Find a word by it's description
     - [[https://reversedictionary.org/][Reverse Dictionary]] This reverse dictionary allows you to search for words
@@ -52,6 +53,9 @@
 painintheenglish.com###fixedHeader > .blurbGroup
 painintheenglish.com###popBottom
     #+end_example
+  - [[https://www.goodreads.com/quotes][Popular Quotes]]  - copy-pasting quotes into  the writing might be  a bad
+    taste,  but  it  can't  hurt  to read  some  interesting  passages  and
+    reinterpret as needed.
 
 
 * nltk
@@ -726,6 +730,155 @@ Dictionary]]
   src_org{#+property: header-args} at the top of the file.
 - Disable evaluation during export :: ~:eval no-export~
 - Export both source code and result :: ~:exports both~
+
+* Correct writing structure
+
+Listing logical fallacies, sketch moves in discussions etc. There are a few
+sites that provide partial listings, and I've collected them all, sometimes
+adding examples. Partially taken from [[https://www.informationisbeautiful.net/visualizations/rhetological-fallacies/][Rhetological Fallacies &#8211; A list
+of Logical Fallacies - Rhetorical Devices with examples &mdash; Information
+is  Beautiful]]  Quotes were  removed  because  they largely  touched  that
+touched topics that  were overly US-centric (like using  Bill Clinton quote
+as  an example  of  a "Lie"),  directly  conveyed distracting  inflammatory
+opinions. Added translations for Latin-only versions.
+
+More in-depth explanations can be found at [[https://rationalwiki.org/wiki/Main_Page][RationalWiki]].
+
+- *Appeal to the mind*
+
+  - Appeal  to  Anonymous  Authority  :: Using  evidence  from  an  unnamed
+    'expert',  'study' or  generalized group  (like 'scientists')  to claim
+    something is true.
+  - Appeal to Authority :: Claiming  something is true because an 'expert',
+    whether qualified or not, says it is.
+  - Appeal to  Common Practice ::  Claiming something is true  because it's
+    commonly practiced.
+  - Appeal to Ignorance ::  A claim is true simply because  it has not been
+    proven false (or false because it has not been proven true).
+  - Appeal to Incredulity  :: Because a claim sounds  unbelievable, it must
+    not be true.
+  - Appeal to Money  :: Supposing that, if someone is  rich or something is
+    expensive, then it affects the truth of the claim.
+  - Appeal to Novelty :: Supposing something is better because it is new or
+    newer.
+  - Appeal  to Popular  Belief ::  Claiming something  is true  because the
+    majority of people believe it.
+  - Appeal to  Probability :: Assuming  because something could  happen, it
+    will inevitably happen.
+  - Appeal  to  Tradition  ::  Claiming  something  is  true  because  it's
+    (apparently) always been that way.
+
+- *Appeal to emotions*
+
+  - Appeal to Consequences of a Belief :: Arguing a belief is false because
+    it implies something you'd rather not believe.
+  - Appeal to Fear :: An argument  is made by increasing fear and prejudice
+    towards the opposing side.
+  - Appeal to  Flattery :: Using  an irrelevant  compliment to slip  in an
+    unfounded claim which is accepted along with the compliment.
+  - Appeal  to Nature  :: Making  your claim  seem more  true by  drawing a
+    comparison with the "good" natural world.
+  - Appeal to Pity :: Attempt to induce pity to sway opponents.
+  - Appeal to Ridicule :: Presenting the  opponent's argument in a way that
+    makes it appear absurd.
+  - Appeal to  Spite :: Dismissing  a claim  by appealing to  personal bias
+    against the claimant.
+  - Appeal to Wishful Thinking :: Suggesting  a claim is true or false just
+    because you strongly hope it is.
+
+- *Faulty deduction*
+
+  - [[https://rationalwiki.org/wiki/Anecdotal_evidence][Anecdotal  Evidence]] ::  Discounting evidence  arrived at  by systematic
+    search or testing in favor of a few firsthand stories.
+  - [[https://rationalwiki.org/wiki/Category_mistake][Composition]] :: Assuming that characteristics  or beliefs of some or all
+    of a group applies to the entire group.
+  - [[https://rationalwiki.org/wiki/Category_mistake][Division]]  ::  Assuming  that  characteristics or  beliefs  of  a  group
+    automatically apply to any individual member.
+  - Design Fallacy :: Assuming that because something is nicely designed or
+    beautifully visualized it’s more true.
+  - [[https://rationalwiki.org/wiki/Gambler%27s_fallacy][Gambler's    Fallacy]]  ::    Assuming  the history  of  outcomes of  the
+    *unrelated events* will affect future outcomes.
+
+    NOTE: if  events are  in fact  related (for  example series  of actions
+    conducted by the same entity) this fallacy does not apply.
+
+  - Hasty  Generalization  :: Drawing  a  general  conclusion from  a  tiny
+    sample.
+  - [[https://rationalwiki.org/wiki/Jumping_to_conclusions][Jumping to  Conclusions]] ::  Drawing a  quick conclusion  without fairly
+    considering relevant (and easily available) evidence.
+  - [[https://rationalwiki.org/wiki/Balance_fallacy][Middle  Ground]],  Balance fallacy   ::   Assuming  because two  opposing
+    arguments  have   merit,  the   answer  must  lie   somewhere  [rightly
+    equidistantly] between them.
+  - [[https://rationalwiki.org/wiki/Nirvana_fallacy][Perfectionist Fallacy]] :: Assuming that the  only option on the table is
+    perfect success, then rejecting anything that will not work perfectly.
+  - [[https://rationalwiki.org/wiki/Relativist_fallacy][Relativist Fallacy]] :: Rejecting a claim  because of a belief that truth
+    is relative to a person or group.
+  - [[https://rationalwiki.org/wiki/Spotlight_fallacy][Spotlight]] :: Assuming  an observation from a small  sample size applies
+    to an entire group.
+  - Sweeping Generalisation :: Applying a general rule too broadly.
+  - Undistributed Middle ::  Assuming because two things  share a property,
+    that makes them the same thing.
+
+- *Manipulating content*
+
+  - [[https://rationalwiki.org/wiki/Ad_hoc][Ad   Hoc   Rescue]]    ::    Person presents  a new explanation – that is
+    unjustified or  simply unreasonable –  of why their original  belief or
+    hypothesis  is correct  after  evidence that  contradicts the  previous
+    explanation has emerged.
+
+    Throw more faulty logical constructions into the discussion, maybe your
+    opponent will just drown in them.
+  - [[https://rationalwiki.org/wiki/Overgeneralization][Biased Generalizing]] :: Generalizing  from an unrepresentative sample to
+    increase the strength of your argument.
+  - [[https://rationalwiki.org/wiki/Confirmation_bias][Confirmation Bias]]  :: Cherry-picking  evidence that supports  your idea
+    while ignoring contradicting evidence.
+  - [[https://rationalwiki.org/wiki/False_dilemma][False  Dilemma]] ::  Presenting  two  opposing options  as  the only  two
+    options while hiding alternatives.
+  - Lie :: An outright untruth repeated knowingly as a fact.
+  - Misleading Vividness :: Describing an  occurrence in vivid detail, even
+    if it is a rare occurrence, to convince someone that it is a problem.
+  - [[https://rationalwiki.org/wiki/Red_herring][Red  Herring]] ::  Introducing  irrelevant material  to  the argument  to
+    distract and lead towards a different conclusion.
+  - [[https://rationalwiki.org/wiki/Slippery_slope][Slippery  Slope]]  ::  Assuming  a   relatively  small  first  step  will
+    inevitably lead to a chain of related (negative) events.
+  - Suppressed  Evidence ::  Intentionally failing  to use  significant and
+    relevant information which counts against one’s own conclusion.
+  - [[https://www.logicallyfallacious.com/logicalfallacies/Unfalsifiability][Unfalsifiability]]  :: Offering  a  claim that  cannot  be proven  false,
+    because there is no way to check if it is false or not.
+
+- *Garbled cause and effect*
+
+  - [[https://rationalwiki.org/wiki/Affirming_the_consequent][Affirming the Consequent]]  :: Assuming there's only  one explanation for
+    the observation you're making.
+  - [[https://rationalwiki.org/wiki/Circular_reasoning][Circular Logic]] ::  A conclusion is derived from a  premise based on the
+    conclusion.
+  - [[https://rationalwiki.org/wiki/Causality][Cum Hoc  Ergo Propter Hoc]]  :: Claiming  two events that  occur together
+    must have a cause-and-effect relationship. (Correlation = cause).
+  - Denying  the Antecedent  :: There  isn't  only one  explanation for  an
+    outcome. So it's false to assume the cause based on the effect.
+  - Ignoring a  Common Cause  :: Claiming  one event  must have  caused the
+    other when a third (unlooked for) event is probably the cause.
+  - Post Hoc Ergo  Propter Hoc :: Claiming that because  one event followed
+    another, it was also caused by it.
+  - Two Wrongs  Make a Right  :: Assuming that  if one wrong  is committed,
+    another wrong will cancel it out.
+  - [[https://rationalwiki.org/wiki/Sunk_cost][Sunk cost]] ::  Someone argues for  continuing a course of action despite
+    evidence showing it’s a mistake.
+
+- *On the attack*
+
+  - [[https://rationalwiki.org/wiki/Argumentum_ad_hominem][Ad Hominem]]  :: (Latin for  'to the  person') Bypassing the  argument by
+    launching an irrelevant attack on the person and not their claim.
+  - [[https://rationalwiki.org/wiki/Burden_of_proof][Burden of Proof]] ::  I don't need to prove my claim -  you must prove it
+    is false.
+  - Circumstance  Ad Hominem  ::  Stating a  claim  lacks credibility  only
+    because of the advocate’s interests in their claim.
+  - [[https://rationalwiki.org/wiki/Genetic_fallacy][Genetic Fallacy]]  :: Attacking the  cause or  origin of a  claim, rather
+    than its substance.
+  - [[https://rationalwiki.org/wiki/Association_fallacy#Negative_uses][Guilt by Association]] :: Discrediting an idea or claim by associating it
+    with an undesirable person or group.
+  - [[https://rationalwiki.org/wiki/Straw_man][Straw  Man]] ::  Creating a  distorted or  simplified caricature  of your
+    opponent's argument, and then arguing against that.
 
 * Input
 

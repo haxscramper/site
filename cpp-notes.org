@@ -63,18 +63,18 @@ A single translation unit can be compiled into an object file, library, or execu
 
 ** Function declaration attributes
 
-- optimizations - there are several interesting attributes that can be
-  added to the function declaration. Sadly it does not seem to be possible
+- optimizations  - there  are several  interesting attributes  that can  be
+  added to the function declaration. Sadly  it does not seem to be possible
   to diagnose violations of the
-  - ~__attribute__((pure))~ function has no side effects and the value
-    returned depends on the arguments /and state of the global variable/,
-    therefore it is safe for the optimizer to elide some calls to it, if the
-    arguments are the same, and the caller /did not do anything to change the
-    state of the globals in between the calls/.
+  - ~__attribute__((pure))~  function has  no  side effects  and the  value
+    returned depends on  the arguments /and state of  the global variable/,
+    therefore it is  safe for the optimizer  to elide some calls  to it, if
+    the arguments  are the  same, and  the caller /did  not do  anything to
+    change the state of the globals in between the calls/.
   - ~__attribute__((const))~ signal to the compiler that function is /pure/
-    and repeated calls with the same arguments might be replaced with the
-    same output. More restrictive version of the ~((pure))~ as even external
-    variable reads should not be performed.
+    and repeated calls  with the same arguments might be  replaced with the
+    same  output.  More  restrictive  version of  the  ~((pure))~  as  even
+    external variable reads should not be performed.
 - General declaration attributes
   - ~[[deprecated]]~ or ~__attribute__((deprecated))~ (for gcc/clang old)
   - ~[[nodiscard]]~ - issue warning when function value is discarded
@@ -88,30 +88,30 @@ A single translation unit can be compiled into an object file, library, or execu
 
 * Linking, object file manipulation
 
-Linking describes the process of combining multiple object files. Linking
-can be static or dynamic - depending on when the process itself is
+Linking describes the  process of combining multiple  object files. Linking
+can  be  static or  dynamic  -  depending on  when  the  process itself  is
 executed.
 
 - Static linking :: In case of the static linking linker takes in a list of
-  the object files that need to be combined together. Each file has some
-  exported symbols (src_cpp{int exported() { return 12; }}) and some
+  the object  files that need to  be combined together. Each  file has some
+  exported  symbols  (src_cpp{int exported()  {  return  12; }})  and  some
   missing undefined ones (src_cpp{extern int exported();}). Input files are
   processed one-by-one and used to modify the /symbol table/ of the linker.
-  1. When new object is found it's exported symbols are added in the table
-     and used to *fix known undefined* symbols. If there are any *new
+  1. When new object is found it's  exported symbols are added in the table
+     and  used to  *fix known  undefined* symbols.  If there  are any  *new
      undefined* symbols, they are *recorded* in the table.
-  2. If static library is found it is processed as a collection of object
+  2. If static library  is found it is processed as  a collection of object
      files.
      1. New symbols are used for fixes
-     2. If there were /any/ new symbols in files then whole library is
-        rescanned again. This is done in order to account for links inside
+     2. If  there were  /any/ new  symbols in files  then whole  library is
+        rescanned again. This is done in  order to account for links inside
         of the library (or cycles).
 - Dynamic linking :: In case of a dynamic linking functions are loaded from
   the shared library by an external helper.
-- Dynamic loading :: It is possible to interact with dynamic libraries
-  using ~dlopen~ and ~dlsym~ function and manually search for symbols in
-  it. This method is usually used by the dynamic languages. When using
-  shared libraries in this mode it is necessary to use ~dl~ library (link
+- Dynamic  loading ::  It is  possible to  interact with  dynamic libraries
+  using ~dlopen~  and ~dlsym~ function  and manually search for  symbols in
+  it. This  method is  usually used  by the  dynamic languages.  When using
+  shared libraries in  this mode it is necessary to  use ~dl~ library (link
   with it as ~ldl~)
 
 ** CLI tools
@@ -134,13 +134,13 @@ executed.
 
 ** Static linking details
 
-- Create static library :: Create several object files using src_sh{gcc -c
-  file.c -o result.o} and then combine them in a library using src_sh{ar
+- Create static library :: Create  several object files using src_sh{gcc -c
+  file.c -o  result.o} and then combine  them in a library  using src_sh{ar
   rcs final.a result-1.o result-2.o}
-- CLI compilation :: Order of passed arguments [[https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking][matters]] - src_sh{clang++
+- CLI compilation  :: Order  of passed  arguments [[https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking][matters]]  - src_sh{clang++
   file.cpp -lLIB} is ok, but src_sh{clang++ -lLIB file.cpp} is not, because
-  linked will only try to substitute newly discovered symbols in already
-  known placeholders. If new placeholder is discovered linked *won't* go
+  linked will  only try to  substitute newly discovered symbols  in already
+  known placeholders.  If new placeholder  is discovered linked  *won't* go
   over all known symbols to see if any matches.
 
   NOTE: It is possible to supply linked libraries more than once in the
@@ -149,9 +149,9 @@ executed.
   From [[https://www.linuxtopia.org/online_books/an_introduction_to_gcc/gccintro_18.html][An Introduction to GCC - Link order of libraries]]
 
   #+begin_quote
-  The traditional behavior of linkers is to search for external functions
-  from left to right in the libraries specified on the command line. This
-  means that a library containing the definition of a function should
+  The traditional behavior  of linkers is to search  for external functions
+  from left to  right in the libraries specified on  the command line. This
+  means  that a  library containing  the  definition of  a function  should
   appear after any source files or object files which use it. This includes
   libraries specified with the short-cut -l option.
   #+end_quote

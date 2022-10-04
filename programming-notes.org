@@ -54,6 +54,15 @@ are indentation-based.
   rejected it (Rust - [[https://github.com/rust-lang/rfcs/issues/1616][rejected]], Zig had this built-in, but decided to add a
   separate [[https://github.com/ziglang/zig/issues/35][check]] instead). There is an  [[https://www.imperialviolet.org/2014/02/22/applebug.html][article]] where this feature led to a
   bug.
+- Someone might consider the [[http://cafe.elharo.com/programming/prefer-multiline-if/][requirement]] of  "one statement per line" to be
+  overly strict, but maintainability-wise it  is better than weird drive to
+  squeeze as much  code as possible one line, joining  ~if() { action(); }~
+  then removing wrapping  curly braces because it saves  four characters on
+  the line. One must to decide  whether they are playing an elaborate ASCII
+  art puzzle or writing a code for humans to read and modify.
+
+  NOTE:   Some  programming   environments  might   have  trouble   putting
+  breakpoints on the one-line statements.
 - Ambiguous ~else~ attachment, although if you have a code like this
 
   #+caption: Fist attachment variant
