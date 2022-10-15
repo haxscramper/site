@@ -129,6 +129,8 @@ executed.
 - ~readelf~ :: used to provide full information about ELF binaries. It uses
   =libelf= library whereas =objdump= uses =BFD=, which is also used by the
   =ld= linker.
+  - src_sh{readelf  --syms  --wide  <file>}  show  symbol  table  from  the
+    ~<file>~ with full unabbreviated names.
 - ~strings~ :: show printable strings in the binary
 - ~ldd~ :: shared library dependencies
 
@@ -178,6 +180,8 @@ executed.
 - env variables :: ~LD_LIBRARY_PATH~ can be used to set the directory used
   at /runtime/ for library search. ~LIBRARY_PATH~ is used for
   /compile-time/ search of the shared libraries.
+
+** Linker scripts
 
 * Standard library
 

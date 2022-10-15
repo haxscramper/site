@@ -1,7 +1,5 @@
 * links
 
-
-
 - Find words and phrases in different contexts
   - [[https://ludwig.guru/][ludwig.guru]] "Ludwig is the first sentence search engine that helps you
     write better English by giving you contextualized examples taken from
@@ -56,6 +54,8 @@ painintheenglish.com###popBottom
   - [[https://www.goodreads.com/quotes][Popular Quotes]]  - copy-pasting quotes into  the writing might be  a bad
     taste,  but  it  can't  hurt  to read  some  interesting  passages  and
     reinterpret as needed.
+- Articles
+  - [[https://en.wikipedia.org/wiki/Valency_(linguistics)][Valency (linguistics)]], [[https://www.thoughtco.com/valency-grammar-1692484][Linguistic Valency in English Grammar]]
 
 
 * nltk
@@ -719,6 +719,17 @@ Dictionary]]
 - when listing multiple things :: ~The <A>, <B>, <C>, <D> and <E>~ - it is
   not /wrong/ to add an article before each of the ~<A-E>~ in this case,
   but it is not mandatory either.
+
+** "had", "has", "have" etc. in different contexts
+
+- "have been" / "has been" :: used to mean that something began in the past
+  and has lasted into the present time.
+  - "He has been working here for two years"
+- "had been" ::  used to mean that  something happened in the  past and has
+  already ended.
+  - "He had been working here until the last month"
+- "will have been" / "will has been" ::
+
 
 * Markup languages
 
