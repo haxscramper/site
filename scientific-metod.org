@@ -1,0 +1,51 @@
+Mostly quotes and  notes on the definitions of certain  words and breakdown
+why specific pairs of words should not  be confused with each other. It is,
+of  course, incomplete  and does  not encompass  the whole  breadth of  the
+possible interpretations of the definitions provided here -- I'm only using
+it to clean up some things for myself.
+
+- theory ::
+
+  #+begin_quote
+A scientific theory is an explanation of an aspect of the natural world and
+universe that  has been  repeatedly tested  and corroborated  in accordance
+with  the  scientific  method,  using accepted  protocols  of  observation,
+measurement, and evaluation of results.
+  #+end_quote
+
+  Theory can incorporate laws, facts, inferences and tested hypotheses.
+
+  Difference from
+  - fact :: Theory is used to explain facts
+  - law :: Does not try to  explain *why* certain things are happening this
+    way. Only explains *what* is happening,  and to certain extent *what is
+    going to* happen.
+
+
+- law :: A descriptive generalization about  how some aspect of the natural
+  world behaves under stated circumstances.
+
+  First  few paragraphs  in  the  Wikipedia [[https://en.wikipedia.org/wiki/Scientific_law][article]]  give  a good  relative
+  overview of the definition and it's difference from other terms.
+
+  - theory  :: Theories  are usually  broader  in scope  and might  include
+    several laws.
+  - hypothesis :: Were not tested to  the same degree, but they might *lead
+    to* (not turn into!) a law
+  - fact ::
+
+
+- hypothesis :: A proposed explanation of the phenomenon.
+- fact :: An  observation that has been  repeated so many times,  it can be
+  considered "true" for all intents and purposes.
+  - theory :: Used to explain facts
+  - hypothesis ::
+- model ::
+
+  #+begin_quote
+Generally, models are schematic representations of reality or of one's view
+of a possible  world, constructed to improve one's  understanding about the
+world and/or to make predictions.
+  #+end_quote
+  - fact, theory :: Model can be seen as an intermediate step between facts
+    (data) and theories.
