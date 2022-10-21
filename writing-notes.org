@@ -695,7 +695,7 @@ used with a copy hook. This commit <actual change description>
 that is mostly rooted in the  bug *fix descriptions* rather than underlying
 problem categorization.
 
-[fn:any-663] 
+[fn:any-663]
 
 * Other things
 
@@ -730,7 +730,6 @@ Dictionary]]
   - "He had been working here until the last month"
 - "will have been" / "will has been" ::
 
-
 * Markup languages
 
 ** Org-mode
@@ -741,6 +740,314 @@ Dictionary]]
   src_org{#+property: header-args} at the top of the file.
 - Disable evaluation during export :: ~:eval no-export~
 - Export both source code and result :: ~:exports both~
+
+* Sentence diagramming
+
+- Verbs ::
+  - Transitive active ::  "doer" does "action" and  "receiver" receives it.
+    Indirect object is an optional addition of the action.
+
+    - TA :: Transitive active
+    - DO :: Direct object
+    - IO :: Indirect object
+
+    #+begin_example
+     doer | action (TA) | reciever (DO)
+    ------+-------------+--------------
+          | \ (x)
+             \    [indirect object (IO)]
+              \___________________
+    #+end_example
+
+    - /"Rex [bit (TA)] [Joe (DO)]"/
+    - /"He [gave (TA)] [the pirate (DO)] [a chance (IO)]"/
+  - Intransitive linking   ::  No action, verb acts as an  "equal" mark and
+    links subject  with *predicate  nominative* -- either  (predicate noun)
+    (PN) or *predicate adjective* (PA).
+
+    Intransitive linking  verb is  usually one of  the *be*,  (*am*, *are*,
+    *is*,  *was*, *were*,  *being*,  *been*),  *become*, *sound*,  *taste*,
+    *seem*, *appear*, *smell*, *remain* ...
+
+    #+begin_example
+    doer | link (IL) \ predicate nominative (PA/PN)
+    -----+-----------+-----------------------------
+         |
+    #+end_example
+
+    - /"Rex [is (IL)] [happy (PA)]"/
+    - /"Rex [is (IL)] [dog (PN)]"/
+
+  - Transitive  passive ::  Subject  receives action.  Doer  of action,  if
+    known, is in prepositional phrase after "by"
+
+    #+begin_example
+    receiver | action (TP)
+    ---------+------------
+             | \ by
+                \   [reciever]
+                 \_______
+    #+end_example
+
+    Transitive passive verb  can also include an  optional *retained object
+    (RO)* part, making it similar to the intransitive linking.
+
+    #+begin_example
+    receiver | action (TP) \ object (RO)
+    ---------+-------------+------------
+             | \ by
+                \   [reciever]
+                 \_______
+    #+end_example
+
+    In both variants the receiver part is optional.
+
+    - /"Harry [was thrown (TP)] the [ball (RO)]"/
+    - /"The ball [was thrown (TP)] to Harry [by me]"/
+    - /"Jill [was sent (TP)] [money (RO)]"/
+
+  - Intransitive   complete   ::   Action,   but  no  receiver   (from  the
+    grammatical  standpoint --  it might  be "logically"  present). Subject
+    does an action.
+
+    #+begin_example
+    subject | action (IC)
+    --------+------------
+    #+end_example
+
+    - /"Rex barks"/
+    - /"Rex barks at Joe"/  - in this case the receiver  is present, but it
+      is should be placed as a prepositional phrase, not as a direct object
+      that "receives barking".
+- Nouns ::
+  - Subject ::
+  - Direct objects ::
+  - Indirect objects ::
+  - Objects of preposition ::
+  - Predicate nominatives ::
+
+- Verbals :: Verb form used as another part of speech -- noun, adjective or
+  adverbs.
+  - Gerunds ::   Always nouns. Ends up  with "-ing" suffix, can  be used as
+    subject/direct object/indirect object/retained object and so on.
+
+    #+caption: One possible use is a subject
+    #+begin_example
+     do-ing
+     ---+--
+        |
+       / \  | action
+     -------+--------
+    #+end_example
+
+    Gerund  might  have  a  complement -  predicate  noun  (PN),  predicate
+    adjective (PA) or direct object complements (DO).
+
+
+    #+caption: One possible use is a subject
+    #+begin_example
+     do-ing | DO/PN/DA
+     ---+---+---------
+        |
+       / \  | action
+     -------+--------
+    #+end_example
+
+    - /"Running exists"/ -- /"Running"/ is a gerund, used as a subject here.
+    - /"Running fast  is dangerous"/ --  /"Running fast"/ is a  gerund with
+      predicate adjective.
+    - /"Being king is a responsibility"/ -- /"Being king"/ is a gerund with
+      predicate noun.
+
+    - Perticiples  ::  Always adjectives. *Present* participles end up with
+      "-ing" (e.g. ones  that describe the something in  the current moment
+      I'm time.), *past* ones end up in "-d", "-t", or "-n".
+
+      Similarly  to gerunds  participles  can include  a  direct object  or
+      predicate nominative.
+
+      Participles  differ from  gerunds  in  a sense  that  they allow  for
+      *helping verbs* to be included in.
+
+      TODO nominative absolute
+
+      - /"They  ran  to the  burning  house"/  --  /"burning"/ here  is  an
+        adjective for the /"house"/.
+      - /"They ran to the house that  was burning"/ -- /"that was burning"/
+        is a dependent noun clause introduced by the link word /"that"/
+      - /"Raking the lawn, Tom found a dollar"/ -- /"Raking the lawn"/ is a
+        participle with /"lawn"/ as the direct object.
+      - /"Being  honest,  he  returned  it"/   --  /"Being  honest"/  is  a
+        participle with /"lawn"/ as the predicate adjective.
+      - /"The work having been finished, the men moved on"/ -- in this case
+        /"The work having been finished"/ is the nominative absolute and it
+        stands separately  from the  other part  of the  sentence. /"Having
+        been finished"/ is  a participle with /"having been"/  is a helping
+        verb.
+
+    - Infinitives :: Nouns, adjectives or adverbs. "to"
+
+      TODO adverbial modifiers
+      TODO complements
+
+- Appositive :: An  appositive is a noun (and any  modifiers) that restates
+  another noun and shares its construction. TODO
+- Objective complement  :: An objective  complement is a noun  or adjective
+  that completes  the meaning of the  verb and modifies, names,  or renames
+  the direct  object.
+
+  Since these modify, name, or  renamedirect objects, you'll only find them
+  in sentences that have direct objects.  That also means the sentence will
+  have atransitive active verb.
+
+  Sometimes object complement is introduced by the *expletive* "as".
+
+  #+caption: Diagramming structure with no expletive
+  #+begin_example
+  subhect | verb | direct object \ objective complement
+  --------+------+---------------+---------------------
+          |
+  #+end_example
+
+  #+caption: Diagramming structure with an expletive
+  #+begin_example
+                                  as
+                                 --+-
+  subject | verb | direct object \ : objective complement
+  --------+------+---------------+-----------------------
+          |
+  #+end_example
+
+  - /"This music makes me [happy]"/ -- /"happy"/ is an object complement here
+  - /"They  elected my  uncle  [as]  [mayor]"/ --  /"mayor"/  is an  object
+    complement and /"as"/ is an expletive.
+- Adverbial noun ::  An adverbial noun is a word  which serves the function
+  of either a  noun or an adverb  depending on the sentence in  which it is
+  used.
+
+  Nouns  dealing in  measurements  of some  kind, such  as  time frames  or
+  distances,  are  usually  adverbial  nouns.  Like  adverbs,  these  nouns
+  normally modify verbs but can also modify adjectives.
+
+  #+caption: Adverbial noun is diagrammed like a direct object
+  #+begin_example
+  subject | verb | direct object
+  --------+------+--------------
+          |\ (x)
+            \      adverbial noun
+             \___________________
+  #+end_example
+
+  TODO better explanation on the particular application cases
+
+
+- Case ::
+  - Nominative  case  ::  Used   for  subjects  and  predicate  nominatives
+    (intransitive linking)
+    - /"Who goes there"/ - nominative case of the word "who"
+  - Possesive case :: Used to show ownership
+    - Possessive nouns :: Adding /'s/ to a noun
+    - Possessive pronouns :: "mine", "yours", "his", "hers", "its", "ours",
+      and "theirs."
+    - Possessive  determiners    ::  Sometimes  are also called "possessive
+      adjective". "my", "your", "his", "her", "its", "our", and "their".
+
+      "Whose" is a possessive case of the word "who".
+  - Objective case :: Used for objects of verbs or prepositions
+    - /"Whom did you see?"/ - objective case, the subject here is "you" and
+      then direct object is "whom".
+    - /"Whom did he ask about?/
+
+
+- Preposition :: Answers questions such as "why? how? when? where?" or "how
+  many? what kind? whose? which ones?"
+
+- Phrases ::
+  - Verb phrase :: Main verb and it's helpers
+  - Prepositional phrase :: a preposition, its object, and any modifiers of
+    the object.
+    - Adverb phrase ::
+    - Adjective phrases ::
+- Clauses ::
+  - Main/Independent ::
+  - Dependent/Subordinate ::
+    - Adverb  clauses ::
+      - Usually  answers "why?"  and some  other weird  variations such  as
+        "if?" ("under which circumstances?").
+      - Introduced by a connecting  word *"after"*, *"because"*, *"until"*,
+        *"if"*, *"since"*.
+      - Can be  moved in front  of the sentence,  if that happens,  then it
+        should be followed by a *comma*.
+    - Adjective   clauses  ::  Introduced by  a *relative  pronoun* (*who*,
+      *whose*, *whom*, *that*, *which*).  Sometimes relative pronoun can be
+      missing and the meaning is inferred from the sentence itself.
+
+      #+begin_example
+      subject |
+      --------+ ~~~
+         :
+         :
+         that (RP) | action
+         ----------+----
+      #+end_example
+
+      - /"The dog  [[that (RP)]  [barked (IC)]] [is  (IL)] [Rex  (PL)]"/ --
+        /"[that  barked]"/  is a  dependent  adjective  clause with  "that"
+        serving as a relative pronoun.
+      - /"I [have  found (TA)]  the [cap  (DO)] [[that (DO  & RP)]  I [lost
+        (TA)]]"/ -- /"[that I lost]"/ is a dependent clause with transitive
+        active verb "lost" which is used  on the direct object "that" which
+        serves as a relative pronoun from  the main clause to the dependent
+        one.
+      - /"The bid I saw is the you described"/ -- /"that I saw"/
+
+    - Noun clauses :: Dependent clause that is used in place of a noun
+
+      #+caption: Can be used as a direct object
+      #+begin_example
+
+                  subject | action | object
+                  --------+--------+-------
+                          |
+      subject | action | / \
+      --------+--------+-----
+      #+end_example
+
+      #+caption: Can be used a as a subject
+      #+begin_example
+      subject | action | object
+      --------+--------+-------
+              |
+             / \ | action | object
+            -----+--------+-------
+      #+end_example
+
+      #+caption: Can be used as a part of preposition phrase
+      #+begin_example
+      subject | action | object
+      --------+--------+-------
+              |\ to   subject | action | object |
+                \     --------+--------+-------
+                 \            |
+                  \          / \
+                   \____________
+
+      #+end_example
+
+      - /"I know  [what I like]"/  -- /"what I  like"/ is a  dependent noun
+        clause  used as  a direct  object  for the  transitive active  verb
+        "know". The clause itself also has a TA+DO pair.
+      - /"[Whatever you wish] is my command"/ -- /"Whatever you wish"/ is a
+        dependent noun close that is used as a subject.
+      - /"You gave what he likes no  consideration"/ - /"What he likes"/ is
+        an  dependent noun  clause  used  as an  indirect  object for  main
+        transitive action clause.
+      - /"Pay  attention  to what  he  says"/  --  /"What  he says"/  is  a
+        dependent noun clause with "to" as a linking word from the main
+
+  - Elliptical clause   ::  Any clause that  has some parts of the sentence
+    omitted.  Usually  it  is  a  subordinating  one.  Most  of  the  times
+    introduced by the *"that"* word.
 
 * Correct writing structure
 
