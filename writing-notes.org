@@ -239,6 +239,57 @@ Taken from [[https://ell.stackexchange.com/questions/108169/what-do-programmers-
 - some additions
   - ~([{}])~ :: closing/opening delimiters
 
+** Libraries
+
+*** =spacy=
+
+#+caption: Installing language models
+#+begin_src sh
+python3 -m spacy download <model_name>
+# for example (language model used in the documentation)
+python3 -m spacy download en_core_web_sm
+#+end_src
+
+#+caption: Starting visualization
+#+begin_src python
+import spacy
+from spacy import displacy
+
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("This is a sentence.")
+displacy.serve(doc, style="dep")
+#+end_src
+
+#+caption: Spacy plaintex visualization (require ~deplacy~ installation)
+#+begin_src python :results output
+import spacy
+import deplacy
+
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("Rex barks")
+deplacy.render(doc)
+#+end_src
+
+#+RESULTS:
+: Rex   PROPN <╗ compound
+: barks NOUN  ═╝ ROOT
+
+#+caption: Spacy graphviz visualization
+#+begin_src python
+import spacy
+import deplacy
+import os
+
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("I like Nim a lot, but I'm also unsure of its' general direction.")
+text = deplacy.dot(doc)
+
+with open("/tmp/graph.dot", 'w') as file:
+    file.write(text)
+
+os.system("dot -Tpng -o /tmp/graph.png /tmp/graph.dot")
+#+end_src
+
 * Main parts of the sentence
 
 ** noun
@@ -741,7 +792,7 @@ Dictionary]]
 - Disable evaluation during export :: ~:eval no-export~
 - Export both source code and result :: ~:exports both~
 
-* Sentence diagramming
+* Reed-Kellogg sentence diagramming
 
 - Verbs ::
   - Transitive active ::  "doer" does "action" and  "receiver" receives it.
@@ -885,10 +936,34 @@ Dictionary]]
         been finished"/ is  a participle with /"having been"/  is a helping
         verb.
 
-    - Infinitives :: Nouns, adjectives or adverbs. "to"
+    - Infinitives ::   Nouns,  adjectives or adverbs. Consist  of word "to"
+      plus  a  verb.  Infinitives   can  take  optional  *complements*  and
+      *adverbial modifiers*. When they do, the whole construction is called
+      *infinitive phrase*.
 
-      TODO adverbial modifiers
-      TODO complements
+      #+caption: Simple infinitive
+      #+begin_example
+      subject | verb
+      --------+-----
+              |\
+                \  \ to
+                 \  \   verb
+                  \  \________
+                   \    /\
+                    \_________
+      #+end_example
+
+      #+caption: Infinitive phrase
+      #+begin_example
+      subject \to verb | direct object
+      --------+--------+--------------
+              |
+             / \               | verb
+      -------------------------+------
+                               |
+      #+end_example
+
+
 
 - Appositive :: An  appositive is a noun (and any  modifiers) that restates
   another noun and shares its construction. TODO
@@ -988,7 +1063,7 @@ Dictionary]]
          :
          :
          that (RP) | action
-         ----------+----
+         ----------+-------
       #+end_example
 
       - /"The dog  [[that (RP)]  [barked (IC)]] [is  (IL)] [Rex  (PL)]"/ --
@@ -1048,6 +1123,8 @@ Dictionary]]
   - Elliptical clause   ::  Any clause that  has some parts of the sentence
     omitted.  Usually  it  is  a  subordinating  one.  Most  of  the  times
     introduced by the *"that"* word.
+
+TODO:
 
 * Correct writing structure
 

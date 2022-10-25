@@ -1,0 +1,789 @@
+#+title: Why nimskull
+#+options: broken-links:mark
+
+After another round  of discussions about possible  objectives, reasons and
+merits of the Nim fork I've been working  on I decided to write down my own
+thoughts on this matter, elaborate  on the decision-making process that has
+led to the specific wording of the readme.
+
+---------------------------------------------------------------------------
+
+Disclaimer: this  article is going  to have a  lot of disclaimers  down the
+road, but  ultimately I admit  the attempt to  write it in  the "objective"
+manner failed,  since I have too  much personal investment in  the issue. I
+tried to keep the tone in check, but you can never be completely sure.
+
+---------------------------------------------------------------------------
+
+Some parts of this article are going to be outdated in the future -- mostly
+stuff  concerning PR  aspect of  the  project, how  we advertise  different
+elements of it and so on. If  there are going to be any fundamental changes
+I will update this text accordingly.
+
+---------------------------------------------------------------------------
+
+To save you  some time, my top  picks when it comes to  spreading FUD about
+nimskull are the following, in order of my preference:
+
+1. /"Well good luck hard-forking backwards into the past to re-write commit
+   messages."/ ([[https://news.ycombinator.com/item?id=32033473][link]]  and I'm /still/  really puzzled  as to what  the hell
+   does that  mean, so if you  want to FUD  in comments *and* use  this one
+   *and* can explain it -- I will be really glad to see you)
+2. /"Forks  that seem to  exist for no  clear reason other  than disgruntled
+   person(s) thumbing their nose at an upstream maintainer never do."/
+3. /"So, nimskull is a project management exercise, carry on then"/
+
+* WIP Part one: "why"
+
+Important  disclaimer before  I  go  into long  and  annoying  list of  all
+failings that  happened over the  years --  I *personally* think  that this
+sort of conduct  is bad and poorly reflects on  the community health. There
+might be other points of view, either on specific issues or in general.
+
+Some might consider  a missing Code of Conduct a  major problem, some might
+be hell-bent  on a [[https://forum.nim-lang.org/t/9511#62471][multiple]] instances  of a very unwelcome  language, weird
+[[https://forum.nim-lang.org/t/9402#61840][rhetoric]] and so on, but I included things that I, *personally*, consider to
+be important.
+
+---------------------------------------------------------------------------
+
+
+Most common questions concerning "why" aspect  of the project I've seen can
+be summarized in the following phrase: "why fork if you can just contribute
+to the mainline" or  "why not contribute to the mainline".  There are a few
+things in this sentence that need to be unpacked, specifically in the first
+variant of it. It  is not always used in this literal form,  but I saw that
+formulation often enough to go into the sentence dissection mode.
+
+Let's get  the most  obvious and  irritating response out  of the  way. The
+response to *"why do X"* is pretty simple: "because I'm a free person to do
+what I want with my free time". So I decided to work on the fork instead of
+a main project.
+
+Of course this is just a blanket  "buzz off" response that does not address
+the important  questions, but I decided  it is important enough  to warrant
+the inclusion.
+
+Second and a lot more controversial response targets the *"just"* word. I'm
+sure there are  realms of irritated blog posts, articles  and books written
+about "why don't you just do X" and how often it is not all that easy.
+
+Before I go into long detailed list of what is wrong with the mainline, I'm
+going  to say  that we  (nimskull contributor  team) explicitly  decided to
+*not* to include these sort of historical elaboration in the readme because
+it does not  generally help the discussion. Instead of  looking forward and
+deciding what do next the discourse  is focused on seeking someone to blame
+for various issues.
+
+I've contemplated the idea of writing this  kind of article for a long time
+and after about  a year of hearing various questions,  ranging from genuine
+confusion (e.g. newcomer  to the mainline gets disoriented  about status of
+each projects and  seeks some elaboration) to a commonplace  HN FUD that is
+based on the quick skim of the readme.
+
+
+https://discord.com/channels/371759389889003530/371759607934353448/915902483086323732
+
+https://discord.com/channels/371759389889003530/371759607934353448/915895070803243008
+
+https://discord.com/channels/371759389889003530/371759389889003532/910564109764935781
+
+https://discord.com/channels/371759389889003530/371759389889003532/910579516903157781
+
+https://github.com/nim-lang/nimble/pull/913#issuecomment-873565439
+
+https://discord.com/channels/371759389889003530/371759607934353448/915916352450088961
+
+> the delete circus with nimStrictDelete is something I will probably never understand
+
+** Issues with package management
+
+On July 4th, 2021 I wrote  the [[https://github.com/nim-lang/RFCs/issues/398][RFC]] detailing various issues and suggestions
+for the package management improvements that provided a detailed account of
+most of the things that were wrong with the package manager at the time.
+
+*** UX and implementation issues
+
+*** Non-existent level of interest in package manager improvements
+
+1. Non-existent dependency  resolution algorithm that can  get knocked over
+   at any time, causing bugs and repeated installations.
+2. Bidirectional data  flow between the compiler and package  manager -- it
+   is not  possible to  run the  compiler separately with  the same  set of
+   packages as in command-line.
+
+
+*** Dead community management
+
+By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
+"development has been  outsourced, wasn't ready for 1.6.0 and  I don't know
+the plan either"[fn:either-96] -- this happened moths after long discussion
+about  added nimble  features, subsequent  reversal  of the  version to  be
+release https://forum.nim-lang.org/t/8404#54511 and we still don't have any
+concrete roadmap about plans to roll out 14.0.
+
+So these are my two cents on how having a good roadmap could've prevented a
+almost  a year's  worth  of  effort (pattern  matching)  to  not lose  it's
+maintainer, and how you managed to loose a single person who was interested
+enough to really  try to compose the plans,  suggestions, improvement ideas
+and  vision for  the  package  manager into  something  coherent, not  "the
+discussions were  spread through  multiple Github  issues, IRC  and private
+chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889003530/753721959308853319/892742985626824734][discord link]].
+
+This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
+
+P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
+
+
+[fn:either-96] Remember -- this is a main project contributor talking about
+their
+
+** TODO Issues with the implementation
+
+*** Handling of the community requests
+
+Nim-lang conducts a  yearly community survey with results  available on the
+blog. [[https://nim-lang.org/blog/2022/01/14/community-survey-results-2021.html][2021]], [[https://nim-lang.org/blog/2021/01/20/community-survey-results-2020.html][2020]], [[https://nim-lang.org/blog/2020/02/18/community-survey-results-2019.html][2019]], [[https://nim-lang.org/blog/2018/10/27/community-survey-results-2018.html][2018]], [[https://nim-lang.org/blog/2017/10/01/community-survey-results-2017.html][2017]], [[https://nim-lang.org/blog/2016/09/03/community-survey-results-2016.html][2016]]. Some questions persisted over the
+years.
+
+#+caption: "Top/High", "Medium" and "Low/Ok" priority
+| Question             | 2021     | 2020     | 2019     | 2018 | 2017 | 2016 |
+| Fixing compiler bugs | 68/20/12 | 55/28/17 | 55/26/20 | N/A  | N/A  | N/A  |
+| Improving tooling    | 49/29/22 | 43/30/26 | N/A      | N/A  | N/A  | N/A  |
+| Documentation        | 40/36/24 | 42/30/28 | 50/26/24 | N/A  | N/A  | N/A  |
+
+As you  can see,  over last  two years number  of respondents  who consider
+current  implementation  acceptable  in  terms  of  bugs  decreased  almost
+twofold, from  20% to 12%,  while the number  of those who  consider fixing
+compiler bugs to be of high  or critical importance increased by 13%. Prior
+to 2018 this question was not being asked.
+
+Priority of  the tooling  improvement had  been asked  only twice,  but the
+declining trend is present here, although not as drastically.
+
+Documentation quality is steadily improving year-over-year.
+
+*** TODO Compiler documentation
+
+**** TODO Lack of the literal documentation
+
+**** TODO No high-level overview of the compiler internals
+
+**** TODO The code is still effectively owned by a single person
+
+*** TODO Error messages
+
+*** TODO Quality of the source code
+
+** TODO General issues with the management
+
+** TODO Tooling implementation issues
+
+[[https://github.com/nim-lang/RFCs/issues/300][Developer    tooling   ·    Issue   #300]]    ([[https://web.archive.org/web/20221024162725/https://github.com/nim-lang/RFCs/issues/300][archive]])   is    second   most
+commented-on[fn:on-96] and third most-upwoted issue currently open issue in
+the repository.  At the time of  writing [2022-10-24 Mon] it  has been open
+for almost two  years -- added to  the 2021 milestone, then  described as a
+/"the most important thing for me personally"/ thing in the [[https://github.com/nim-lang/RFCs/issues/437][roadmap]].
+
+[fn:on-96] Second only to a [[https://github.com/nim-lang/RFCs/issues/456][Nim v2: get rid of style insensitivity · Issue
+#456]] aka
+#+begin_quote
+Not because  style insensitivity leads to  bugs or any of  the other things
+that those  unfamiliar with Nim  hypothesise but because  it is one  of the
+main reasons that people do not even try Nim
+#+end_quote
+which gathered  a whopping 220  responses over  a topic that  is completely
+dwarfed in importance  by the working developer tooling.  This question had
+been raised four years ago as well on the nim forum [[https://forum.nim-lang.org/t/4388][Should we get rid of
+style insensitivity?]] with no concrete results.
+
+** TODO Project priorities and goal-setting
+
+*** General project roadmap
+
+[[https://github.com/nim-lang/RFCs/issues/437][Roadmap for  Nim ·  Issue #437]] had  been created only  after long  and ugly
+[[https://forum.nim-lang.org/t/8627][discussion]] where core project developer apparently [[#= ][learned]] that
+
+#+begin_quote
+    It's good that I have a plan.
+    Even better would be if I shared it with the community...
+#+end_quote
+
+Too bad the roadmap still did not include the, well, *road* component of it
+-- specifically  how to  get to  the  point listed,  so  it was  more of  a
+wish-list than a real roadmap. But that's something at least, and you would
+be hard-pressed to  find /anything even resembling it/ for  the most of the
+core project existence since 1.0.
+
+*** Managing specific projects
+
+**** c2nim
+
+Nim interop a *big*  topic when someone starts using nim,  but it there has
+never been  any official effort aside  from a *[[https://forum.nim-lang.org/t/8020][handwritten]]* C++  parser (if
+you have any  knowledge of the subject  you should run away  already) and a
+tool that requires you to [[https://github.com/nim-lang/c2nim/blob/master/doc/c2nim.rst#def-directive][modify]] the headers.
+
+**** standard library
+
+**** fusion
+
+I  was  involved  in this  part  personally,  so  I'm  going to  provide  a
+first-hand account in this specifically  I worked on the "official" pattern
+matching implementation solution.
+
+Back in 2020 ~@alehander92~ (author of  the Gara [[https://github.com/alehander92/gara/][library]], nil [[https://github.com/nim-lang/Nim/pull/15287][check]] feature
+and many  [[https://github.com/nim-lang/Nim/pulls?q=is%3Apr+sort%3Aupdated-desc+author%3Aalehander92][other]] PRs) wrote  an [[https://github.com/nim-lang/RFCs/issues/245][RFC]]  about pattern matching.  Several months
+later I  [[https://github.com/nim-lang/RFCs/issues/245#issuecomment-695780794][joined]] the discussion,  providing a starting [[https://github.com/haxscramper/hmisc/blob/f58838040170547e19c01bd6b9f3e42a16811f91/tests/tMatching.nim][implementation]]  and a
+specification  that later  was [[https://github.com/nim-lang/RFCs/issues/245#issuecomment-697897542][expanded]]  and agreed  upon. At  this time  I
+[[https://github.com/nim-lang/RFCs/issues/194#issuecomment-700994731][thought]] it should be a move  to consolidate the ecosystem. I [[https://github.com/nim-lang/fusion/pull/33][implemented]] it
+for the fusion library  and it was merged after an  initial review.
+
+At this point I thought that people can finally make use of it in different
+scenarios, simplify writing macros and so on, writing my [[https://github.com/nim-lang/website/pull/252][first]] iteration of
+the article. About  two weeks later fusion was [[https://github.com/nim-lang/Nim/pull/16925][unbundled]]  from the standard
+library and  left on it's own  as a separate  package with an idea  it will
+also [[https://github.com/nim-lang/fusion/issues/30][adopt]] semantic versioning (never really  happened). Then I had to wait
+for over a month until by patience finally [[https://github.com/nim-lang/website/pull/252#issuecomment-786700979][ran out]] and I decided to publish
+it  myself somehow.  Eventually it  was [[https://github.com/nim-lang/website/pull/271][published]],  received 145  points on
+[[https://news.ycombinator.com/item?id=26420716][hackernews]]. In march someone made a video tutorial on the [[https://www.youtube.com/watch?v=GJpn6SfR_1M][library]].
+
+
+Then nim 1.6.0 introduced the ~nnkTupleConstr~ - ~fusion/matching~ required
+some  fixing, so  ~@clybber~ [[https://github.com/nim-lang/fusion/pull/86][fixed]]  it  in, so  far so  good. Except  after
+unbundling never  received any  proper tags, and  people still  [[https://github.com/nim-lang/fusion/issues/99][get]] [[https://www.reddit.com/r/nim/comments/qfi1d0/fusionmatching_broken_in_nim_16/][version]]
+that is nine months old. I  wasn't really privy into the management details
+and simply worked on the [[https://github.com/nim-lang/fusion/pull/94][PR]] with additional fixes.
+
+My PR had  a CI failing for  a five months purely  due to [[https://github.com/nim-lang/fusion/pull/100][misconfiguration]],
+and I  had to personally  come and complain about  it in order  for leorize
+(another person who moved to nimskull btw) to fix it.
+
+After fixing CI -- Half a month forward, zero reaction. Is fusion a part of
+the current  nim effort, or is  it not - I  don't know. Each time  it was a
+waiting game, or I had to personally come and push people around so someone
+even looked at my efforts, maybe even reviewed the code. No, five months of
+silence with  dead CI,  no understanding  if my work  is even  needed, then
+another half a month with fully green CI, and still no reaction.
+
+Then "Preview of the coming attractions"  [[https://forum.nim-lang.org/t/8627][thread]] happened. I made the point
+[[https://forum.nim-lang.org/t/8627#56155][above]], then got a fantastic exchange that I'm going to simply paste here in
+it's entirety,  it is too  good to  slice and dice  into parts. I  will add
+footnotes instead.
+
+-------
+
+*Araq*:
+
+I'm really sorry for your bad experience and I hope you'll come back. Fusion is part of what we offer, it's however badly maintained as I get no emails from github when there is activity. I think I enabled the email feature, I'm not sure why I still don't get any. I also don't know why so few people appear to have the proper rights to merge things on Fusion, I'll see what we can do.
+
+    So these are my two cents on how having a good roadmap could've prevented a almost a year's worth of effort (pattern matching) to not lose it's maintainer ...
+
+Sorry, but that's not how I see it, since we are overburdened with work, the proper solution is to give you more rights so that you can go ahead and not be constantly blocked by us.
+
+
+-------
+
+*haxscramper*:
+
+NO, the  proper solution is not  to give me  "more rights" - have  you even
+read what I said about fusion and my PR?
+
+#+begin_quote
+Half a month  forward, zero reaction. Is  fusion a part of  the current nim
+effort, or is it not - I don't know.  Each time it was a waiting game, or I
+had to personally come and push people  around so someone even looked at my
+efforts, maybe even reviewed the code. No, five months of silence with dead
+CI, no understanding if  my work is even needed, then  another half a month
+with fully green CI, and still no reaction.
+#+end_quote
+
+
+The solution is not  to give me more permissions in  hope I will accomplish
+something without any supervision. Now I have even more responsibility, and
+I  have  double-think  any of  my  decisions  -  are  they right,  do  they
+contribute to the final goal (whatever it is). You just made situation even
+worse - before I just doubted if my  work is needed, but now I also have to
+constantly carry the  burden of even higher-level decision  making and face
+decision paralysis with no clear common goal in sight.
+
+#+begin_quote
+Fusion is part of what we offer,  it's however badly maintained as I get no
+emails from github when there is activity.
+#+end_quote
+
+It  is badly  maintained not  because  you don't  get emails,  it is  badly
+maintained because  I'm yet to  see a  single finalized decision  about it.
+Nobody understands it's status, and people can't really work in dark. After
+we decided to unbundle it, it practically became an abadonware. I mean, for
+half a year nobody  even looked at the CI - the  fix was absolutely trivial
+except you  need to  know that "nim-lang.org  no longer  provides versioned
+MinGW", which  I of course  had no idea about,  since I don't  use windows.
+Well, I should've probably pinged you right there, right? Except
+
+#+begin_quote
+... but that's not how I see it, since we are overburdened with work ...
+#+end_quote
+
+And you  know, for  some weird reason  I'm not thrilled  about the  idea of
+constantly  pinging  people who  say  stuff  like  this  with (and  have  a
+perfectly valid reason to say this,  which is even more important). I mean,
+my problem is not that important,  and I might distract them from something
+actually important, so maybe  I just need to wait, I'm  sure they have some
+kind of planning going on ..., right?
+
+#+begin_quote
+give you more rights so that you can go ahead and not be constantly blocked
+by us.
+#+end_quote
+
+and turn  the language into  complete mess  by my misguided  decisions? No,
+thank  you, I  do not  trust  myself enough  to make  decisions that  would
+benefit everyone. Or I were supposed  to somehow build a sub-community with
+whom I  can discuss  my decisions on  the implementation  details? Maintain
+dedicated set  of issues on  pattern matching in  fusions, treat them  as a
+sort of "local RFC" and basically  replicate the whole process on a smaller
+scale?
+
+-------
+
+*Araq*:
+
+Yes, I did read it, all of it. Yes, I do care about pattern matching and Fusion and I love your work on it.
+
+#+begin_quote
+It is badly maintained not because you don't get emails, it is badly maintained because I'm yet to see a single finalized decision about it.
+#+end_quote
+
+We don't  bundle Fusion with  Nim anymore  because that causes  yet another
+"split" -- you can update it independently  from Nim, so if we also ship it
+with Nim both of these modes must be tested and be ensured to keep working.
+Ensuring that stuff keeps working can be surprisingly hard. Fusion also had
+other design  mistakes, like  an unreasonable backwards  compat requirement
+for code that is supposed to evolve.
+
+A "finalized" decision would be easy:  Let's split up Fusion into different
+packages,  there  can   be  nim-lang/pattern-matching,  nim-lang/threading,
+nim-lang/javascript-wrappers,  nim-lang/xyz. The  problem?  It's really  as
+mundane as setting up N Nimble packages plus the CIs plus ensuring that the
+CIs stay green and that things work well together.
+
+--------
+
+*haxscramper*:
+
+Making it a multitude of packages instead of one single package addresses none of the concerns I expressed above. It is just shuffling responsibility around, and further separating the efforts.
+
+nim-lang/pattern-matching - It seems like my last idea was close enough
+
+#+begin_quote
+Or I were supposed to somehow build a sub-community with whom I can discuss
+my  decisions on  the  implementation details?  Maintain  dedicated set  of
+issues on pattern matching in fusions, treat  them as a sort of "local RFC"
+and basically replicate the whole process on a smaller scale?
+#+end_quote
+
+I can do this, it is possible, but  what is the point even? I get nim-lang/
+prefix for  the repo  and some sort  of the "official"  status? I  can just
+maintain my own library, we have a PM so people can just require things.
+
+--------
+
+*haxscramper*:
+
+With each  step we are  getting farther and  farther away from  my original
+goal - not  in the stdlib because we should  use "upcoming" let expressions
+(where  is a  roadmap). Not  in the  fusion because  maintainer's incentive
+slowly withered away in complete silence. Now  the solution is to make it a
+collection of packages in nim-lang/ organization.
+
+--------
+
+*haxscramper*:
+
+#+begin_quote
+I'm really sorry for your bad experience and I hope you'll come back.
+#+end_quote
+
+Sorry, but no, I sort of made up  my mind before hitting the "Reply" on the
+first comment, since it  was not a trivial decision for  me, I really don't
+like to burn the bridges.
+
+Followed discussion just made it clear I no longer want to have anything to
+do  with  fusion&related  -  I  will  just  dive  into  abyss  of  complete
+uncertainty, I don't need any of that.
+
+I will just  maintain my own library  - kind of sad all  my aspirations and
+work effectively amounted to a xkcd comic
+
+-----
+
+*Araq*:
+
+#+begin_quote
+I can do this, it is possible, but  what is the point even? I get nim-lang/
+prefix for  the repo  and some sort  of the "official"  status? I  can just
+maintain my own library, we have a PM so people can just require things.
+#+end_quote
+
+Good points. But the "official" status is not marketing, it implies that the code got reviewed, that it is our recommended package, that it's covered by a CI, that it keeps working.
+
+------
+
+*haxscramper*:
+
+Almost two weeks  later, fusion is not  tagged (surely it was  hard to do),
+released roadmap does  not even mention it, nimble is  briefly described as
+"We hope to  be able to ship a  new Nimble with the 2.0 release  but we are
+happy to ship  it whenever it's ready." (probably my  RFC is either implied
+as "you should  know about it" or something like  that, definition of ready
+is not provided, no idea what state is it in now)
+
+So I think that
+
+#+begin_quote
+I'm really sorry for your bad experience and I hope you'll come back
+#+end_quote
+
+Pretty much amounts to "I will pretend I care, but I really don't, and this is certainly not something worth mentioning on the roadmap"
+
+-------
+
+*Araq*:
+
+#+begin_quote
+released roadmap does not even mention it
+#+end_quote
+
+
+Fusion is  not part  of the  plan. You want  me to  make decisions,  I make
+decisions, and then I make the wrong ones. It's inevitable.
+
+#+begin_quote
+nimble is briefly described as...
+#+end_quote
+
+Edit: I extended the section on Nimble a little bit.
+
+------
+
+*haxscramper*:
+
+Main point was - two weeks after fusion is still not tagged and still breaks the code on 1.6, but since it is "not part of the plan" I guess this can be ignored.
+
+-------
+
+*Araq*
+
+I could give you  the rights so that you can fix and  tag things on fusion.
+But you didn't want that so instead you have to be patient.
+
+------
+
+*haxscramper*:
+
+Maybe it  makes sense to just  admit fusion has absolutely  no maintainers,
+and find someone who is willing to  do the job? Think about enabling people
+to do the work  for you instead of singling out me  just because I happened
+to raise the  problem. "you have to  be patient" - yes,  and everyone using
+1.6.0 and unable to  compile basic example from the manual.  (by the way, I
+said  I'm not  willing  to  shoulder the  responsibility  to  make the  API
+decision  and  self-approve  them  without any  external  review,  this  is
+different from being able to tag things. Latter one takes like five minutes
+at  most,  and does  not  have  any  major  implications. Certainly  not  a
+backbreaking effort, so if you want, you can give me permissions and I will
+make this one-line commit).
+
+-----
+
+*Araq*
+
+We released a  new version of Fusion. The next  time problems arise, please
+use Fusion's issue  tracker. If you get no feedback  there, create an issue
+on Nim's issue tracker instead.
+
+------
+
+Last [[https://github.com/nim-lang/RFCs/issues/476][discussion]]  about fusion talked  of its  deprecation. [[https://github.com/nim-lang/fusion/pull/16][PR]] took  about a
+year to be reviewed.
+
+So, to summarize -- in a span of about a month since I got my PR merged the
+project  silently moved  from the  "official implementation"  to "we  don't
+bundle it anymore" and then continued to rot from there.
+
+** TODO Ecosystem and community health
+
+*** TODO Repository issues
+
+**** TODO Number of issues in the repository over time
+
+**** TODO Average time to close the issue
+
+*** TODO Repository pull requests
+
+**** TODO Number of pull requests merged per day
+
+**** TODO Percentage of the pull requests rejected/merged/stalled
+
+# NOTE certain people will have different  rates of closing and opening the
+# pull requests. I need  to know how many PRs did  Araq merge from himself,
+# how many did he merge from dom96 and so on.
+
+*** TODO Number of commits per period of time
+
+# IMPLEMENT  split  number  of  interactions  with  certain  parts  of  the
+# repository -- for example, commits that only touch a standard library are
+# not especially interesting and can be ignored.
+
+*** TODO Engagement of the core contributors in the repository
+
+**** TODO Number of comments on various issues
+
+**** TODO Number of commits
+
+** TODO Financing and team management
+
+Yes, money  talk. Although  I can't say  there is a  single instance  I can
+remember that  can even be  characterize as  even /sketchy/, but  there are
+more than a few loose ends I personally understand.
+
+- Status  allegedly  finances nim  development,  but  I've never  seen  any
+  official account  for this and judging  from some [[https://discord.com/channels/371759389889003530/371759607934353448/973912902903951382][remarks]] ("And  then how
+  Status pays Araq  money is something for  him to explain if  he wishes, I
+  know some  details but don't  want to make it  public in case  he doesn't
+  want to.") it is not considered important enough to be discussed.
+- Nim has [[https://nim-lang.org/blog/2021/10/25/nim-receives-100k-usd-bitcoin.html][received]] 100k in bitcoin  donations that then were transferred to
+  this  [[https://www.blockchain.com/btc/address/1BXfuKM2uvoD6mbx4g5xM3eQhLzkCK77tJ][address]] and  subsequently split  into  [[https://www.blockchain.com/btc/address/bc1qzgw3vsppsa9gu53qyecyu063jfajmjpye3r2h4][these]] [[https://www.blockchain.com/btc/address/bc1qde22ua57hqvl36657mkx4x2gvwp5gn5xh34g6f][two]],  where the  money
+  reside up to  this day. I've never  heard about any plans  to do anything
+  with these  money, but  the USD value  had dropped by  a factor  of three
+  since then.
+- It is not really clear who actually works on the project full-time and is
+  paid  core contributor,  who  is  just a  volunteer  and  who is  getting
+  periodically [[https://opencollective.com/nim/expenses/97898][paid]] to work on a  specific [[https://github.com/nim-lang/RFCs/issues/437#issue-1058638395][tasks]] (most checkpoints had been
+  closed by the ~@xflywind~).
+
+* Part two: "nimskull"
+
+There is no point denying that the project had started as a fork of the nim
+programming language  compiler, but at  the same time  it is less  and less
+relevant as time goes  on, because we want to move into  the direction of a
+/better language/ not a /better reimplementation of a nim compiler/.
+
+A  specific meaning  of  this  distinction will  be  provided  in the  next
+section, here I will briefly talk  about some of the common misconceptions.
+After this  article is  written I  will try  to update  the readme  text to
+reflect the list.
+
+* Part three: our deal
+
+This  is  specifically  aimed  to provide  the  explanation  about  working
+procedures in  the project,  explain the  value framework  that is  used to
+decide what  is going to  be worked  on and what  is going to  be postponed
+until a later time.
+
+I  decided it  would be  better  to formulate  my  ideas on  this topic  as
+precisely as I can,  even if it will sound harsher than it  needs to be. It
+probably won't end up in readme,  because that sort of wording and language
+is very unlikely to excite new contributors and users.
+
+On a basic level, each project is working off a finite resource -- there is
+a limited number of people, they don't have an infinite amount of time they
+can dedicate, they don't  want to have a /burnout on  the OSS/ projects and
+they want to /work on the stuff they enjoy/. At this moment in the goals of
+the project are almost entirely by contributor team. Said team decided that
+it would be the best user of their time to (in no specific order):
+
+1. *DO  NOT* provide a LTS  version that keeps backward  compatibility with
+   mainline nim.
+2. *DO  NOT* /try/  to keep  the backwards  compatibility in  the following
+   cases (and similar scenarios):
+   1. If better language design emerges.
+   2. If the feature had already been marked as deprecated in the mainline
+   3. If the feature is implemented in form of opt-in language dialect
+   4. If keeping the feature intact will require significant compromises on
+      the code quality and maintainability.
+3. *DO  NOT* hesitate  to make  a hard decisions  if it  would allow  for a
+   large-scale cleanup to move forward.
+4. *DO* work on the internal documentation, development history
+5. *DO* work that improves the internal architecture of the compiler.
+6. *DO* reduce the barrier of entry to the new contributors
+7.  *DO*   prioritize  the  consistent  language   design  over  occasional
+   convenience.
+8. *DO*  work on consolidating  existing language dialects into  a /single/
+   language, not exponential number of possible flag combinations.
+9.  *DO* work  on specifying  exact  rules of  the aforementioned  /single/
+   language.
+
+Having read that a user can  decide for themselves whether *they think* the
+trade-offs are acceptable  *for them*.
+
+Personally, I  think it is important  to honestly set the  expectations and
+adhere  to the  community  contract  you proposed,  rather  than trying  to
+accommodate for every  single user from the old community.  Yes, that might
+sound overly harsh, but  I don't want to move along  the =vlang= route with
+over-promises and under-deliveries.
+
+Three important  points that should  be emphasized  in regards as  to where
+this list is relevant and where it is not:
+
+1. The  list above explains the  principles under which we  operate when it
+   comes to the decisions related  to the *implementation* and weighing out
+   the  pros  and  cons  of  technical  decision.  Discussion  process  and
+   community handling  are regulated  by the  Code of  Conduct and  Code of
+   Ethics which take priority over all interactions.
+2. The list should serve as a  breakdown of the developer team priority and
+   served as  a first filter  that is used  to consider specific  ideas and
+   requests.
+3. It explicitly does not provide breakdown of a specific new feature-based
+   objectives  in this  section. Current  part of  the work  is focused  on
+   solving implementation issues with already existing features.
+
+* Part four: our vision
+
+In this  section I will  briefly outline a  general vision for  the project
+moving forward. After more than a year of work it is a good idea to draw on
+the newly discovered knowledge to help better define the direction.
+
+This section does  not focus on the specific technical  details -- they are
+provided in section five, "our scopes".
+
+* Part five: our scopes
+
+In this section  I will provide a more technical  explanation about current
+stage of the development, how it correlates with a vision from the previous
+section ("our vision") and issues in the implementation "why".
+
+This section  is mostly in line  with the near-term development  [[https://github.com/nim-works/nimskull#near-term-development][roadmap]] in
+the  readme,  but  provides  a  lot more  historical  elaborations  on  the
+implementation details.  I try  to keep  the most  relevant details  of the
+reimplementation progress updated in the [[https://github.com/nim-works/nimskull/discussions/142?sort=new][thread]].
+
+* Part six: my vision
+
+#+begin_center
+Why *I* decided to contribute to this specific project.
+#+end_center
+
+I've already provided  most of the historical context I  could get my hands
+on, so in this  part I'm instead going to focus on  the my personal account
+of working for nimskull.
+
+* Part six: my scopes
+
+As a  contributor to the project  I have some  ideas of my own  that either
+haven't been  in the discussion  for a long time  or too fuzzy  to properly
+place on the roadmap. I will  discuss them in the following section, adding
+to the master plan from the part five.
+
+In  most cases  they  have  already been  discussed  /somewhat/ in  various
+places, but are currently too far from the present state of things.
+
+** Documentation generation
+
+*** Problem
+
+Specific features of the documentation generator have always been a notable
+pain point for me  with respect to the ~nim doc~  command. Some people have
+already ([[https://gradha.github.io/articles/2015/08/sad-ways-documentation-generation-tools-suck.html][Sad ways documentation generation tools suck - Rants from the
+Ballmer Peak]]) voiced ([[https://github.com/nim-lang/RFCs/issues/447][Split documentation generation for easier tooling
+and better jsondoc · Issue #447]]) their ideas and concerns. Missing pieces
+include
+
+- Ability to sort generated documentation in any way -- entries are grouped
+  based on the macro/iterator/proc/func/template/method/type basis and then
+  sorted alphabetically.
+- Incredibly  verbose  system of  the  internal  references that  makes  it
+  largely unusable for any sort of complex linking.
+
+  In order to link the type somewhere you  need to spell out a full name of
+  the  procedure with  all of  its argument  types. Now  imagine trying  to
+  casually write documentation for some internal compiler module and having
+  to link /this/:
+
+  #+caption: pickBestCandidate is a semcall.nim function
+  #+begin_src nim
+proc pickBestCandidate(c: PContext,
+                       headSymbol: PNode,
+                       n: PNode,
+                       initialBinding: PNode,
+                       filter: TSymKinds,
+                       best, alt: var TCandidate,
+                       errors: var seq[SemCallMismatch],
+                       flags: TExprFlags) =
+  #+end_src
+
+  Note -- the whole  codebase has a single procedure with  this name, so it
+  is entirely possible to just resolve it from the name alone.
+
+- It  is not  possible  to  get structured  output  from the  documentation
+  generator. Produced 'structured' json  internally contains formatted HTML
+  pieces instead of a structured information.
+
+- Documentation generation happens in a single run, with ~runnableExamples~
+  handled in a non-parallel way. Syntactic  errors in a single comment fail
+  the whole  project build and so  do runnable examples. Running  either of
+  the  source  code  pieces   below  with  src_sh{nim  doc  --errormax=1290
+  file.nim} will  cause compilation  to fail  on a  first invalid  piece of
+  code.
+
+  #+caption: Syntax error in the documentation
+  #+begin_src nim
+proc bad*() =
+  ## *??
+
+proc thing*() =
+  ## *?
+  #+end_src
+- Implementation of the documentation generator is pre
+
+*** Solution
+
+Just as most of the other core tools documentation generator lacks any form
+of  intermediate  representation  that  can  be used  to  easily  create  a
+structured  output.  Things  are  often  [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1204][formatted]]  in-place  or  converted
+[[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1117][directly]] from ~PNode~ [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1108][to]] json, HTML or LaTeX with [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L379][two]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L477][hardcoded]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L515][outputs]].
+
+Lack  of IR  is an  obvious  issue that  prevents  any sort  of the  output
+customization.  A  better  solution  would be  to  have  some  intermediate
+machine-readable format  that can then  be converted into  a human-readable
+output.  Because  documentation generator  effectively  needs  to create  a
+database of the whole project the  most obvious solution would be to create
+an sqlite database from the code.
+
+*** Extra features that solution would enable
+
+- Because public API can now be  stored in a fixed-format database it might
+  be  possible to  determine the  differences between  two versions  of the
+  public API.
+
+** Package management solution
+
+*** Problem
+
+Putting aside many different implementation, UX and ideological issues with
+nimble that I already outlined in  the previous section, the most important
+one is the philosophy it tries to impose on the user. Fundamentally it says
+that there should be only one command  nim user should use and it should be
+~nimble~. Install packages,  compile the code, run the code,  test the code
+and so on. There is a lot of  information that you can't get out of nimble,
+even in the ~.nimble~ script.
+
+- If you  have a  custom ~test~  target and want  to get  the full  list of
+  packages in the same way as a native ~test~ does -- it is not possible.
+- If you want to run an extra  tool, such as ~testament~ for your tests and
+  pass the list of the packages nimble  knows about -- you can't, this data
+  is not exposed.
+
+There  are many  counterpoints  to the  minimum  version selection  package
+managers, most of  which talk about how things are  "usually" done and that
+it "does not  make sense" or "nobody would manually  upgrade the packages".
+Most of them effectively  boil down to the fact that =MVS=  is not the best
+tool for every single workflow, which is perfectly understandable.
+
+There  are  also   several  considerations,  both  of   the  technical  and
+ideological  nature  that  are  involved  in  decision  about  how  package
+management is done.
+
+- First  and foremost  -- /proper/  implementation of  the maximum  version
+  selection  is  a  complicated  task  because  the  problem  itself  is  a
+  NP-complete. There have been [[https://github.com/nim-lang/nimble/issues/890][discussions]] about.
