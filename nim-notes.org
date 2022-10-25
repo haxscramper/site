@@ -176,27 +176,6 @@ passBase(der)
   There are hundred of different diagnostics compiler might produce, but in
   order to figure  out where something might be formatted  your best bet is
   to just ~rg~ over the whole code and edit a random string.
-- Reliance on the one-character variable names  such as ~a~, ~p~, ~n~, ~c~,
-  ~s~ or two-character ones such as  ~sl~ in critically important code. Not
-  commenting said code  in any way besides superficial  annotations that do
-  not describe  the structure  itself. Prime  example -  one-char [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L121-L124][variables]]
-  followed by two  nested loops that introduce [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L155][more]] than  [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L177][shadow]] them. This
-  part of  the compiler serves as  a main semantic analysis  entry point if
-  I'm not  mistaken -  I'm writing  this while I'm  trying to  decipher its
-  purpose, so I might be a big wrong.
-
-  #+caption: Number of the standalone one-character identifiers in ~*.nim~ files
-  #+begin_src sh
-# Nim/compiler on  devel via 👑 v1.6.0 took 2ms
-# ❯ rg -g "*.nim" '[\s(.\[][a-z][\s)=.:\[\]]' | wc -l
-33732
-  #+end_src
-  - [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][sigmatch.paramTypesMatch]]   has   a   total  of   *NINE*   one-character
-    variables -  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][m]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][f]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][a]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2220][x]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2221][y]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2222][z]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2218][c]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2237][r]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2227][i]], all  involved in  a complex
-    algorithm of best  candidate argument search - that's about  a third of
-    an english  alphabet. Good  to know the  algorithm complexity  has such
-    robust limiting  mechanism - at most  you can write code  that is three
-    times as complex, not more.
 - Endless sea  of magical  indices for subnode  access operation  - ~n[0]~,
   ~n[1]~ and so on. It is almost impossible to know what is going on in the
   code unless you have good understanding of all the inputs of a particular
@@ -208,11 +187,6 @@ Nim/compiler on  devel via 👑 v1.6.0
 4536
   #+end_src
 - ~sizeof(lexer.Token)~ -> 72
-- Large number  of 'convenience'  templates that (1)  do not  specify their
-  argument types,  (2) implicitly  capture something  (or expect)  from the
-  environment . Examples include both [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L258][tokenEnd]], [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L283][eatChar]], [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L269][tokenEndPrevious]] -
-  which are not so bad, and [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/vm.nim#L78][vm.stackTrace]] which injects ~return~, obscuring
-  the control flow each time it is used in the code.
 - Proliferation  of   hard-to-spot  hacks   that  are  at   best  sparingly
   documented,  at worst  require a  lot of  guesswork got  figure out.  For
   example, [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L887][lexer.getSymbol]] [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L923][uses]]  enum ~ord()~ and ~PIdent~  id addition (or

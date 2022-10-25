@@ -215,6 +215,8 @@ implementation of the compiler in order to make sense out of it.
 
 *** TODO Quality of the source code
 
+**** Commit messages
+
 Source code implementation has an absolutely appauling quality with unclear
 commit  messages and  a very  interesting [[https://github.com/nim-lang/Nim/pull/19211][attitude]]  from some  of the  core
 developers.
@@ -226,7 +228,7 @@ I have no intention to follow this guideline so I cannot accept it. The problem 
 The PR  was merged at [2021-12-03  Fri], but it didn't  really prevent [[https://github.com/nim-lang/Nim/commit/07b645342abd06b2323df042c170eb847f51880d][more]]
 [[https://github.com/nim-lang/Nim/commit/48d41ab375498ba638863b55807bac96eccf667a][fixes]],  [[https://github.com/nim-lang/Nim/commit/81087c949f620dc80697364da414872791ffe23c][fixes]], [[https://github.com/nim-lang/Nim/commit/81087c949f620dc80697364da414872791ffe23c][fixes]],  [[https://github.com/nim-lang/Nim/commit/08ae3467b9b3f52fa568bbf06a9057a87020158b][refactorings]],  [[https://github.com/nim-lang/Nim/commit/6d8178a93e14f24cbb327cf718de181942339126][closes]] etc.  But I  guess  it is  not
 surprising given core contributors seem  to have an inverse proportion wrt.
-to the  number of commits and  their documentation, starting with  Araq not
+to the number of commits and  their documentation, starting with =Araq= not
 writing anything else beside a title (49 characters).
 
 #+caption: Average commit message lenght
@@ -242,6 +244,81 @@ echo "Average commit: "(echo (wc -c < $file) "/" (wc -l < $file) | bc -l)", #com
 | Dom96            |                  64.00 |              1477 | active   |
 | Timothee Cour    |                     82 |              1088 | inactive |
 
+**** Code quality itself
+
+Before going into specific examples I want to briefly outline the situation
+with  the data  flow  inside of  compiler  and what  types  are often  used
+internally.
+
+The most important type you should know about is ~PNode~ -- the name itself
+is a pascal-era artifact and effectively  means "node". The type is used to
+represent your  code inside of the  compiler -- all files  are first parsed
+into ~PNode~ then sem modifies it and finally generates the target code for
+various backends.  The whole compiler  pipeline uses the single  type, from
+start to finish.
+
+~PNode~ [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/ast.nim#L785][is]] a variant [[https://nim-lang.org/docs/manual.html#types-object-variants][object]] that uses [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/ast.nim#L36][TNodeKind]] as a switch type. Kinds are
+divided  into two  broad categories  -- literals  (integer, floating-point,
+string)  and 'container'  (definitions, statements,  expressions etc)  that
+store nodes in a strictly ordered fashion.
+
+***** Magical indices all over the code
+
+Access to  the data in  the AST is  largely performed using  direct indexed
+access --  there are over  four thousand naked ~[IDX]~  accesses throughout
+the code  (~rg '\[\d+\]' |  wc -l~ => 4601  ATTOW). In order  to understand
+what [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semexprs.nim#L2498][some]]  [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semstmts.nim#L1863-L1864][piece]] of  [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semstmts.nim#L1448-L1453][code]] might  be doing you  would need  to know  all the
+possible node kinds that pass through this part of the code.
+
+Explanation  for the  transformations that  are performed  on the  nodes is
+largely absent.
+
+***** Tens of thousands of one-character variables
+
+Number  of  one-character  variables  in the  implementation  is  downright
+obscene. There  are some common  cases like  ~g~ or ~ModuleGraph~,  ~c~ for
+~PContext~,  ~TContext~  or  ~PPassContext~,  ~m~  for  ~Module~,  ~n~  for
+~PNode~, but overall number of the  one-char variable usages goes into tens
+of thousands (~rg -g "*.nim"  '[\s(.\[][a-z][\s)=.:\[\]]' | wc -l~ => 33834
+ATTOW) sometimes concentrating in an absolutely unimaginable numbers:
+
+#+begin_quote
+one-char [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L121-L124][variables]]  followed by two  nested loops that introduce  [[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L155][more]] than
+[[https://github.com/nim-lang/Nim/blob/f540fd5cde268d2ecd1e22a20cac0879bf405f85/compiler/passes.nim#L177][shadow]] them. This  part of the compiler serves as  a main semantic analysis
+entry point  if I'm  not mistaken -  I'm writing this  while I'm  trying to
+decipher its purpose, so I might be a big wrong.
+#+end_quote
+
+
+#+begin_quote
+[[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][sigmatch.paramTypesMatch]] has a total of *NINE* one-character variables - [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][m]],
+[[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][f]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2209][a]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2220][x]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2221][y]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2222][z]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2218][c]], [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2237][r]],  [[https://github.com/nim-lang/Nim/blob/cde6b2aab8f67291eca5375a067f97e98b7593ee/compiler/sigmatch.nim#L2227][i]], all  involved in  a complex  algorithm of  best
+candidate argument  search - that's about  a third of an  english alphabet.
+Good to know the algorithm complexity  has such robust limiting mechanism -
+at most you can write code that is three times as complex, not more.
+#+end_quote
+
+***** Sea of 'convenience' templates
+
+Large  number of  'convenience' templates  that  (1) do  not specify  their
+argument  types, (2)  implicitly  capture something  (or  expect) from  the
+environment .  Examples include both [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L258][tokenEnd]],  [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L283][eatChar]], [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/lexer.nim#L269][tokenEndPrevious]] -
+which are not  so bad, and [[https://github.com/nim-lang/Nim/blob/8dcf367e5223ae26b57c9bbfaec6e70ac14bb820/compiler/vm.nim#L78][vm.stackTrace]] which  injects ~return~, obscuring
+the control flow each time it is used in the code.
+
+TODO astrepr implementation with ~compiles~ hacks
+
+***** Exceptions for control flow
+
+~globalError~ and ~ERecoverableError~ for control flow handling - there are
+around  *one hundred*  (105  ATTOW)  calls to  the  ~globalError~ that  can
+arbitrarily raise "recoverable" exception during semantic analysis which is
+then   caught  in   the   ~semexpr~  and   discarded  (~tryExpr~,   ~except
+ERecoverableError: discard~) and [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L361][some]] [[https://github.com/nim-lang/Nim/blob/b6bfe38ff5283f77d5e5e78da06d2710bc16afb6/compiler/sem.nim#L662][more]] [[https://github.com/nim-lang/Nim/blob/d4c0d35b32e51eae06e65e78c253cdaf8bb42446/compiler/suggest.nim#L614][examples]] of [[https://github.com/nim-lang/Nim/blob/0014b9c48e883d3c04995b9e83bb0f8468a16df6/compiler/semexprs.nim#L2204][this]].
+
+Exceptions being used  for control, discarding exceptions  - again, someone
+(like me)  might consider this  to be a  bad code smell  that significantly
+reduces the readability. Whole codebase turns into spaghetti.
 
 ** TODO General issues with the management
 
