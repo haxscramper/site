@@ -171,7 +171,47 @@ Documentation quality is steadily improving year-over-year.
 
 **** TODO The code is still effectively owned by a single person
 
-*** TODO Error messages
+*** Error messages
+
+I've written several RFCs regarding  error message formatting and handling:
+[[https://github.com/nim-lang/RFCs/issues/323][Compiler error suggestions · Issue #323]], [[https://github.com/nim-lang/RFCs/issues/324][Structured compilation errors ·
+Issue #324]],  [[https://github.com/nim-lang/RFCs/issues/325][Type mismatch errors ·  Issue #325]] so I  will briefly rehash
+the issues  regarding user-facing side of  things and implementation-facing
+side. To the error quality RFC I got a lovely response
+
+#+begin_quote
+Feel free to improve the compiler's error messages. There is not much to disagree here with. (For me the error messages are good enough but I don't use mapIt nor noSideEffect.)
+#+end_quote
+
+It took  approximately two months of  work, almost twenty thousand  line of
+changes in  173 compiler files  and significant  help of the  several other
+contributors to  [[https://github.com/nim-works/nimskull/pull/94][provide]] a  /basis/ for further  error improvements.  And I
+that  was  preceded  by almost  a  year  of  bashing  my head  against  the
+implementation of the compiler in order to make sense out of it.
+
+- Function  call  resolution  failures  were  created  with  little  to  no
+  consideration to the  formatting quality. Things are  simply formatted as
+  strings, [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semcall.nim#L264][sorted]] in an alphabetical order and printed out.
+- Error  messages themselves  are implemented  using almost  every possible
+  solution, including direct string [[https://github.com/nim-lang/Nim/blob/4728c52c787b19c60a5533e20b7d71ee9ca137a3/compiler/semstmts.nim#L51][formatting]] and [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semcall.nim#L413][concatenation]] (sometimes
+  with [[https://github.com/nim-lang/Nim/blob/5602183234f59ece4fd668915da848f0753cbbb9/compiler/pragmas.nim#L116][raw]] ~PNode~  renders -- remember these lovely "but  expression has a
+  type" with ~mapIt~ results), [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/msgs.nim#L577][formatting]] [[https://github.com/nim-lang/Nim/blob/5602183234f59ece4fd668915da848f0753cbbb9/compiler/lineinfos.nim#L106][enums]], formatting from the [[https://github.com/nim-lang/Nim/blob/69eaa4f14cdb1276650141adb6b2e96f478e0856/compiler/semcall.nim#L280][consts]]
+  that are indistinguishable from the enums but for some reason were placed
+  separately.
+- Current "new" idea  of the ~nkError~ never went [[https://github.com/nim-lang/Nim/search?q=nkError][anywhere]]  (link to the GH
+  search  --  at the  time  of  writing it  shows  only  five uses  of  the
+  ~nkError~) after it had been [[https://github.com/nim-lang/Nim/commit/cfff27529e4ec129daad602d945a2b222145e922][added]].
+- It is not possible to get errors  in a structured manner, one that can be
+  used for testing without  hardcoding current rendering format. Separation
+  of data and presentation  -- not that hard of a concept  to grasp, yet to
+  this day,  if you  need to  change even  a single  character in  an error
+  formatting, you also need to go and update all tests suits that have this
+  error. Each time.
+- There  is no  encouragement of  the incremental  error improvements,  and
+  thanks to  the necessity to  edit the test suite  each time it  becomes a
+  major chore.
+
+
 
 *** TODO Quality of the source code
 
@@ -658,6 +698,66 @@ the  readme,  but  provides  a  lot more  historical  elaborations  on  the
 implementation details.  I try  to keep  the most  relevant details  of the
 reimplementation progress updated in the [[https://github.com/nim-works/nimskull/discussions/142?sort=new][thread]].
 
+** Proper intermediate representation for compiler stages
+
+*** Data-oriented design
+
+*** Lexer data
+
+*** Parser data
+
+*** Error data
+
+Mainline  implementation  of  the  compiler  handling  does  not  have  any
+structured  form  of  the  error message.  Things  are  randomly  formatted
+in-placed using multiple of variations of different
+
+*** Semantic analysis data
+
+*** Embedded virtual machine data
+
+*** Backend data
+
+** Code formatting solution
+
+Official stance on  the improvement of the code  formatting solutions seems
+to be somewhere in the neighborhood of "just format the code manually".
+
+#+caption: IRC [[https://irclogs.nim-lang.org/17-07-2019.html#10:27:47][logs]]
+#+begin_quote
+teach a system without eyes how to make code visually appealing, how hard can it be?
+#+end_quote
+
+The  fact that  most  major  languages seem  to  have  solved the  problem,
+sometimes even multiple times suggest that it is not so "hard" to implement
+after  all. The  main issues  seems  to be  rooted  in the  lack of  proper
+intermediate representation in the compiler.
+
+*** Problem
+
+~nimpretty~ itself is a fairly simple  tool. Implementation leaves a lot to
+be  desired -  currently it  is  hacked into  ~parser.nim~ and  ~lexer.nim~
+directly, with  multiple (total  of ~37  and ~23  respectively) conditional
+compilation checks like
+
+#+begin_src nim
+  if p.tok.tokType in {tkCurlyDotRi, tkCurlyRi}:
+    when defined(nimpretty):
+      if p.tok.tokType == tkCurlyRi: curlyRiWasPragma(p.em)
+    getTok(p)
+#+end_src
+
+This makes it really  hard to provide a global code  layout, leading to bad
+formatting -- if the tool does  not even understand the code properly there
+is no hope it would be able to format it in any reasonable manner.
+
+*** Solution
+
+Code formatting  should first get a  concrete syntax tree --  one that does
+not loose positional and structural information  -- and then format it back
+into the source code. We already  [[https://github.com/nim-works/nimskull/pull/361][implemented]] the code layout algorithm and
+continuing the work in this direction.
+
 * Part six: my vision
 
 #+begin_center
@@ -669,6 +769,9 @@ on, so in this  part I'm instead going to focus on  the my personal account
 of working for nimskull.
 
 * Part six: my scopes
+  :PROPERTIES:
+  :ID:       df3bccc6-1850-4ad1-85ff-44776c59f15c
+  :END:
 
 As a  contributor to the project  I have some  ideas of my own  that either
 haven't been  in the discussion  for a long time  or too fuzzy  to properly
@@ -774,6 +877,32 @@ even in the ~.nimble~ script.
   pass the list of the packages nimble  knows about -- you can't, this data
   is not exposed.
 
+*** Package manager assumptions solution
+
+Key  ideas of  the package  management  solution is  that *package  manager
+manages the environment* and *if the environment hasn't changed the package
+manager does not need to run*.
+
+There  is already  a notion  of the  "environment" via  ~nim.cfg~ that  can
+specify  the   ~--path="<package  path>"~  configuration  options   to  the
+compiler or any other tool that can be put in the compilation pipeline.
+
+- A package  manager to  manage your  package installation.  Downloads your
+  packages  and   resolves  things   using  information  provided   by  git
+  submodules.  When version  conflict occurs,  we use  the MVS  strategy to
+  resolve which version of the library you  end up getting in the end. When
+  the package  manager finishes  execution, you are  left with  a ~nim.cfg~
+  file  that   contains  ~--path:~  parameters  with   specify  where  each
+  dependency was installed in the end.
+- ~<build  tool>~ that  might  be  used after  package  download stage  has
+  finished. At  this point  it is  used to finish  the installation  of the
+  packages  -  for some  libraries  it  might  be  needed to  perform  some
+  additional actions, like building ~.so~.
+- After  all  of your  packages  are  correctly  (1) *downloaded*  and  (2)
+  *installed*, you can start compiling your code using nim compiler.
+
+*** Dependency resolution algorithm solution
+
 There  are many  counterpoints  to the  minimum  version selection  package
 managers, most of  which talk about how things are  "usually" done and that
 it "does not  make sense" or "nobody would manually  upgrade the packages".
@@ -786,4 +915,28 @@ management is done.
 
 - First  and foremost  -- /proper/  implementation of  the maximum  version
   selection  is  a  complicated  task  because  the  problem  itself  is  a
-  NP-complete. There have been [[https://github.com/nim-lang/nimble/issues/890][discussions]] about.
+  NP-complete. There have  been [[https://github.com/nim-lang/nimble/issues/890][discussions]] about using  a better algorithm
+  for the resolution,  but it is still pretty  sophisticated, [[https://nex3.medium.com/pubgrub-2fb6470504f][especially]] if
+  you want to get a [[ for the resolution failures][good]] UX.
+
+  Minimum  version selection,  on the  other hand,  is a  trivial and  very
+  predictable algorithm that  can be written in a hundred  lines of code or
+  so.
+- Second -- usage  of the =MVS= would require package  authors to be honest
+  with what  their requirements are. If  you actually need the  ~0.4.0~ and
+  not the ~0.3.0~ you should no longer rely on the implicit assumption that
+  PM will "do the right thing".
+- Thirdly -- package manager won't suddenly pull a different version of the
+  dependency unless you explicitly specify it can do so.
+
+*** "Single tool" solution
+
+In several cases the importance of a single tool, which can perform all the
+project-related activity, has been emphasized. Go has often been used as an
+example.  Solution above  is completely  orthogonal to  this request  as it
+would be trivial  to provide a main  driver program, in the  same manner as
+~clang++~ is a driver on top of multiple smaller execution actions.
+
+Keeping things separate on the implementation level still allows to provide
+a unified  interface that would even  support a user-provided actions  in a
+manner similar to the ~git~ subcommands.
