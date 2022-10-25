@@ -211,7 +211,39 @@ implementation of the compiler in order to make sense out of it.
   thanks to  the necessity to  edit the test suite  each time it  becomes a
   major chore.
 
+***** Random hacks all over the place
 
+Proliferation of hard-to-spot hacks that  are at best sparingly documented,
+at  worst  require  a  lot  of  guesswork  got  figure  out.  For  example,
+[[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L887][lexer.getSymbol]] [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L923][uses]] enum ~ord()~ and ~PIdent~ id addition (or [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L934][subtraction]])
+in order to  figure out the kind  of the token. Why are  identifier ids are
+guaranteed to be mapped to  tokens? Maybe because ~newIdentCache~ [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/idents.nim#L114][fills ids]]
+at the  start with values from  the [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/wordrecg.nim#L17][~TSpecialWord~]]? But how  latter enum is
+related  to the  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L37][~TokenKind~]]  we are  trying to  figure  out? (they  /look/
+similar, but is that  intentional?) Why do we need to  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L896][hash]] the token value
+in the ~getSymbol~? Why do hashing in the ~getOperator~? Can't we just keep
+a map ~token-string -> token-kind~ conversion?
+
+Kludges are thrown  on each other all over the  place ~Token.iNumber~ is an
+integer  literal  of   a  token,  according  to   the  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L101][documentation]]  (BTW,
+single-hash-comments are not processed  by the documentation generator, yet
+compiler uses them  for docs anyway -  as you can see in  the linked file),
+but it is  also a (1) place to  [[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L441][split]] user numerical literals at  and a (2)
+[[https://github.com/nim-lang/Nim/blob/f433d9cccf1a05da1a24e9fed9b914b7a2a35945/compiler/lexer.nim#L1094][number]] of newlines in the comment token
+
+When an  error message is written  out it goes into  ~writeLnHook~ callback
+(misused for ~{.explain.}~)  (hacked for ~compiles()~) and  was written out
+to the stdout/stderr.
+
+Of course you can't  have a proper error reporting in  the nim compiler, so
+this hook was also misused to  the point of complete nonsense. Most notable
+clusterfuck  where you  could spot  this little  shit is  implementation of
+~{.explain.}~ pragma  for concepts. It  was implemented via  really 'smart'
+(aka welcome to hell) solution in
+
+[[https://github.com/nim-works/nimskull/commit/74a80988d9289e8147a791c4b0939d4287baaff3][74a8098]] (sigmatch ~704)  and then further "improved" in  [[https://github.com/nim-lang/Nim/commit/fe48dd1cbec500298f7edeb75f1d6fef8490346c][fe48dd1]] by slicing
+out  parts  of  the  error  message with  ~let  msg  =  s.replace("Error:",
+errorPrefix)~
 
 *** TODO Quality of the source code
 
