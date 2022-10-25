@@ -215,6 +215,34 @@ implementation of the compiler in order to make sense out of it.
 
 *** TODO Quality of the source code
 
+Source code implementation has an absolutely appauling quality with unclear
+commit  messages and  a very  interesting [[https://github.com/nim-lang/Nim/pull/19211][attitude]]  from some  of the  core
+developers.
+
+#+begin_quote
+I have no intention to follow this guideline so I cannot accept it. The problem is real, but the solution is to write some simple tool that makes "git log" more useful.
+#+end_quote
+
+The PR  was merged at [2021-12-03  Fri], but it didn't  really prevent [[https://github.com/nim-lang/Nim/commit/07b645342abd06b2323df042c170eb847f51880d][more]]
+[[https://github.com/nim-lang/Nim/commit/48d41ab375498ba638863b55807bac96eccf667a][fixes]],  [[https://github.com/nim-lang/Nim/commit/81087c949f620dc80697364da414872791ffe23c][fixes]], [[https://github.com/nim-lang/Nim/commit/81087c949f620dc80697364da414872791ffe23c][fixes]],  [[https://github.com/nim-lang/Nim/commit/08ae3467b9b3f52fa568bbf06a9057a87020158b][refactorings]],  [[https://github.com/nim-lang/Nim/commit/6d8178a93e14f24cbb327cf718de181942339126][closes]] etc.  But I  guess  it is  not
+surprising given core contributors seem  to have an inverse proportion wrt.
+to the  number of commits and  their documentation, starting with  Araq not
+writing anything else beside a title (49 characters).
+
+#+caption: Average commit message lenght
+#+begin_src elvish
+var file = "/tmp/count"
+git log --pretty="format:%an;;;%s %b" | cat | rg "(Andreas Rumpf|Araq)" | sd "^.*?;;;" "" > $file
+echo "Average commit: "(echo (wc -c < $file) "/" (wc -l < $file) | bc -l)", #commits "(wc -l < $file)
+#+end_src
+
+| Core contributor | average message length | number of commits | status   |
+|------------------+------------------------+-------------------+----------|
+| Araq             |                  48.59 |              8898 | active   |
+| Dom96            |                  64.00 |              1477 | active   |
+| Timothee Cour    |                     82 |              1088 | inactive |
+
+
 ** TODO General issues with the management
 
 ** TODO Tooling implementation issues
