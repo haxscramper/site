@@ -112,7 +112,6 @@ most of the things that were wrong with the package manager at the time.
    is not  possible to  run the  compiler separately with  the same  set of
    packages as in command-line.
 
-
 *** Dead community management
 
 By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
@@ -134,11 +133,13 @@ This is my personal view of the matter, I'm not going to lie and say that I don'
 
 P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
 
-
 [fn:either-96] Remember -- this is a main project contributor talking about
 their
 
 ** TODO Issues with the implementation
+
+This section outlines what is wrong  with the current implementation -- for
+our solutions to fixing the problems see the "our vision" section below.
 
 *** Handling of the community requests
 
@@ -241,11 +242,11 @@ clusterfuck  where you  could spot  this little  shit is  implementation of
 ~{.explain.}~ pragma  for concepts. It  was implemented via  really 'smart'
 (aka welcome to hell) solution in
 
-[[https://github.com/nim-works/nimskull/commit/74a80988d9289e8147a791c4b0939d4287baaff3][74a8098]] (sigmatch ~704)  and then further "improved" in  [[https://github.com/nim-lang/Nim/commit/fe48dd1cbec500298f7edeb75f1d6fef8490346c][fe48dd1]] by slicing
+[[https://github.com/nim-works/nimskull/commit/74a80988d9289e8147a791c4b0939d4287baaff3][74a8098]] (=sigmatch= ~704) and then further "improved" in [[https://github.com/nim-lang/Nim/commit/fe48dd1cbec500298f7edeb75f1d6fef8490346c][fe48dd1]] by slicing
 out  parts  of  the  error  message with  ~let  msg  =  s.replace("Error:",
 errorPrefix)~
 
-*** TODO Quality of the source code
+*** Quality of the source code
 
 **** Commit messages
 
@@ -352,6 +353,24 @@ Exceptions being used  for control, discarding exceptions  - again, someone
 (like me)  might consider this  to be a  bad code smell  that significantly
 reduces the readability. Whole codebase turns into spaghetti.
 
+*** Extra
+
+- Linux [[https://github.com/nim-lang/RFCs/issues/58#issuecomment-442785793][is]] "fundamentally broken" and
+
+  #+begin_quote
+  dlopen  is widely  used by  Python, Ruby,  Perl, ...  what you're  really
+  telling me  here is that your  OS is fundamentally broken.  That might be
+  news for you, but it isn't for me.
+  #+end_quote
+
+  So using  native linker is  not a feasible option  -- proven by  the fact
+  *dynamic* languages (TIL  Nim is a [[https://github.com/nim-lang/Nim/issues/9203#issuecomment-428201355][dynamic]] language,  right) use ~dlopen~
+  so instead  it would be better  to just [[https://github.com/nim-lang/Nim/blob/1247043c9036fb6029c87bf5bed9021c6eff6092/lib/wrappers/openssl.nim#L337-L357][reimplement]] random  pieces of the
+  linker and still resort to low-level [[https://github.com/nim-lang/Nim/blob/1247043c9036fb6029c87bf5bed9021c6eff6092/lib/wrappers/openssl.nim#L411][hacks]].
+
+
+
+
 ** TODO General issues with the management
 
 ** TODO Tooling implementation issues
@@ -402,6 +421,13 @@ you have any  knowledge of the subject  you should run away  already) and a
 tool that requires you to [[https://github.com/nim-lang/c2nim/blob/master/doc/c2nim.rst#def-directive][modify]] the headers.
 
 **** standard library
+**** Nim forum
+
+- [[https://github.com/nim-lang/nimforum/issues/180][searching posts by user should not be limited to 1st 10 posts/threads ·
+  Issue #180 · nim-lang/nimforum ]]
+- https://www.reddit.com/r/nim/comments/7smw81/comment/dt7xmab/
+- https://forum.nim-lang.org/t/3534#22078
+- https://forum.nim-lang.org/t/8852#57838
 
 **** fusion
 
@@ -781,14 +807,16 @@ it would be the best user of their time to (in no specific order):
       the code quality and maintainability.
 3. *DO  NOT* hesitate  to make  a hard decisions  if it  would allow  for a
    large-scale cleanup to move forward.
-4. *DO* work on the internal documentation, development history
-5. *DO* work that improves the internal architecture of the compiler.
-6. *DO* reduce the barrier of entry to the new contributors
-7.  *DO*   prioritize  the  consistent  language   design  over  occasional
-   convenience.
-8. *DO*  work on consolidating  existing language dialects into  a /single/
+4. *DO  NOT* spec  out bugs and  *DO NOT* solidify  bugs into  the language
+   design
+5. *DO* work on the internal documentation, development history
+6. *DO* work that improves the internal architecture of the compiler.
+7. *DO* reduce the barrier of entry to the new contributors
+8. *DO*   prioritize  the  consistent  language   design  over  occasional
+  convenience.
+9. *DO*  work on consolidating  existing language dialects into  a /single/
    language, not exponential number of possible flag combinations.
-9.  *DO* work  on specifying  exact  rules of  the aforementioned  /single/
+10. *DO* work  on specifying  exact  rules of  the aforementioned  /single/
    language.
 
 Having read that a user can  decide for themselves whether *they think* the
@@ -823,6 +851,26 @@ the newly discovered knowledge to help better define the direction.
 
 This section does  not focus on the specific technical  details -- they are
 provided in section five, "our scopes".
+
+>>>>>>>>>>>>>
+
+One of the most important goal is to make it easier for contributors on all
+levels. Writing documentation and reorganizing the code is pretty good, but
+there are lots of smaller things that improve quality of life. Attention to
+details is important. You can continue  to keep the whole compiler codebase
+in  one   folder  with  150+  files   or  you  can  separate   things  into
+subdirectories based  on the respective  compiler subsystems. You  can keep
+test suite as  a gigantic mess of ~t10489_a.nim~ files  that can be decoded
+only if you  use git blame extensively  ... or you can spend  a fraction of
+implementation efforts and  document what you've done and why  it should be
+tested this  way. You can  keep adding various ~stdlib_misc~  tests, random
+toplevel folders with a single test (TODO insert ~test.c~ link, link to the
+gigantic ~stdlib~), misplaced tests (TODO insert ~collections~ link, stdlib
+link), continue testing with ~echo~
+
+https://github.com/nim-lang/Nim/tree/3469f37a56c31623eff473c65fd231bb5a77d5d8/tests/misc
+
+<<<<<<<<<<<<<
 
 * Part five: our scopes
 

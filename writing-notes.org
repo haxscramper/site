@@ -8,6 +8,9 @@
   - [[https://www.wordhippo.com/][Thesaurus and Word Tools | WordHippo]]
   - [[https://skell.sketchengine.eu/#home?lang=en][SKELL]]
   - [[https://writebetter.io/][WriteBetter &#8211; A linguistic search engine]]
+- NLP processing
+  - [[https://corenlp.run/][CoreNLP]]
+  - [[https://emorynlp.github.io/ddr/doc/pages/overview.html][Deep dependencies guidelines]]
 - Dictionaries
   - Find a word by it's description
     - [[https://reversedictionary.org/][Reverse Dictionary]] This reverse dictionary allows you to search for words
@@ -93,15 +96,15 @@ painintheenglish.com###popBottom
 - NN :: *noun, common, singular or mass* common-carrier cabbage
   knuckle-duster Casino afghan shed thermostat investment slide humour
   falloff slick wind hyena override subhumanity machinist ...
-- NNP :: *noun, proper, singular* Motown Venneboerger Czestochwa Ranzer
-  Conchita Trumplane Christos Oceanside Escobar Kreisler Sawyer Cougar
-  Yvette Ervin ODI Darryl CTCA Shannon A.K.C. Meltex Liverpool ...
-- NNPS :: *noun, proper, plural* Americans Americas Amharas Amityvilles
-  Amusements Anarcho-Syndicalists Andalusians Andes Andruses Angels Animals
-  Anthony Antilles Antiques Apache Apaches Apocrypha ...
-- NNS :: *noun, common, plural* undergraduates scotches bric-a-brac
-  products bodyguards facets coasts divestitures storehouses designs clubs
-  fragrances averages subjectivists apprehensions muses factory-jobs ...
+  - NNP :: *noun, proper, singular* Motown Venneboerger Czestochwa Ranzer
+    Conchita Trumplane Christos Oceanside Escobar Kreisler Sawyer Cougar
+    Yvette Ervin ODI Darryl CTCA Shannon A.K.C. Meltex Liverpool ...
+  - NNPS :: *noun, proper, plural* Americans Americas Amharas Amityvilles
+    Amusements Anarcho-Syndicalists Andalusians Andes Andruses Angels Animals
+    Anthony Antilles Antiques Apache Apaches Apocrypha ...
+  - NNS :: *noun, common, plural* undergraduates scotches bric-a-brac
+    products bodyguards facets coasts divestitures storehouses designs clubs
+    fragrances averages subjectivists apprehensions muses factory-jobs ...
 - PDT :: *pre-determiner* all both half many quite such sure this
 - POS :: *genitive marker* ' 's
 - PRP :: *pronoun, personal* hers herself him himself hisself it itself me
@@ -111,12 +114,12 @@ painintheenglish.com###popBottom
 - RB :: *adverb* occasionally unabatingly maddeningly adventurously
   professedly stirringly prominently technologically magisterially
   predominately swiftly fiscally pitilessly
-- RBR :: *adverb, comparative* further gloomier grander graver greater
-  grimmer harder harsher healthier heavier higher however larger later
-  leaner lengthier less- perfectly lesser lonelier longer louder lower more
-- RBS :: *adverb, superlative* best biggest bluntest earliest farthest
-  first furthest hardest heartiest highest largest least less most nearest
-  second tightest worst
+  - RBR :: *adverb, comparative* further gloomier grander graver greater
+    grimmer harder harsher healthier heavier higher however larger later
+    leaner lengthier less- perfectly lesser lonelier longer louder lower more
+  - RBS :: *adverb, superlative* best biggest bluntest earliest farthest
+    first furthest hardest heartiest highest largest least less most nearest
+    second tightest worst
 - RP :: *particle* aboard about across along apart around aside at away
   back before behind by crop down ever fast for forth from go high i.e. in
   into just later low more off on open out over per pie raising start teeth
@@ -131,24 +134,24 @@ painintheenglish.com###popBottom
   attention avoid bake balkanize bank begin behold believe bend benefit
   bevel beware bless boil bomb boost brace break bring broil brush build
   ...
-- VBD :: *verb*, *past tense* dipped pleaded swiped regummed soaked tidied
-  convened halted registered cushioned exacted snubbed strode aimed adopted
-  belied figgered speculated wore appreciated contemplated ...
-- VBG :: *verb*, *present participle or gerund* telegraphing stirring
-  focusing angering judging stalling lactating hankerin' alleging veering
-  capping approaching traveling besieging encrypting interrupting erasing
-  wincing ...
-- VBN :: *verb*, *past participle* multihulled dilapidated aerosolized
-  chaired languished panelized used experimented flourished imitated
-  reunifed factored condensed sheared unsettled primed dubbed desired ...
-- VBP :: *verb, present tense, not 3rd person singular* predominate wrap
-  resort sue twist spill cure lengthen brush terminate appear tend stray
-  glisten obtain comprise detest tease attract emphasize mold postpone
-  sever return wag ...
-- VBZ :: *verb, present tense, 3rd person singular* bases reconstructs
-  marks mixes displeases seals carps weaves snatches slumps stretches
-  authorizes smolders pictures emerges stockpiles seduces fizzes uses
-  bolsters slaps speaks pleads ...
+  - VBD :: *verb*, *past tense* dipped pleaded swiped regummed soaked tidied
+    convened halted registered cushioned exacted snubbed strode aimed adopted
+    belied figgered speculated wore appreciated contemplated ...
+  - VBG :: *verb*, *present participle or gerund* telegraphing stirring
+    focusing angering judging stalling lactating hankerin' alleging veering
+    capping approaching traveling besieging encrypting interrupting erasing
+    wincing ...
+  - VBN :: *verb*, *past participle* multihulled dilapidated aerosolized
+    chaired languished panelized used experimented flourished imitated
+    reunifed factored condensed sheared unsettled primed dubbed desired ...
+  - VBP :: *verb, present tense, not 3rd person singular* predominate wrap
+    resort sue twist spill cure lengthen brush terminate appear tend stray
+    glisten obtain comprise detest tease attract emphasize mold postpone
+    sever return wag ...
+  - VBZ :: *verb, present tense, 3rd person singular* bases reconstructs
+    marks mixes displeases seals carps weaves snatches slumps stretches
+    authorizes smolders pictures emerges stockpiles seduces fizzes uses
+    bolsters slaps speaks pleads ...
 - WDT :: *WH-determiner* that what whatever which whichever
 - WP :: *WH-pronoun* that what whatever whatsoever which who whom whosoever
 - WP$ :: *WH-pronoun, possessive* whose
@@ -179,7 +182,12 @@ painintheenglish.com###popBottom
 - CONJ :: Conjunct
 - CSUBJ :: Clausal subject
 - CSUBJPASS :: Clausal subject (passive)
-- DATIVE :: Dative
+- DATIVE (DAT)  ::   Dative is either the indirect object  or a preposition
+  phrase that carries the same thematic role as the indirect object.
+
+  - /"The woman gave the book [to the man]_dat"/
+  - /"John sent a book [to you]_dat"/
+
 - DEP :: Unclassified dependent
 - DET :: Determiner
 - DOBJ :: Direct Object
@@ -288,6 +296,102 @@ with open("/tmp/graph.dot", 'w') as file:
     file.write(text)
 
 os.system("dot -Tpng -o /tmp/graph.png /tmp/graph.dot")
+#+end_src
+
+** =nltk=
+
+*** Constituency parsing
+
+I swear I've seen an easier method  somewhere else, but from what I've seen
+the  "best"  solution   for  getting  a  tree  structure  is   now  to  use
+~CoreNLPParser~ solution. Setup is pretty annoying because it involves some
+manual configuration and stuff.
+
+First of all, you need to install  the =nltk= library itself. Then you need
+to     download     the     Stanford    language     model     (?)     from
+https://stanfordnlp.github.io/CoreNLP/download.html  --  "Download  CoreNLP
+X.X.X". After you downloaded the zip file, extract it into some directory.
+
+Then you  need to  /launch the NLP  server/ and only  after ensuring  it is
+correctly  started you  can  run the  analysis script.  The  server can  be
+launched using
+
+#+caption: Start Stanford Core NLP server
+#+begin_src python
+from nltk.parse.corenlp import CoreNLPServer
+import os
+
+VERSION = "4.5.1"
+STANFORD = f"stanford-corenlp-{VERSION}"
+
+# Create the server
+server = CoreNLPServer(
+   os.path.join(STANFORD, f"stanford-corenlp-{VERSION}.jar"),
+   os.path.join(STANFORD, f"stanford-corenlp-{VERSION}-models.jar"),
+)
+
+# Start the server in the background
+server.start()
+#+end_src
+
+This script assumes  you've unpacked the NLP archive in  the same directory
+as the  script.
+
+NOTE:  the ~CoreNLPServer~  fails to start  it will  give a
+rather confusing error message in regards to the missing file path:
+
+#+begin_example
+Could not find stanford-corenlp-(\d+)\.(\d+)\.(\d+)\.jar jar file at stanford-corenlp-4.5.1
+#+end_example
+
+Despite  the use  of  regex-like  patterns it  does  not  search treat  the
+arguments to  the server as  /directories to  search for/ --  arguments are
+files and  checked as such. So  this message actually means  ~"no such file
+'stanford-corenlp-4.5.1'"~.  I was  pretty confused  by this  error when  I
+tried to pass unpacked directory itself to the constructor.
+
+After server script has started and  you ensured it is running successfully
+you can execute the NLP tree parser code itself.
+
+#+caption: Example NLP parser
+#+begin_src python :results output
+from  nltk.parse.corenlp  import CoreNLPParser
+
+parser = CoreNLPParser()
+parse = next(parser.raw_parse("I put the book in the box on the table."))
+parse.pretty_print()
+#+end_src
+
+#+RESULTS:
+#+begin_example
+                         ROOT
+                          |
+                          S
+  ________________________|______________________________
+ |                        VP                             |
+ |    ____________________|________________              |
+ |   |       |            PP               PP            |
+ |   |       |         ___|____         ___|___          |
+ NP  |       NP       |        NP      |       NP        |
+ |   |    ___|___     |    ____|___    |    ___|____     |
+PRP VBD  DT      NN   IN  DT       NN  IN  DT       NN   .
+ |   |   |       |    |   |        |   |   |        |    |
+ I  put the     book  in the      box  on the     table  .
+
+#+end_example
+
+NOTE: if you  get the "connection refused" error, check  the server startup
+routine.
+
+You can also execute  the code in the Jupyter notebook and  render it as an
+SVG image, but you would need to have the =svgling= library installed.
+
+#+caption: Parse NLP for Jupyter notebook display
+#+begin_src python
+from  nltk.parse.corenlp  import CoreNLPParser
+
+parser = CoreNLPParser()
+next(parser.raw_parse("I put the book in the box on the table."))
 #+end_src
 
 * Main parts of the sentence
