@@ -141,6 +141,48 @@ fig, ax = plt.subplots(figsize=(12, 12))
 fig.savefig("<output file>", dpi=300, bbox_inches="tight")
 #+end_src
 
+*** Create stacked bar plot
+
+If you have a series of Y values and need to plot them in form of a stacked
+bar you  can do  this using ~bar()~  plotting method. In  order to  get the
+/stacked/ plot  you need  to add  values in  a cumulative  manner. Assuming
+~value~ is a sequence  of Y values, ~xdata~ is an X values  bar plot can be
+created like this:
+
+#+caption: Stacked bar plot
+#+begin_src python
+import matplotlib.pyplot as plt
+import numpy as np
+
+fig, ax = plt.subplots(figsize=(12, 12))
+
+# Bar positions
+xdata = [1, 2, 3, 4, 6]
+ydata = [[1, 2, 3, 4, 0], [3, 4, 5, 6, 9]]
+
+# Annotate each stacked bar in parallel
+labels = ["first", "second"]
+# Bar width calculation is absolute, use difference between X data points
+# to compute the value automatically and then multiply by 0.7 to get bars
+# that occupy 70% of the maximum allowed width.
+width = np.min(np.diff(xdata)) * 0.7
+# Compute cumulative sum to get bar plots stacked on top of each other
+bottom = np.cumsum([np.zeros(len(ydata[0])).astype(int)] + ydata, axis=0)
+for idx in range(len(ydata)):
+    ax.bar(
+        x=xdata,
+        height=ydata[idx],
+        bottom=bottom[idx],
+        label=labels[idx],
+        width=width,
+        edgecolor="black",
+    )
+
+plt.savefig("/tmp/result.png")
+#+end_src
+
+#+RESULTS:
+
 *** Using =matplotlib= with pandas
 
 You can either supply series data to the various plotting functions or use

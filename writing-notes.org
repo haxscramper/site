@@ -82,12 +82,12 @@ painintheenglish.com###popBottom
 - JJ :: *adjective or numeral, ordinal* third ill-mannered pre-war
   regrettable oiled calamitous first separable ectoplasmic battery-powered
   participatory fourth still-to-be-named multilingual multi-disciplinary
-- JJR :: *adjective, comparative* bleaker braver breezier briefer brighter
-  brisker broader bumper busier calmer cheaper choosier cleaner clearer
-  closer colder commoner costlier cozier creamier crunchier cuter ...
-- JJS :: *adjective, superlative* calmest cheapest choicest classiest
-  cleanest clearest closest commonest corniest costliest crassest creepiest
-  crudest cutest darkest deadliest dearest deepest densest dinkiest ...
+  - JJR :: *adjective, comparative* bleaker braver breezier briefer brighter
+    brisker broader bumper busier calmer cheaper choosier cleaner clearer
+    closer colder commoner costlier cozier creamier crunchier cuter ...
+  - JJS :: *adjective, superlative* calmest cheapest choicest classiest
+    cleanest clearest closest commonest corniest costliest crassest creepiest
+    crudest cutest darkest deadliest dearest deepest densest dinkiest ...
 - LS :: *list item marker* A A. B B. C C. D E F First G H I J K One
   SP-44001 SP-44002 SP-44005 SP-44007 Second Third Three Two * a b c d
   first five four one six three two
@@ -322,7 +322,10 @@ from nltk.parse.corenlp import CoreNLPServer
 import os
 
 VERSION = "4.5.1"
-STANFORD = f"stanford-corenlp-{VERSION}"
+STANFORD = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    f"stanford-corenlp-{VERSION}"
+)
 
 # Create the server
 server = CoreNLPServer(
