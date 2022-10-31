@@ -1,3 +1,42 @@
+#+title: Writing notes
+
+#+name: nlp_parse
+#+caption: Example NLP parser
+#+begin_src python :results output :exports result :var sent="Random"
+from  nltk.parse.corenlp import CoreNLPParser
+
+parser = CoreNLPParser()
+parse = next(parser.raw_parse(sent))
+parse.pretty_print()
+#+end_src
+
+#+name: sexp_parse
+#+caption: Example NLP parser
+#+begin_src python :results output :exports result :var sent="Random"
+from nltk.parse.corenlp import CoreNLPParser
+import nltk
+
+parser = CoreNLPParser()
+parse = next(parser.raw_parse(sent))
+
+
+def rec(tree: nltk.tree.Tree, level: int) -> str:
+    if len(tree) == 1 and type(tree[0]) != nltk.tree.Tree:
+        return f"{'  ' * level}({tree.label()} \"{tree[0]}\")"
+
+    else:
+        result = f"{'  ' * level}({tree.label()}"
+        for sub in tree:
+            result += "\n"
+            result += rec(sub, level + 1)
+
+
+        result += ")"
+        return result
+
+print(rec(parse, 0))
+#+end_src
+
 * links
 
 - Find words and phrases in different contexts
@@ -11,6 +50,7 @@
 - NLP processing
   - [[https://corenlp.run/][CoreNLP]]
   - [[https://emorynlp.github.io/ddr/doc/pages/overview.html][Deep dependencies guidelines]]
+  - [[https://gist.github.com/nlothian/9240750][Penn Treebank II Tags · GitHub]]
 - Dictionaries
   - Find a word by it's description
     - [[https://reversedictionary.org/][Reverse Dictionary]] This reverse dictionary allows you to search for words
@@ -25,6 +65,25 @@
     - [[https://en.wiktionary.org/wiki/Wiktionary:Main_Page][Wiktionary, the free dictionary]]
     - [[https://dictionary.reverso.net/english-cobuild/][English dictionary | Learn English | Reverso]] get a simple definition
       of a word.
+    - [[https://www.merriam-webster.com/][Dictionary by Merriam-Webster: America's most-trusted online
+      dictionary]]
+  - [[http://download.huzheng.org/dict.org/][dictd-www.dict.org Dictionaries]] download  openly available dictionaries
+    for use  with =StarDict=  software. For  use on  linux --  download the
+    dictionary file,  unpack it  using src_sh{tar -xvf  <name>.tar.bz2} and
+    then move resulting files from the directory (~<name>~ by default) into
+    ~$HOME/.stardict/dic~
+    - Note that "The Collaborative  International Dictionary of English" is
+      largely  an extension  of  "Webster's  Revised Unabridged  Dictionary
+      (1913)" and ideally  only one is needed (I'm  using the international
+      version).
+    - Also note  that Webster dictionary presented  in this list is  a 1913
+      version  and is  notably different  from the  online version  and IMO
+      better (for more elaborate explanation see [[http://jsomers.net/blog/dictionary][You're probably using the
+      wrong dictionary]])
+    - To get the synonyms in results you can use "Moby Thesaurus II"
+    - CLI tool  for accessing  the dictionary  data is  ~sdcv~ and  the GUI
+      variant is available as ~qstardict~ (Qt rewrite) on =aur=
+    - ~sdcv~ can be used from emacs using homonymous package ~sdcv~
 - Translation
   - [[https://context.reverso.net/translation/][Reverso Context | Translation in context]]
   - [[https://tr-ex.me/][Online dictionary]] "Tr-ex.me is bilingual contextual dictionary,
@@ -42,8 +101,8 @@
   - [[http://www.plainenglish.co.uk/how-to-write-in-plain-english.html][How to write in plain English]]
   - [[https://spacy.io/api][Spacy Library Architecture]]
   - [[https://developers.google.com/style][Google developer documentation style guide]]
-  - Microsoft_Manual_of_Style_for_Technical_Publications,_3rd_edition
-  - The Chicago Manual of Style (coll.)
+  - ~Microsoft_Manual_of_Style_for_Technical_Publications,_3rd_edition~
+  - ~The Chicago Manual of Style (coll.)~
   - [[https://painintheenglish.com/forum][Discussion Forum — Pain in the English]]
 
     =Adblock= rules for their shitty popups:
@@ -63,100 +122,402 @@ painintheenglish.com###popBottom
 
 * nltk
 
-** POS tag list
+** Word level POS tags
 
-- CC :: *conjunction*, *coordinating* & 'n and both but either et for less
-  minus neither nor or plus so therefore times v. versus vs. whether yet
-- CD :: *numeral*, *cardinal* mid-1890 nine-thirty forty-two one-tenth ten
-  million 0.5 one forty- seven 1987 twenty '79 zero two 78-degrees
-  eighty-four IX '60s .025 fifteen 271,124 dozen quintillion DM2,000 ...
-- DT :: *determiner* all an another any both del each either every half la
-  many much nary neither no some such that the them these this those
-- EX :: *existential* there
-- FW :: *foreign word* gemeinschaft hund ich =jeux= =habeas= =Haementeria=
-  Herr K'ang-si vous lutihaw alai je jour objets =salutaris= =fille=
-  =quibusdam= pas trop Monte terram fiche oui =corporis= ...
-- IN :: *preposition or conjunction, subordinating* astride among uppon
-  whether out inside pro despite on by throughout below within for towards
-  near behind atop around if like until below next into if beside ...
-- JJ :: *adjective or numeral, ordinal* third ill-mannered pre-war
-  regrettable oiled calamitous first separable ectoplasmic battery-powered
-  participatory fourth still-to-be-named multilingual multi-disciplinary
-  - JJR :: *adjective, comparative* bleaker braver breezier briefer brighter
-    brisker broader bumper busier calmer cheaper choosier cleaner clearer
-    closer colder commoner costlier cozier creamier crunchier cuter ...
-  - JJS :: *adjective, superlative* calmest cheapest choicest classiest
-    cleanest clearest closest commonest corniest costliest crassest creepiest
-    crudest cutest darkest deadliest dearest deepest densest dinkiest ...
-- LS :: *list item marker* A A. B B. C C. D E F First G H I J K One
-  SP-44001 SP-44002 SP-44005 SP-44007 Second Third Three Two * a b c d
-  first five four one six three two
-- MD :: *modal auxiliary* can cannot could couldn't dare may might must
-  need ought shall should shouldn't will would
-- NN :: *noun, common, singular or mass* common-carrier cabbage
-  knuckle-duster Casino afghan shed thermostat investment slide humour
-  falloff slick wind hyena override subhumanity machinist ...
-  - NNP :: *noun, proper, singular* Motown Venneboerger Czestochwa Ranzer
-    Conchita Trumplane Christos Oceanside Escobar Kreisler Sawyer Cougar
-    Yvette Ervin ODI Darryl CTCA Shannon A.K.C. Meltex Liverpool ...
-  - NNPS :: *noun, proper, plural* Americans Americas Amharas Amityvilles
-    Amusements Anarcho-Syndicalists Andalusians Andes Andruses Angels Animals
-    Anthony Antilles Antiques Apache Apaches Apocrypha ...
-  - NNS :: *noun, common, plural* undergraduates scotches bric-a-brac
-    products bodyguards facets coasts divestitures storehouses designs clubs
-    fragrances averages subjectivists apprehensions muses factory-jobs ...
-- PDT :: *pre-determiner* all both half many quite such sure this
-- POS :: *genitive marker* ' 's
-- PRP :: *pronoun, personal* hers herself him himself hisself it itself me
-  myself one oneself ours ourselves ownself self she thee theirs them
-  themselves they thou thy us
-- PRP$ :: *pronoun, possessive* her his mine my our ours their thy your
-- RB :: *adverb* occasionally unabatingly maddeningly adventurously
-  professedly stirringly prominently technologically magisterially
-  predominately swiftly fiscally pitilessly
-  - RBR :: *adverb, comparative* further gloomier grander graver greater
-    grimmer harder harsher healthier heavier higher however larger later
-    leaner lengthier less- perfectly lesser lonelier longer louder lower more
-  - RBS :: *adverb, superlative* best biggest bluntest earliest farthest
-    first furthest hardest heartiest highest largest least less most nearest
-    second tightest worst
-- RP :: *particle* aboard about across along apart around aside at away
-  back before behind by crop down ever fast for forth from go high i.e. in
-  into just later low more off on open out over per pie raising start teeth
-  that through under unto up up-pp upon whole with you
-- SYM :: *symbol* ~% & ' '' ''. ) ). * + ,. < = > @ A[fj] U.S U.S.S.R * **
-  ***~
-- TO :: "to" as preposition or infinitive marker to
-- UH :: *interjection* Goodbye Goody Gosh Wow Jeepers Jee-sus Hubba Hey
-  Kee-reist Oops amen huh howdy uh dammit whammo shucks heck anyways
-  whodunnit honey golly man baby diddle hush sonuvabitch ...
-- VB :: *verb*, *base form* ask assemble assess assign assume atone
-  attention avoid bake balkanize bank begin behold believe bend benefit
-  bevel beware bless boil bomb boost brace break bring broil brush build
-  ...
-  - VBD :: *verb*, *past tense* dipped pleaded swiped regummed soaked tidied
-    convened halted registered cushioned exacted snubbed strode aimed adopted
-    belied figgered speculated wore appreciated contemplated ...
-  - VBG :: *verb*, *present participle or gerund* telegraphing stirring
-    focusing angering judging stalling lactating hankerin' alleging veering
-    capping approaching traveling besieging encrypting interrupting erasing
-    wincing ...
-  - VBN :: *verb*, *past participle* multihulled dilapidated aerosolized
-    chaired languished panelized used experimented flourished imitated
-    reunifed factored condensed sheared unsettled primed dubbed desired ...
-  - VBP :: *verb, present tense, not 3rd person singular* predominate wrap
-    resort sue twist spill cure lengthen brush terminate appear tend stray
-    glisten obtain comprise detest tease attract emphasize mold postpone
-    sever return wag ...
-  - VBZ :: *verb, present tense, 3rd person singular* bases reconstructs
-    marks mixes displeases seals carps weaves snatches slumps stretches
-    authorizes smolders pictures emerges stockpiles seduces fizzes uses
-    bolsters slaps speaks pleads ...
-- WDT :: *WH-determiner* that what whatever which whichever
-- WP :: *WH-pronoun* that what whatever whatsoever which who whom whosoever
-- WP$ :: *WH-pronoun, possessive* whose
-- WRB :: *Wh-adverb* how however whence whenever where whereby whereever
-  wherein whereof why
+- Noun (names)  :: a word or  lexical item denoting any  abstract (abstract
+  noun: e.g. home) or concrete entity (concrete noun: e.g. house); a person
+  (police  officer, Michael),  place (coastline,  London), thing  (necktie,
+  television), idea  (happiness), or quality  (bravery). Nouns can  also be
+  classified as count  nouns or non-count nouns; some can  belong to either
+  category. The most common part of speech; they are called naming words.
+  - ~NN~ :: /[N]ou[N]/ *noun, common, singular or mass*
+    #+begin_quote
+    common-carrier  cabbage knuckle-duster  Casino  afghan shed  thermostat
+    investment slide  humour falloff slick wind  hyena override subhumanity
+    machinist ...
+    #+end_quote
+
+  - ~NNP~ :: /[N]ou[N] [P]roper/ *noun, proper, singular*
+    #+begin_quote
+    Motown  Venneboerger  Czestochwa  Ranzer  Conchita  Trumplane  Christos
+    Oceanside Escobar Kreisler  Sawyer Cougar Yvette Ervin  ODI Darryl CTCA
+    Shannon A.K.C. Meltex Liverpool ...
+    #+end_quote
+
+  - ~NNPS~ :: /[N]ou[n] [P]roper + [S]/ *noun, proper, plural*
+    #+begin_quote
+    Americans Americas Amharas  Amityvilles Amusements Anarcho-Syndicalists
+    Andalusians  Andes Andruses  Angels Animals  Anthony Antilles  Antiques
+    Apache Apaches Apocrypha ...
+    #+end_quote
+
+  - ~NNS~  :: /[N]ou[n] + [S]/  *noun, common, plural*
+    #+begin_quote
+    undergraduates scotches  bric-a-brac products bodyguards  facets coasts
+    divestitures    storehouses   designs    clubs   fragrances    averages
+    subjectivists apprehensions muses factory-jobs ...
+    #+end_quote
+
+- Pronoun (replaces  or places again)  :: a substitute  for a noun  or noun
+  phrase (them, he). Pronouns make sentences shorter and clearer since they
+  replace nouns.
+  - ~PRP~ :: *pronoun, personal*
+    #+begin_quote
+    hers herself him  himself hisself it itself me myself  one oneself ours
+    ourselves ownself self she thee theirs them themselves they thou thy us
+    #+end_quote
+
+  - ~PRP$~ :: *pronoun, possessive* her his mine my our ours their thy your
+  - ~WP~  ::  *WH-pronoun*
+    #+begin_quote
+    that what whatever whatsoever which who whom whosoever
+    #+end_quote
+
+  - ~WP$~ :: *WH-pronoun, possessive*
+    #+begin_quote
+    whose
+    #+end_quote
+
+- Adjective (describes,  limits) :: a modifier  of a noun or  pronoun (big,
+  brave). Adjectives make the meaning of another word (noun) more precise.
+  - ~JJ~  :: /Ad[J]ective/ *adjective  or  numeral, ordinal*
+    #+begin_quote
+    third ill-mannered pre-war regrettable oiled calamitous first separable
+    ectoplasmic  battery-powered   participatory  fourth  still-to-be-named
+    multilingual multi-disciplinary
+    #+end_quote
+
+  - ~JJR~  :: /Ad[J]ective + [R]elative/ *adjective, comparative*
+    #+begin_quote
+    bleaker braver breezier briefer  brighter brisker broader bumper busier
+    calmer cheaper choosier cleaner clearer closer colder commoner costlier
+    cozier creamier crunchier cuter ...
+    #+end_quote
+
+  - ~JJS~  :: /Ad[J]ective [S]uperlative/ *adjective, superlative*
+    #+begin_quote
+    calmest cheapest choicest classiest cleanest clearest closest commonest
+    corniest costliest crassest creepiest  crudest cutest darkest deadliest
+    dearest deepest densest dinkiest ...
+    #+end_quote
+
+- Verb  (states action  or  being) ::  a word  denoting  an action  (walk),
+  occurrence (happen),  or state of being  (be). Without a verb  a group of
+  words cannot be a clause or sentence.
+  - ~VB~  :: /[V]er[B]/ *verb*,  *base form*
+    #+begin_quote
+    ask assemble assess assign assume  atone attention avoid bake balkanize
+    bank begin  behold believe  bend benefit bevel  beware bless  boil bomb
+    boost brace break bring broil brush build ...
+    #+end_quote
+
+  - ~VBD~  :: *verb*,  *past  tense*
+    #+begin_quote
+    dipped pleaded swiped regummed soaked tidied convened halted registered
+    cushioned  exacted   snubbed  strode  aimed  adopted   belied  figgered
+    speculated wore appreciated contemplated ...
+    #+end_quote
+
+  - ~VBG~  :: *verb*,  *present participle  or gerund*
+    #+begin_quote
+    telegraphing  stirring  focusing  angering judging  stalling  lactating
+    hankerin'  alleging  veering  capping approaching  traveling  besieging
+    encrypting interrupting erasing wincing ...
+    #+end_quote
+
+  - ~VBN~ ::  *verb*, *past  participle*
+    #+begin_quote
+    multihulled dilapidated  aerosolized chaired languished  panelized used
+    experimented  flourished imitated  reunifed factored  condensed sheared
+    unsettled primed dubbed desired ...
+    #+end_quote
+
+  - ~VBP~  ::  /[V]er[B] [P]resent/  *verb, present  tense, not  3rd person
+    singular*
+
+    #+begin_quote
+    predominate wrap resort  sue twist spill cure  lengthen brush terminate
+    appear  tend  stray  glisten   obtain  comprise  detest  tease  attract
+    emphasize mold postpone sever return wag ...
+    #+end_quote
+
+  - ~VBZ~ ::  *verb, present tense,  3rd person singular*
+    #+begin_quote
+    bases reconstructs  marks mixes displeases seals  carps weaves snatches
+    slumps  stretches  authorizes   smolders  pictures  emerges  stockpiles
+    seduces fizzes uses bolsters slaps speaks pleads ...
+    #+end_quote
+
+  - ~MD~ :: *modal auxiliary*
+    #+begin_quote
+    can cannot could  couldn't dare may might must need  ought shall should
+    shouldn't will would
+    #+end_quote
+
+- Adverb  (describes, limits)  ::  a  modifier of  an  adjective, verb,  or
+  another adverb (very, quite). Adverbs make language more precise.
+  - ~RB~  :: /Adve[RB]/  *adverb*
+    #+begin_quote
+    occasionally   unabatingly    maddeningly   adventurously   professedly
+    stirringly  prominently   technologically  magisterially  predominately
+    swiftly fiscally pitilessly
+    #+end_quote
+
+  - ~RBR~ ::  *adverb, comparative*
+    #+begin_quote
+    further  gloomier   grander  graver  greater  grimmer   harder  harsher
+    healthier heavier  higher however  larger later leaner  lengthier less-
+    perfectly lesser lonelier longer louder lower more
+    #+end_quote
+
+  - ~RBS~ ::  *adverb, superlative*
+    #+begin_quote
+    best  biggest   bluntest  earliest  farthest  first   furthest  hardest
+    heartiest highest largest least less most nearest second tightest worst
+    #+end_quote
+
+  - ~WRB~  ::   *Wh-adverb*  how   however  whence  whenever   where  whereby
+    =whereever= wherein whereof why
+- Preposition (relates)  :: a word  that relates words  to each other  in a
+  phrase or sentence  and aids in syntactic context  (in, of). Prepositions
+  show the  relationship between a noun  or a pronoun with  another word in
+  the sentence.
+  - ~IN~ :: *preposition or conjunction, subordinating*
+    #+begin_quote
+    astride among  uppon whether  out inside pro  despite on  by throughout
+    below within  for towards near behind  atop around if like  until below
+    next into if beside ...
+    #+end_quote
+
+- Conjunction (connects) :: a syntactic connector; links words, phrases, or
+  clauses (and, but). Conjunctions connect words or group of words
+  - ~CC/CCONJ~ :: [[https://universaldependencies.org/u/pos/CCONJ.html][CCONJ]] *conjunction*, *coordinating*  &
+    #+begin_quote
+    'n  and both  but either  et  for less  minus  neither nor  or plus  so
+    therefore times v. versus vs. whether yet
+    #+end_quote
+
+- Interjection (expresses  feelings and emotions) ::  an emotional greeting
+  or exclamation (Huzzah, Alas).  Interjections express strong feelings and
+  emotions.
+  - ~UH~ :: *interjection*
+    #+begin_quote
+    Goodbye Goody  Gosh Wow Jeepers  Jee-sus Hubba Hey Kee-reist  Oops amen
+    huh howdy  uh dammit whammo  shucks heck anyways whodunnit  honey golly
+    man baby diddle hush sonuvabitch ...
+    #+end_quote
+
+- Article  (describes, limits)  /  Determiner ::  a  grammatical marker  of
+  definiteness (the) or  indefiniteness (a, an). The article  is not always
+  listed among the parts of speech. It is considered by some grammarians to
+  be a type of adjective[15] or  sometimes the term 'determiner' (a broader
+  class) is used.
+  - ~DT, DET~ :: [[https://universaldependencies.org/u/pos/DET.html][DET]] *determiner*
+    #+begin_quote
+    all an another  any both del each  either every half la  many much nary
+    neither no some such that the them these this those
+    #+end_quote
+  - ~WDT~ :: *WH-determiner*
+    #+begin_quote
+    that what whatever which whichever
+    #+end_quote
+- Other ::
+  - ~CD~ :: *numeral*, *cardinal*
+    #+begin_quote
+    mid-1890  nine-thirty forty-two  one-tenth ten  million 0.5  one forty-
+    seven  1987 twenty  '79 zero  two 78-degrees  eighty-four IX  '60s .025
+    fifteen 271,124 dozen quintillion DM2,000 ...
+    #+end_quote
+  - ~FW~   ::  *foreign   word*
+    #+begin_quote
+    gemeinschaft hund ich =jeux=  =habeas= =Haementeria= Herr K'ang-si vous
+    lutihaw alai  je jour objets  =salutaris= =fille= =quibusdam=  pas trop
+    Monte terram fiche oui =corporis= ...
+    #+end_quote
+
+  - ~LS~ :: *list item marker*
+    #+begin_quote
+    A A. B  B. C C. D  E F First G H  I J K One  SP-44001 SP-44002 SP-44005
+    SP-44007 Second Third Three Two * a b c d first five four one six three
+    two
+    #+end_quote
+
+  - ~EX~ :: *existential*
+    #+begin_quote
+    there
+    #+end_quote
+
+  - ~TO~ :: "to" as preposition or infinitive marker to
+  - ~PDT~ :: *pre-determiner*
+    #+begin_quote
+    all both half many quite such sure this
+    #+end_quote
+
+  - ~POS~ :: *genitive marker* ' 's
+  - ~RP~ :: *particle* [[https://en.wikipedia.org/wiki/Grammatical_particle][Grammatical particle - Wikipedia]]
+    #+begin_quote
+    aboard about across  along apart around aside at away  back before behind
+    by crop down ever fast for forth from go high i.e. in into just later low
+    more off on open out over per  pie raising start teeth that through under
+    unto up up-pp upon whole with you
+    #+end_quote
+
+  - SYM  :: *symbol*  ~%  & '  ''  ''. )  ).  * +  ,.  < =  >  @ A[fj]  U.S
+    U.S.S.R * ** ***~
+
+** Phrase level POS tags
+
+[[http://surdeanu.cs.arizona.edu/mihai/teaching/ista555-fall13/readings/PennTreebankConstituents.html][Penn Treebank Constituent Tags ]]
+
+TODO:  create  a list  of  possible  subnodes  kinds for  each  constituent
+structure. What kinds of subnodes can be expected in various places.
+
+- ~ADJP~ :: Adjective Phrase.
+- ~ADVP~ :: Adverb Phrase.
+- ~CONJP~ :: Conjunction Phrase.
+- ~FRAG~ :: Fragment.
+- ~INTJ~ :: Interjection. Corresponds approximately to the part-of-speech tag
+  UH.
+- ~LST~ :: List marker. Includes surrounding punctuation.
+- ~NAC~ ::  Not a Constituent; used  to show the scope  of certain prenominal
+  modifiers within an NP.
+- ~NP~ :: Noun Phrase.
+  - ~NP-TMP~ :: "When" -- NP which is used as an indicator of time in place
+    where adverb could be used instead.
+    #+call: nlp_parse("obviously I  think about it every single day")
+
+    #+RESULTS:
+    #+begin_example
+                         ROOT
+                          |
+                          S
+         _________________|________
+        |      |                   VP
+        |      |     ______________|__________
+        |      |    |          PP             |
+        |      |    |      ____|___           |
+       ADVP    NP   |     |        NP       NP-TMP
+        |      |    |     |        |     _____|_____
+        RB    PRP  VBP    IN      PRP   DT    JJ    NN
+        |      |    |     |        |    |     |     |
+    obviously  I  think about      it every single day
+
+    #+end_example
+
+- ~NX~  :: Used  within certain  complex  NPs to  mark  the head  of the  NP.
+  Corresponds very roughly to N-bar level but used quite differently.
+- ~PP~ :: Prepositional Phrase.
+- ~PRN~ :: Parenthetical.
+- ~PRT~ :: Particle. Category for words that should be tagged RP.
+- ~QP~ :: Quantifier Phrase (i.e. complex measure/amount phrase); used within
+  NP.
+- ~RRC~ :: Reduced Relative Clause.
+- ~UCP~ :: Unlike Coordinated Phrase.
+- ~VP~ :: Verb Phrase [[https://dictionary.cambridge.org/grammar/british-grammar/verb-phrases][Verb phrases - Grammar - Cambridge Dictionary]]
+  #+call: nlp_parse("Could have been used ")
+
+  #+RESULTS:
+  #+begin_example
+             ROOT
+              |
+              S
+              |
+              VP
+     _________|____
+    |              VP
+    |     _________|____
+    |    |              VP
+    |    |          ____|___
+    |    |         |        VP
+    |    |         |        |
+    MD   VB       VBN      VBN
+    |    |         |        |
+  Could have      been     used
+
+  #+end_example
+
+
+- ~WHADJP~ :: Wh-adjective Phrase.  Adjectival phrase containing a wh-adverb,
+  as in how hot.
+- ~WHAVP~ ::  Wh-adverb Phrase. Introduces  a clause with  an NP gap.  May be
+  null (containing the 0 complementizer) or lexical, containing a wh-adverb
+  such as how or why.
+- ~WHNP~ :: Wh-noun Phrase.  Introduces a clause with an NP  gap. May be null
+  (containing the  0 complementizer)  or lexical, containing  some wh-word,
+  e.g.  who,  which book,  whose  daughter,  none  of  which, or  how  many
+  leopards.
+- ~WHPP~   ::  Wh-prepositional  Phrase.  Prepositional  phrase containing  a
+  wh-noun  phrase (such  as of  which or  by whose  authority) that  either
+  introduces a PP gap or is contained by a WHNP.
+- ~X~ :: Unknown, uncertain, or unbracketable. X is often used for bracketing
+  typos and in bracketing the...the-constructions.
+
+** Clause level POS tags
+
+- ~S~ ::  simple declarative  clause, i.e.  one that is  not introduced  by a
+  (possible empty) subordinating conjunction or a wh-word and that does not
+  exhibit subject-verb inversion.
+  #+call: nlp_parse("Rex barks")
+
+  #+RESULTS:
+  #+begin_example
+      ROOT
+       |
+       S
+    ___|_____
+   NP        VP
+   |         |
+  NNP       VBZ
+   |         |
+  Rex      barks
+
+  #+end_example
+
+- ~SBAR~   ::  Clause   introduced  by   a  (possibly   empty)  subordinating
+  conjunction.
+- ~SBARQ~ :: Direct question introduced by a wh-word or a wh-phrase. Indirect
+  questions and relative clauses should be bracketed as SBAR, not SBARQ.
+
+  #+call: nlp_parse("Who barks")
+
+  #+RESULTS:
+  #+begin_example
+        ROOT
+         |
+       SBARQ
+    _____|_____
+   |           SQ
+   |           |
+  WHNP         VP
+   |           |
+   WP         VBZ
+   |           |
+  Who        barks
+
+  #+end_example
+
+- ~SINV~  :: Inverted  declarative sentence,  i.e. one  in which  the subject
+  follows the tensed verb or modal.
+- ~SQ~   ::  Inverted  yes/no  question,  or main  clause  of a  wh-question,
+  following the wh-phrase in SBARQ.
+
+  #+call: nlp_parse("Who is barking")
+
+  #+RESULTS:
+  #+begin_example
+        ROOT
+         |
+       SBARQ
+    _____|____
+   |          SQ
+   |      ____|_____
+  WHNP   |          VP
+   |     |          |
+   WP   VBZ        VBG
+   |     |          |
+  Who    is      barking
+
+  #+end_example
 
 ** POS dependency types
 
@@ -164,6 +525,7 @@ painintheenglish.com###popBottom
 - The [[https://github.com/clir/clearnlp-guidelines/blob/master/md/specifications/dependency_labels.md][list]] of dependency labels that might be used by the =spaCy=
 - [[https://emorynlp.github.io/ddr/doc/pages/overview.html][Deep Dependency Guidelines]] - has parsed tree examples for some of the
   dependency tags.
+
 
 - ACL :: Clausal modifier of noun
 - ACOMP :: Adjectival complement
@@ -820,10 +1182,10 @@ commit improves the edge case and adds tests.
     this instead:
 
     #+begin_quote
-Handle ref fields in the copy hook
+    Handle ref fields in the copy hook
 
-Previously any[fn:1] ref fields was set to  nil by the compiler when it was
-used with a copy hook. This commit <actual change description>
+    Previously any[fn:1] ref fields was set  to nil by the compiler when it
+    was used with a copy hook. This commit <actual change description>
     #+end_quote
 
     Effectively you  can write the  code comment in the  change description
@@ -839,8 +1201,8 @@ used with a copy hook. This commit <actual change description>
     # https://github.com/nim-lang/Nim/commit/bc14b773
     # https://github.com/nim-lang/Nim/issues/18665
 
-    [fn:1] Whether  the bug was  triggered by  every single "ref  field" or
-    only by a select few is also something that could be added.
+[fn:1] Whether the bug was triggered by every single "ref field" or only by
+a select few is also something that could be added.
 
 - "Update <X>" :: TODO
 - "Disable <X> if <Y>" :: TODO
