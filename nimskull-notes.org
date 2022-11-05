@@ -114,6 +114,7 @@ most of the things that were wrong with the package manager at the time.
 
 *** Dead community management
 
+#+begin_quote
 By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
 "development has been  outsourced, wasn't ready for 1.6.0 and  I don't know
 the plan either"[fn:either-96] -- this happened moths after long discussion
@@ -132,6 +133,7 @@ chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889
 This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
 
 P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
+#+end_quote
 
 [fn:either-96] Remember -- this is a main project contributor talking about
 their
@@ -140,6 +142,59 @@ their
 
 This section outlines what is wrong  with the current implementation -- for
 our solutions to fixing the problems see the "our vision" section below.
+
+*** Technical introduction
+
+Before  discussing issues  with the  implementation it  would be  more than
+appropriate  to  provide  brief  overview  of  the  implementation  because
+understanding some of the issues  requires either hands-on experience or at
+least basic familiarity with the problem domain.
+
+**** High-level compiler architecture
+
+Mostly aimed  at people  unfamiliar with how  compilers are  implemented in
+general  and how  nim is  implemented specifically.  Relevant parts  of the
+source code are linked  from the text (TODO). The links  are absolute (to a
+specific version of the file) to avoid potential bitrot in the text.
+
+Nim compiler  has a  classic compilation  architecture, split  into several
+high-level  stages:  tokenization,  parsing,  semantic  analysis  and  code
+generation.
+
+- Tokenization  ::  Splits input  source file into  series of  smaller text
+  units which are called tokens. Each  token has it's own *kind* and value.
+  There  are  many   different  kinds  of  tokens,   such  as  "identifier"
+  (variables, argument names, type  names), "keyword" (~for~, ~while~, ~if~
+  and so on), "literal" (~1~, ~"test"~ in code)
+- Parsing :: Sequence of input tokens  is turned into a tree structure TODO
+  expand more?
+- Semantic analysis :: parsed tree  structure is processed further and more
+  information  is added  to it  (identifiers  are turned  into symbols  and
+  assigned types,  expressions are simplified) and  metaprogramming actions
+  are executed.
+
+  This part of the compilation pipeline has several important steps
+
+  - Macro expansion  :: Macro  and template  calls are  repeatedly expanded
+    into a new AST. TODO
+
+    Macro execution is performed using embedded virtual machine
+  - Constant folding :: Constant expressions  in code that can be evaluated
+    are turned into simple literals. TODO example
+  - Lifting lambdas :: TODO
+  - Destructor injection :: TODO
+- Code generation :: After all parts  of the semantic analysis are complete
+  resulting AST is turned into backend code.
+
+Several  important things  can happen  during any  part of  the compilation
+pipeline:
+
+- Diagnostics reporting :: Any part of the compilation pipeline can issue a
+  diagnostic message (hint, warning or  error) that might potentially abort
+  the whole compilation process.
+- File import  and include ::   External module import process is performed
+  during semantic analysis and can  effectively switch the current "active"
+  part of the compilation process.
 
 *** Handling of the community requests
 
@@ -167,6 +222,9 @@ Documentation quality is steadily improving year-over-year.
 *** TODO Compiler documentation
 
 **** TODO Lack of the literal documentation
+
+Large  parts of  the  compiler  codebase are  not  properly documented  and
+explained.
 
 **** TODO No high-level overview of the compiler internals
 

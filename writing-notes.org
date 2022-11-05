@@ -82,7 +82,11 @@ print(rec(parse, 0))
       wrong dictionary]])
     - To get the synonyms in results you can use "Moby Thesaurus II"
     - CLI tool  for accessing  the dictionary  data is  ~sdcv~ and  the GUI
-      variant is available as ~qstardict~ (Qt rewrite) on =aur=
+      variant  is available  as ~qstardict~  (Qt  rewrite) on  =aur= or  as
+      ~startdict~. There  seems to  be no drastic  difference feature-wise,
+      although the latter one worked more consistently for me. Both are run
+      as daemons and can provide a real-time lookup of different words that
+      you select in other applications.
     - ~sdcv~ can be used from emacs using homonymous package ~sdcv~
 - Translation
   - [[https://context.reverso.net/translation/][Reverso Context | Translation in context]]
@@ -362,6 +366,25 @@ painintheenglish.com###popBottom
     unto up up-pp upon whole with you
     #+end_quote
 
+    #+call: nlp_parse("It turned out this way")
+
+    #+RESULTS:
+    #+begin_example
+         ROOT
+          |
+          S
+      ____|_____
+     |          VP
+     |     _____|________
+     NP   |    PRT       NP
+     |    |     |    ____|___
+    PRP  VBD    RP  DT       NN
+     |    |     |   |        |
+     It turned out this     way
+
+    #+end_example
+
+
   - SYM  :: *symbol*  ~%  & '  ''  ''. )  ).  * +  ,.  < =  >  @ A[fj]  U.S
     U.S.S.R * ** ***~
 
@@ -408,11 +431,60 @@ structure. What kinds of subnodes can be expected in various places.
   Corresponds very roughly to N-bar level but used quite differently.
 - ~PP~ :: Prepositional Phrase.
 - ~PRN~ :: Parenthetical.
+
+  Apparently parentheses themselves are not always required.
+  #+call: nlp_parse("I am glad it is done")
+
+  #+RESULTS:
+  #+begin_example
+              ROOT
+               |
+               S
+        _______|____________
+      PRN           |       |
+       |            |       |
+       S            |       |
+    ___|___         |       |
+   |       VP       |       VP
+   |    ___|___     |    ___|___
+   NP  |      ADJP  NP  |       VP
+   |   |       |    |   |       |
+  PRP VBP      JJ  PRP VBZ     VBN
+   |   |       |    |   |       |
+   I   am     glad  it  is     done
+
+  #+end_example
+
 - ~PRT~ :: Particle. Category for words that should be tagged RP.
+
 - ~QP~ :: Quantifier Phrase (i.e. complex measure/amount phrase); used within
   NP.
 - ~RRC~ :: Reduced Relative Clause.
 - ~UCP~ :: Unlike Coordinated Phrase.
+  #+call: nlp_parse("He slept for about a day or so")
+
+  #+RESULTS:
+  #+begin_example
+       ROOT
+        |
+        S
+    ____|____
+   |         VP
+   |     ____|_________
+   |    |              PP
+   |    |     _________|_______
+   |    |    |                UCP
+   |    |    |          _______|_______
+   |    |    |         PP          |   |
+   |    |    |     ____|___        |   |
+   NP   |    |    |        NP      |  ADVP
+   |    |    |    |     ___|___    |   |
+  PRP  VBD   IN   IN   DT      NN  CC  RB
+   |    |    |    |    |       |   |   |
+   He slept for about  a      day  or  so
+
+  #+end_example
+
 - ~VP~ :: Verb Phrase [[https://dictionary.cambridge.org/grammar/british-grammar/verb-phrases][Verb phrases - Grammar - Cambridge Dictionary]]
   #+call: nlp_parse("Could have been used ")
 
