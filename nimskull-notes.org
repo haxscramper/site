@@ -1011,7 +1011,7 @@ I've already provided  most of the historical context I  could get my hands
 on, so in this  part I'm instead going to focus on  the my personal account
 of working for nimskull.
 
-* Part six: my scopes
+* Part seven: my scopes
   :PROPERTIES:
   :ID:       df3bccc6-1850-4ad1-85ff-44776c59f15c
   :END:
