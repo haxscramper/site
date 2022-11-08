@@ -67,6 +67,7 @@ print(rec(parse, 0))
       of a word.
     - [[https://www.merriam-webster.com/][Dictionary by Merriam-Webster: America's most-trusted online
       dictionary]]
+    - [[https://dictionary.cambridge.org/grammar/british-grammar/][English Grammar Today on Cambridge Dictionary]]
   - [[http://download.huzheng.org/dict.org/][dictd-www.dict.org Dictionaries]] download  openly available dictionaries
     for use  with =StarDict=  software. For  use on  linux --  download the
     dictionary file,  unpack it  using src_sh{tar -xvf  <name>.tar.bz2} and

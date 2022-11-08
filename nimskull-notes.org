@@ -1,6 +1,12 @@
 #+title: Why nimskull
 #+options: broken-links:mark
 
+# TODO https://matrix.to/#/!alsWvZtOfWkQlHwcHC:envs.net/$InF0jWs3VKmmsZTRa_lzWKMyNQXsdcdJanLunNsTlqc?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com add discussion insights from the discussion
+
+# TODO  how  often each  line  in  testament/important packages  have  been
+# edited.  How long  has  drnim been  staying in  the  compiler code  base.
+# Interesting attitude for the "code rot" implementation.
+
 After another round  of discussions about possible  objectives, reasons and
 merits of the Nim fork I've been working  on I decided to write down my own
 thoughts on this matter, elaborate  on the decision-making process that has
@@ -840,19 +846,22 @@ reflect the list.
 This  is  specifically  aimed  to provide  the  explanation  about  working
 procedures in  the project,  explain the  value framework  that is  used to
 decide what  is going to  be worked  on and what  is going to  be postponed
-until a later time.
+until a later date.
 
 I  decided it  would be  better  to formulate  my  ideas on  this topic  as
-precisely as I can,  even if it will sound harsher than it  needs to be. It
-probably won't end up in readme,  because that sort of wording and language
-is very unlikely to excite new contributors and users.
+precisely as I can, even if it might  sound harsher than it needs to be. It
+probably will  never end up  in the official  readme, because that  sort of
+wording and language is very unlikely to excite new contributors and users.
 
-On a basic level, each project is working off a finite resource -- there is
-a limited number of people, they don't have an infinite amount of time they
-can dedicate, they don't  want to have a /burnout on  the OSS/ projects and
-they want to /work on the stuff they enjoy/. At this moment in the goals of
-the project are almost entirely by contributor team. Said team decided that
-it would be the best user of their time to (in no specific order):
+The most important notion that should be understood is that each project is
+working off a  finite resource -- a  limited number of people,  who have an
+finite amount of time they can dedicate. They don't want to have a /burnout
+on the OSS/ projects and they want  to /work on the stuff they enjoy/.
+
+At this  moment in  the goals  of the  project are  almost entirely  set by
+contributor team  (as opposed to  being driven by external  requests). Said
+team  decided that  it would  be the  best  user of  their time  to (in  no
+specific order):
 
 1. *DO  NOT* provide a LTS  version that keeps backward  compatibility with
    mainline nim.
@@ -866,7 +875,7 @@ it would be the best user of their time to (in no specific order):
 3. *DO  NOT* hesitate  to make  a hard decisions  if it  would allow  for a
    large-scale cleanup to move forward.
 4. *DO  NOT* spec  out bugs and  *DO NOT* solidify  bugs into  the language
-   design
+   design.
 5. *DO* work on the internal documentation, development history
 6. *DO* work that improves the internal architecture of the compiler.
 7. *DO* reduce the barrier of entry to the new contributors
@@ -1000,6 +1009,89 @@ Code formatting  should first get a  concrete syntax tree --  one that does
 not loose positional and structural information  -- and then format it back
 into the source code. We already  [[https://github.com/nim-works/nimskull/pull/361][implemented]] the code layout algorithm and
 continuing the work in this direction.
+
+** Improving testing workflow
+
+The  "language" project  consists  of several  parts  that are  effectively
+layered on top of each  other -- core language primitives, metaprogramming,
+external  libraries  and  so  on.  Test  suite  must  also  follow  layered
+structure.
+
+*** Language specification
+
+TODO Core part of language specification
+
+*** Additional feature tests
+
+TODO Extra tests that provide required secondary safety net
+
+*** Ensuring the code written in the language works
+
+From the end  user perspective the ultimate objective of  the compiler test
+suite  is to  ensure the  language will  not suddenly  break at  unexpected
+places. In  order to support this  need core maintainers should  adopt some
+kind of strategy.
+
+Different  programming languages  have different  levels of  strictness and
+guarantees when it  comes to backward compatibility and  ranging degrees of
+attention  to  keeping  existing   code  working.  Some  languages  provide
+specification that explicitly codifies what  the language *is*. Others have
+a (reference)  implementation with accompanying test  suite which specifies
+its  behavior in  different circumstances.  In that  case stability  of the
+language largely depends on the test suite.
+
+Mainline  uses a  combination of  language specification  and a  test suite
+augmented by so called "important packages"  -- a list of external packages
+whose tests are executed as a part  of CI run. This approach allows to keep
+the "important"  part of the  ecosystem working  while making it  easier to
+neglect writing tests  because it is easy to assume  that implementation is
+/sufficiently tested/.
+
+We want  to avoid  this inverse  dependency and instead  focus on  the core
+tests as much as possible. The workflow for handling incoming issues should
+be:
+
+1. Someone discovers  a new implementation issue or  regression and reports
+   it.
+2. Test author should first consider if the problem signifies a hole in the
+   specification.
+
+   For example, if the issue is "FEATURE1 combined with FEATURE2 break when
+   GC  is  used  on  BACKEND"  then  corresponding  specification  test  is:
+
+   - "FEATURE1" works, "FEATURE2"  works, on all targets  and all backends,
+     *or*
+   - "FEATURE1 and FEATURE2"  can be combined in such and  such way. On all
+     backends, for all garbage collectors
+
+   As mentioned previous section ("Language specification") there can be no
+   single way of writing tests so author should use common sense.
+
+3. If it is  not possible to write a specification test  then a regular one
+   is  created.  Problematic  snippet  should   be  reduced  and  added  to
+   appropriate subdirectory in the test suite.
+
+As you can see specification itself  should be enough -- all relevant parts
+of the language can  be specified in an orthogonal way  and then there will
+be no need for  an extra safety net. In theory.  In reality secondary level
+of   tests  makes   it  possible   to  account   of  deficiencies   in  the
+implementation: no matter  how orthogonal the language design  is there are
+bound to be bugs, architectural issues  and so on. Additional feature tests
+are designed to account for this.
+
+"important packages" could've provided a tertiary layer of safety, but they
+create  an  inverse  dependency  that  incur  unjustifiable  slowdowns  and
+questionable [[https://github.com/nim-lang/Nim/commits/devel/testament/important_packages.nim][fiddling]] with the package list:
+
+- [[https://github.com/nim-lang/Nim/pull/18292][disable pkg manu by timotheecour · Pull Request #18292 · nim-lang/Nim ·
+  GitHub]]
+- [[https://github.com/planetis-m/manu/issues/5][manu breaks important_packages · Issue #5 · planetis-m/manu · GitHub]]
+- [[https://github.com/fowlmouth/nake/issues/77][nake breaks manu which breaks important_packages · Issue #77 ·
+  fowlmouth/nake · GitHub]]
+- [[https://github.com/nim-lang/Nim/commit/83128f217f63045974a48e61b65386abbfc97352][disable testing of `fidget`, to make CIs green · nim-lang/Nim@83128f2 ·
+  GitHub]]
+- [[https://github.com/nim-lang/Nim/pull/18601][fixes #18543 by Araq · Pull  Request #18601 · nim-lang/Nim · GitHub]] (note
+  [[https://github.com/nim-lang/Nim/pull/18601#issuecomment-889381407][ignored]] commit message improvement suggestion)
 
 * Part six: my vision
 
