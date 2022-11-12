@@ -120,29 +120,75 @@ most of the things that were wrong with the package manager at the time.
 
 *** Dead community management
 
+Nimble package  manager is  shipped with default  =choosenim= installation.
+Specific  version of  the package  is hardcoded  in the  ~koch.nim~ builder
+using   git  [[https://github.com/nim-lang/Nim/blob/73680cef953bd9c42b7c7c4e8081d0ae609de772/koch.nim#L13][hash]]   and   currently   points  to   the   [[https://github.com/nim-lang/nimble/commit/d13f3b8ce288b4dc8c34c219a4e050aaeaf43fc9][version]]  that   is
+[2021-02-19 Fri]--[2022-11-13 Sun] => 632 days old.
+
+If you look into git [[https://github.com/nim-lang/Nim/commit/3d7c52f3cd6c08a175a8e8f8ed79757dd027648f][blame]] you can see a very interesting commit message
+
 #+begin_quote
-By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
-"development has been  outsourced, wasn't ready for 1.6.0 and  I don't know
-the plan either"[fn:either-96] -- this happened moths after long discussion
-about  added nimble  features, subsequent  reversal  of the  version to  be
-release https://forum.nim-lang.org/t/8404#54511 and we still don't have any
-concrete roadmap about plans to roll out 14.0.
+[backport] Revert "use new Nimble, with lockfiles ([[https://github.com/nim-lang/Nim/pull/18810][#18810]])" ([[https://github.com/nim-lang/Nim/pull/18872][#18872]])
 
-So these are my two cents on how having a good roadmap could've prevented a
-almost  a year's  worth  of  effort (pattern  matching)  to  not lose  it's
-maintainer, and how you managed to loose a single person who was interested
-enough to really  try to compose the plans,  suggestions, improvement ideas
-and  vision for  the  package  manager into  something  coherent, not  "the
-discussions were  spread through  multiple Github  issues, IRC  and private
-chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889003530/753721959308853319/892742985626824734][discord link]].
+This reverts commit [[https://github.com/nim-lang/Nim/commit/f373c17ad926b669bb3b5819ae1dff4bde1da88a][f373c17]].
 
-This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
-
-P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
+For more details, see:
+- [[https://github.com/nim-lang/nimble/issues/940][nim-lang/nimble#940]]
+- [[https://github.com/nim-lang/Nim/issues/18840][#18840]]
+- https://forum.nim-lang.org/t/8404
 #+end_quote
 
-[fn:either-96] Remember -- this is a main project contributor talking about
-their
+Reverted    [[https://github.com/nim-lang/nimble/commit/795704833ddfd0cdaefb45c60551d3ea205279ef][commit]]   actually    points   to    a   much    newer   version
+([2021-09-03 Fri]--[2022-11-13] =>  436 days). The reason  for reversal can
+be seen in detail in the linked  [[https://forum.nim-lang.org/t/8404][thread]], but tl;dr version: ~v0.14~ broke a
+lot of  people's workflows  and didn't  provide any  reasonable alternative
+that people would be satisfied with.  Almost all changes in v0.14 come from
+the gigantic [[https://github.com/nim-lang/nimble/pull/913][PR]] (+9,187/−2,887)  that originally targeted implementation of
+the  [[https://github.com/nim-lang/nimble/issues/127][lockfiles]] according  to the  [[https://github.com/nim-lang/nimble/issues/127#issuecomment-455612545][specification]] but  later grew  to require
+compiler  [[https://github.com/nim-lang/Nim/pull/12104][modifications]]  (bidirectional  dependency  between  compiler  and
+package manager) and include
+
+- Parallel package download
+- Intermediate package.nim.cfg file
+- Lock files
+- Changes to  the nimble  develop command  -- change  that caused  the most
+  issues.
+- Changes to nimble check
+
+The documentation  wasn't especially  clear as  not a  lot of  people could
+figure  out  that  some  original  features  could  actually  be  emulated,
+according to the [[https://forum.nim-lang.org/t/8404#54497][comment]] from one of the core developers (which I [[https://github.com/nim-lang/nimble/pull/943#issuecomment-922681649][suggested]]
+adding to the documentation, but I guess I wasn't persuasive enough).
+
+Several months  later Nimble  came up  in the discussion  again, in  a very
+interesting  [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][context]]: "development  has been  outsourced, wasn't  ready for
+1.6.0 and I don't know the plan either" (Remember -- this is a core project
+contributor talking about the central piece of the ecosystem)
+
+------------------
+
+Attempted  fixes also  included [[https://github.com/nim-lang/Nim/commit/908fc2a22e7336670173bcd06ab30f440ca6d321][addition]]  of the  ~pkgs2~ directory  to the
+nimble path.
+
+# #+begin_quote
+# By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
+# [fn:either-96] -- this happened moths after long discussion
+# about  added nimble  features, subsequent  reversal  of the  version to  be
+# release https://forum.nim-lang.org/t/8404#54511 and we still don't have any
+# concrete roadmap about plans to roll out 14.0.
+
+# So these are my two cents on how having a good roadmap could've prevented a
+# almost  a year's  worth  of  effort (pattern  matching)  to  not lose  it's
+# maintainer, and how you managed to loose a single person who was interested
+# enough to really  try to compose the plans,  suggestions, improvement ideas
+# and  vision for  the  package  manager into  something  coherent, not  "the
+# discussions were  spread through  multiple Github  issues, IRC  and private
+# chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889003530/753721959308853319/892742985626824734][discord link]].
+
+# This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
+
+# P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
+# #+end_quote
 
 ** TODO Issues with the implementation
 
@@ -433,10 +479,7 @@ reduces the readability. Whole codebase turns into spaghetti.
   linker and still resort to low-level [[https://github.com/nim-lang/Nim/blob/1247043c9036fb6029c87bf5bed9021c6eff6092/lib/wrappers/openssl.nim#L411][hacks]].
 
 
-
-
 ** TODO General issues with the management
-
 ** TODO Tooling implementation issues
 
 [[https://github.com/nim-lang/RFCs/issues/300][Developer    tooling   ·    Issue   #300]]    ([[https://web.archive.org/web/20221024162725/https://github.com/nim-lang/RFCs/issues/300][archive]])   is    second   most
@@ -484,6 +527,9 @@ never been  any official effort aside  from a *[[https://forum.nim-lang.org/t/80
 you have any  knowledge of the subject  you should run away  already) and a
 tool that requires you to [[https://github.com/nim-lang/c2nim/blob/master/doc/c2nim.rst#def-directive][modify]] the headers.
 
+Aside from  questionable UX this project  itself has no direct  issues with
+management.
+
 **** standard library
 **** Nim forum
 
@@ -513,18 +559,21 @@ library and  left on it's own  as a separate  package with an idea  it will
 also [[https://github.com/nim-lang/fusion/issues/30][adopt]] semantic versioning (never really  happened). Then I had to wait
 for over a month until by patience finally [[https://github.com/nim-lang/website/pull/252#issuecomment-786700979][ran out]] and I decided to publish
 it  myself somehow.  Eventually it  was [[https://github.com/nim-lang/website/pull/271][published]],  received 145  points on
-[[https://news.ycombinator.com/item?id=26420716][hackernews]]. In march someone made a video tutorial on the [[https://www.youtube.com/watch?v=GJpn6SfR_1M][library]].
+[[https://news.ycombinator.com/item?id=26420716][hackernews]]. In March someone made a video tutorial on the [[https://www.youtube.com/watch?v=GJpn6SfR_1M][library]].
 
 
-Then nim 1.6.0 introduced the ~nnkTupleConstr~ - ~fusion/matching~ required
-some  fixing, so  ~@clybber~ [[https://github.com/nim-lang/fusion/pull/86][fixed]]  it  in, so  far so  good. Except  after
-unbundling never  received any  proper tags, and  people still  [[https://github.com/nim-lang/fusion/issues/99][get]] [[https://www.reddit.com/r/nim/comments/qfi1d0/fusionmatching_broken_in_nim_16/][version]]
-that is nine months old. I  wasn't really privy into the management details
-and simply worked on the [[https://github.com/nim-lang/fusion/pull/94][PR]] with additional fixes.
+Fast forward to 1.6.0: new  version introduced the ~nnkTupleConstr~ - which
+required some fixing, which was promptly done by ~@clybber~ ([[https://github.com/nim-lang/fusion/pull/86][PR]]). So far so
+good. Except  after unbundling never  received any proper tags,  and people
+still [[https://github.com/nim-lang/fusion/issues/99][get]] [[https://www.reddit.com/r/nim/comments/qfi1d0/fusionmatching_broken_in_nim_16/][version]] that  is nine months old. I wasn't  really privy into the
+management details, assuming  the official library tagging  would have some
+work done on it, and simply worked on the [[https://github.com/nim-lang/fusion/pull/94][PR]] with additional fixes.
 
 My PR had  a CI failing for  a five months purely  due to [[https://github.com/nim-lang/fusion/pull/100][misconfiguration]],
 and I  had to personally  come and complain about  it in order  for leorize
-(another person who moved to nimskull btw) to fix it.
+(another  person who  moved  to  nimskull btw)  to  fix  it --  effectively
+confirming that  not a single  maintainer bothered  to look through  PRs in
+fusion for almost half a year.
 
 After fixing CI -- Half a month forward, zero reaction. Is fusion a part of
 the current  nim effort, or is  it not - I  don't know. Each time  it was a
@@ -542,12 +591,23 @@ footnotes instead.
 
 *Araq*:
 
-I'm really sorry for your bad experience and I hope you'll come back. Fusion is part of what we offer, it's however badly maintained as I get no emails from github when there is activity. I think I enabled the email feature, I'm not sure why I still don't get any. I also don't know why so few people appear to have the proper rights to merge things on Fusion, I'll see what we can do.
+I'm  really sorry  for your  bad experience  and I  hope you'll  come back.
+Fusion is part of what we offer,  it's however badly maintained as I get no
+emails from  github when  there is  activity. I think  I enabled  the email
+feature, I'm not sure  why I still don't get any. I also  don't know why so
+few people appear to have the proper rights to merge things on Fusion, I'll
+see what we can do.
 
-    So these are my two cents on how having a good roadmap could've prevented a almost a year's worth of effort (pattern matching) to not lose it's maintainer ...
+    #+begin_quote
+    So  these are  my  two cents  on  how having  a  good roadmap  could've
+    prevented a almost  a year's worth of effort (pattern  matching) to not
+    lose it's maintainer ...
+    #+end_quote
 
-Sorry, but that's not how I see it, since we are overburdened with work, the proper solution is to give you more rights so that you can go ahead and not be constantly blocked by us.
 
+Sorry, but that's  not how I see  it, since we are  overburdened with work,
+the proper solution is to give you more rights so that you can go ahead and
+not be constantly blocked by us.
 
 -------
 
@@ -1108,6 +1168,10 @@ constructor  calling  (using  placement   new)  and  even  customized  code
 generation. All of this will be possible if writings are made structured.
 
 # https://matrix.to/#/!MAXxvfCYnfYgZqSizw:matrix.org/$xQc8dhoTg3rHL4xbF6OlHKVyQegSwHm9cRRUfO0ZX4k?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
+*** TODO Interfacing with complicated C++ code
+
+*** TODO Automatic binding generation
 
 ** Code formatting solution
 
