@@ -105,6 +105,13 @@ else
     - src_sh{fd -e cpp -e hpp -e c -e h -x clang-tidy -fix
       -checks="readability-braces-around-statements" '{}'} to apply
       recursively on all ~hpp/h/cpp/c~ files in the directory.
+      - =clang-tidy=  can't work  on  incomplete  or malformed  translation
+        units compilation database  might be necessary. Supply  path to the
+        ~compile_commands.json~ using ~-p~ switch (~-p="<path>"~)
+        - To generate compilation  database for Qt projects  use "Build" ->
+          "Generate compilation database".
+        - To   generate  compilation   database  for   CMake  project   use
+          ~-DCMAKE_EXPORT_COMPILE_COMMANDS=ON~ while compiling the project.
     - =clang-tidy= 'FIXIT' applications  don't generate perfectly formatted
       code -  you might want to  use src_sh{fd -e cpp  -e hpp -e c  -e h -x
       clang-format  -i  '{}'} to  recursively  reformat  all files  in  the

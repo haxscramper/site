@@ -28,9 +28,9 @@ https://stackoverflow.com/questions/24100602/developing-python-applications-in-q
 
 ** ~qDebug~ / ~console.log~ does not output anything in =QtCreator=
 
-Add ~QT_ASSUME_STDERR_HAS_CONSOLE~ environment variable in the 'run'
-configurations and set it's value to ~1~. IME most of the time an issue
-comes from lack of this configuration, even though most of the forum posts
+Add  ~QT_ASSUME_STDERR_HAS_CONSOLE~  environment   variable  in  the  'run'
+configurations and  set it's value  to ~1~. IME most  of the time  an issue
+comes from lack of this configuration,  even though most of the forum posts
 start with the second one (presented below).
 
 Alternatively this might be caused by the logging rules configuration. In

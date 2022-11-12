@@ -970,6 +970,145 @@ in-placed using multiple of variations of different
 
 *** Backend data
 
+** Removing language dialects
+
+Mainline has  a large number of  language dialects that affect  how code is
+compiled  and what  features  are  available which  can  cause issues  when
+enabled. Having  separate language dialects causes  combinatorial explosion
+in testing  (~on/off~ test for each  flag, sometimes there are  more values
+that  can be  allowed)  and some  things are  inevitably  fall through  the
+cracks.
+
+All  experimental  features should  either  be  implemented completely  and
+enabled by default (such as "strict  funcs", "not nil" checking) or removed
+from  the  implementation.  Optimizing  for  "what  if"  use  case  is  not
+sustainable in the long run as  it disperses the efforts and requires large
+amount of time to coordinate different parts of the language.
+
+** Structured C and C++ interop
+
+Right now  C and C++ interop  largely relies on the  fact backend generates
+code listings and not binaries. This  makes it possible to have things such
+as  ~{.emit.}~ and  various ~importcpp~  patterns. Compiler  does not  know
+anything about the structure of the C++ code that is being wrapped and user
+can trick it with things like  ~#.__karaxMarker__ = true~, but generally it
+is not needed. Overwhelming majority of the patterns
+
+# rg -g "*.nim" --no-filename --no-line-number --only-matching 'importcpp:\s*".*?"' |
+#     sd 'importcpp:\s+"' '' | sd '"$' '' | sort | uniq  > importcpp
+
+*** Problem
+
+- TODO compiler has no understanding  of the FFI structure, code templating
+  has hacks,  99% of the  times it  is used for  trivial cases that  can be
+  covered  by an  interface  file,  everything else  is  either covered  by
+  ~{.emit.}~  or should  just  be  separated in  different  pieces of  code
+  altogether.
+
+*** Current state of the ecosystem
+
+Simple  analysis of  different  ~importcpp~ patterns  shows  that they  are
+*overwhelmingly* used  to account  for a number  of simple  patterns listed
+here:
+
+TODO document/explain patterns.
+
+#+begin_src js
+/^#?(->|\.|\.~|new\s)?[a-zA-Z0-9_:]+(\((@|#)?\))?$/d
+/^\(?#\s*(\|\||&&|>=|<=|<<=|>>=|==|<<|>>|<|>|[-+*%&/~]=|=[-+*%&/~])\s*#\)?$/d
+/^\(?#\s*[+*/%&-|^]\s*\)?#/d
+/^([a-zA-Z_:]+\.?)+$/d
+/^\(?(\+\+|\-\-|[-~*&!]|new)\s*(#|@)\)?$/d
+/^#\(@\)$/d
+/^#\[(#|@)\]$/d
+/^\(#\)$/d
+/^delete @$/d
+/^#.[a-zA-Z_:]\*=\*#$/d
+#+end_src
+
+Cloning all packages in the list  using code listing below and then running
+simple ~rg  | wc -l~  shows that number  of ~importcpp~ patterns  listed is
+14503 (12490 unique).
+
+#+caption: Clone all nimble packages
+#+begin_src elvish
+set E:GIT_TERMINAL_PROMPT = 0
+for url [(cat packages.json | jq '.[].url' --raw-output)] {
+    try {
+        git clone $url".git"
+    } catch {
+
+    }
+}
+#+end_src
+
+#+caption: Count importcpp uses
+#+begin_src elvish
+rg -g "*.nim" --no-filename ^
+    --no-line-number --only-matching 'importcpp:\s*".*?"' |
+    sd 'importcpp:\s*"' '' | sd '"$' '' | wc -l
+#+end_src
+
+Removing common patterns we get 274  (223 unique), which is ~0.018%~ of the
+total number. And  large number of these patterns is  not exactly "special"
+either:
+
+#+caption: Filter out common patterns
+#+begin_src elvish
+rg -g "*.nim" --no-filename --no-line-number --only-matching 'importcpp:\s*".*?"' |
+    sd 'importcpp:\s*"' '' | sd '"$' '' | sed -r -f importcpp_remove.sed
+#+end_src
+
+#+caption: Some of the more trivial examples that weren't matched by sed
+#+begin_example
+std::basic_string<'*0>(@)
+std::pair <'0,'1>
+std::make_shared<'*0>(#)
+std::vector<'*0>(@)
+at::detail::getCUDAHooks().compiledWithCuDNN()
+#+end_example
+
+There are, however, some very questionable constructs such as
+
+#+caption: Unusual code
+#+begin_example
+std::shared_ptr<'*0>(@, []('*0* ptr) { callCppPtrDestructor(ptr); nimPointerDeleter(ptr); })
+std::unique_ptr<'*0, std::function<void('*0*)>>(@, []('*0* ptr) { callCppPtrDestructor(ptr); nimPointerDeleter(ptr); })
+_InterlockedExchange(reinterpret_cast<LONG volatile *>(#), static_cast<LONG>(#))
+fetch(#, #).then(r => r.json())
+(window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB)
+#+end_example
+
+
+# Funnily  enough,  the  only  ~grep   -F  "#.operator"~  found  in  code  is
+# ~#.operator=()~.
+
+*** Solution
+
+Instead  of relying  on fragile  and repetitive  ~importcpp~ patterns  that
+completely loose  the structure  of the  library to be  wrapped we  need to
+introduce  an  /interface  file/  concept.  Interface  file  would  contain
+description of  the library  API in  a declarative  manner. The  concept of
+/declarative/ wrapping description had actually been considered seven years
+ago in [[https://github.com/xomachine/wraptool-cpp2nim][GitHub - xomachine/wraptool-cpp2nim: Macros allowing generating
+compact and readable wrappers to C++ classes for Nim programming language]]
+but sadly didn't gain that much traction.
+
+Main purpose  of the interface  file is  to /present information  about the
+library in  a structured way/.  Interface file can  either be a  product of
+automatic  wrapper  generator  or  a result  of  manual  effort.  Interface
+description is less laborious compared to the manual ~importcpp~ annotation
+as it  reduces the  need for repeated  namespace and  ~header~ annotations,
+makes patterns themselves simpler as well.
+
+In addition  to several  minor quality-of-life improvements  interface file
+could also  be used as a  source of information for  further automatization
+such  as   ~newClass()~  and  ~initClass()~  method   generation,  GC-aware
+constructor  calling  (using  placement   new)  and  even  customized  code
+generation. All of this will be possible if writings are made structured.
+
+# https://matrix.to/#/!MAXxvfCYnfYgZqSizw:matrix.org/$xQc8dhoTg3rHL4xbF6OlHKVyQegSwHm9cRRUfO0ZX4k?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
 ** Code formatting solution
 
 Official stance on  the improvement of the code  formatting solutions seems
@@ -1115,6 +1254,10 @@ to the master plan from the part five.
 
 In  most cases  they  have  already been  discussed  /somewhat/ in  various
 places, but are currently too far from the present state of things.
+
+** Standard library
+
+https://matrix.to/#/!alsWvZtOfWkQlHwcHC:envs.net/$_Kp6CVZzg7CEFIG55dWU11I5vyi9dAphJj89dzYnypo?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
 
 ** Documentation generation
 
