@@ -1470,6 +1470,64 @@ management is done.
   PM will "do the right thing".
 - Thirdly -- package manager won't suddenly pull a different version of the
   dependency unless you explicitly specify it can do so.
+- Extra  -- it  is possible  to transform  ecosystem that  was bout  around
+  minimum version selection into one  that favors maximum version selection
+  because it will  effectively require relaxing the  version ranges. Making
+  transition the other way might be too hard.
+- Extra -- =MVS=  requirements are less vulnerable to bitrot.  If you write
+  the package that uses specific versions, leave it for five years and come
+  back, it will pull the same versions.
+
+Based on above points it is safe  to assume that =MVS= is a better solution
+at the start.
+
+Package resolution algorithm is pretty  simple:
+
+- Package directory path and git URL  of the package to install is supplied
+  to the package manager.
+- First package is cloned to the directory path. If specific version of the
+  package is required it is [[https://git-scm.com/docs/git-checkout][checked out]].
+- Each    package   contains    specification    of   requirement    ranges
+  ~requirements.toml~ (name/format are provisional) which is looked over to
+  determine which packages to download next.
+- For each newfound package:
+  - If new package is required and  is missing it is downloaded and checked
+    out to a minimum possible version.
+  - If  new package  is  required and  had already  been  downloaded it  is
+    checked to a new minimum  version, which is computed as ~max(min_first,
+    min_second)~
+- New  packages  are processed  recursively  and  cloned into  the  package
+  directory as needed.
+- After  installation   process  is  finished  package   manager  generates
+  ~nim.cfg~ file  which contains  multiple ~--path=~,  pointing to  the new
+  package locations.
+
+After installation  any tool can  read ~nim.cfg~ and get  information about
+packages.
+
+
+---------------------
+
+- List of requirements can potentially be replaced to git submodules, but a
+  lot of people find them confusing, they are not as approachable as simple
+  ~config.toml~ file.
+- Dependency  resolution  algorithm  transparently treats  both  local  and
+  remote packages.  If you need  to develop a  package locally you  can use
+  symbolic link and it will be  processed as "required and had already been
+  downloaded".
+- You can roll any particular dependency to a specified version as needed -
+  either independently or updating versions  for all packages. This is very
+  handy for upgrading dependencies.
+- Lock files can be trivially  implemented by writing dependency hash trees
+  into a separate file.
+
+# TODO  if  I fork  one  of  my dependencies  (F)  and  another one  of  my
+# dependencies (D1)  also depends on  the forked  project, how can  this be
+# represented in  requirements file? This use  case "just works" if  I have
+# everything locally -  "fork" simply replaces whatever I  had for package,
+# but  the environment  is not  impossible  to reproduce.  NOTE this  might
+# require support for  more than one package linked into  the main project.
+# TODO ping @saem about this one.
 
 *** "Single tool" solution
 
