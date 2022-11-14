@@ -481,10 +481,10 @@ reduces the readability. Whole codebase turns into spaghetti.
 *** C++ backend
 
 C and  C++ backends  are needlessly  different when  it comes  to derived
-object handling.
+object handling and [[https://github.com/nim-lang/Nim/blob/de89f6ce3233751a5c364100b902eadfc27086a4/compiler/ccgtypes.nim#L708][preference]] of ~&~ references.
 
-- When  the  *C*   backend  uses  inheritance  it  is   done  via  object
-  composition, but when a project is compiled via the *C++* backend it is
+- When  the  *C*   backend  uses  [[https://github.com/nim-lang/Nim/blob/de89f6ce3233751a5c364100b902eadfc27086a4/compiler/ccgtypes.nim#L602][inheritance]]  it  is   done  via  object
+  [[https://github.com/nim-lang/Nim/blob/de89f6ce3233751a5c364100b902eadfc27086a4/compiler/ccgtypes.nim#L615][composition]], but when a project is compiled via the *C++* backend it is
   done using native inheritance instead.
 - This   leads   two   different   modes  of   handling   parent   fields
   ~obj.Sup.field~ vs ~obj.field~
@@ -512,6 +512,12 @@ passBase(der)
 
   For "not a  transpiler" compiler nim certainly tries  to translate into
   too many high-level C++ constructs.
+
+These  differences  are  supposedly   orchestrated  from  withing  semantic
+[[https://github.com/nim-lang/Nim/blob/de89f6ce3233751a5c364100b902eadfc27086a4/compiler/semexprs.nim#L719][analysis]]   for  expression   processing  which   creates  backward-pointing
+information link  during compilation.  Macros get different  AST structure,
+code generation  can work out  two varying code structures,  later compiler
+stages need to anticipate AST variations.
 
 
 ** TODO General issues with the management
