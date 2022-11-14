@@ -972,6 +972,16 @@ this list is relevant and where it is not:
 
 * Part four: our vision
 
+#  https://www.google.com/search?q=best%20effort%20principle
+# https://www.investopedia.com/terms/b/bestefforts.asp#:~:text=The%20term%20best%20efforts%20refers,their%20securities%20offering%20as%20possible.
+# https://www.google.com/search?q=work%20ethics%20conduct
+# https://www.google.com/search?q=code%20of%20work%20ethics
+# https://www.google.com/search?q=professional%20ethics
+# https://www.google.com/search?q=scope%20of%20project
+# https://www.google.com/search?q=vision%20of%20the%20project
+# https://teamhood.com/project-management/project-vision-statement-make-sure-it-works/
+# https://www.google.com/search?q=reasonable%20effort
+
 In this  section I will  briefly outline a  general vision for  the project
 moving forward. After more than a year of work it is a good idea to draw on
 the newly discovered knowledge to help better define the direction.
@@ -1071,8 +1081,6 @@ Simple  analysis of  different  ~importcpp~ patterns  shows  that they  are
 *overwhelmingly* used  to account  for a number  of simple  patterns listed
 here:
 
-TODO document/explain patterns.
-
 #+begin_src js
 /^#?(->|\.|\.~|new\s)?[a-zA-Z0-9_:]+(\((@|#)?\))?$/d
 /^\(?#\s*(\|\||&&|>=|<=|<<=|>>=|==|<<|>>|<|>|[-+*%&/~]=|=[-+*%&/~])\s*#\)?$/d
@@ -1085,6 +1093,24 @@ TODO document/explain patterns.
 /^delete @$/d
 /^#.[a-zA-Z_:]\*=\*#$/d
 #+end_src
+
+The patterns are:
+
+- Wrap class method, ~new~ constructor or destructor.
+  - NOTE: it should not be necessary  to wrap ~new~ directly as constructor
+    wrappers can be generated automatically.
+  - NOTE: sometimes  ~->~ or ~.~ is  used for wrapping, which  also removes
+    flexibility.  Wrapper provides  /code  pattern to  use  when method  is
+    invoked on pointer to object/, it does not exactly provide /information
+    about the method's existence/
+- Various operator calls: binary, unary
+- ~scoped::class.method()~  call   or  similar  construct   with  qualified
+  identifiers joined via dot.
+  - EX: ~desktopChanged.connect~
+- Call operator ~()~
+- Index operator ~[]~
+- Explicit delete wrap
+- Assign to index
 
 Cloning all packages in the list  using code listing below and then running
 simple ~rg  | wc -l~  shows that number  of ~importcpp~ patterns  listed is
