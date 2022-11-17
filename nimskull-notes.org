@@ -405,6 +405,30 @@ divided  into two  broad categories  -- literals  (integer, floating-point,
 string)  and 'container'  (definitions, statements,  expressions etc)  that
 store nodes in a strictly ordered fashion.
 
+****** Reliance on exception handling for control flow
+
+TODO rewrite cleanly, link to the procedures in the source code.
+
+The simplest example would be ~globalError()~ — it is a template defined in msgs.nim which raises ~ERecoverableError~ as a means of execution control. For example, if you have a static[int] argument in a function overloading resolution will try to evaluate the expression you used as an argument and raise exception on failure which ends up in the try ... except block somewhere. Now imagine trying to figure out the control flow logic of how two systems of the compiler interact with each other, multiply by ~100 instances of globalError() sprinkled all over the code and you get some understanding
+
+and is not the only example, mind you, it is just one of dozens separate issues that are layered on top of each other
+
+not using exceptions for control flow is a programming 101 if you ask me, but apparently it is not the common knowledge
+
+let me pull the links in the implementation so you can see what I'm talking about, one second
+
+https://github.com/nim-lang/Nim/blob/1707bc4a992bc966a7439facb9ee819023c22f77/compiler/sem.nim#L354-L362
+
+this code is responsible for trying evaluation of the static[T] arguments
+
+https://github.com/nim-lang/Nim/blob/0ead94c4eb8042bc6f8f313dd5ed4f05eb375330/compiler/vm.nim ctrl+F "globalError" -> 12 results
+
+https://github.com/nim-lang/Nim/blob/a228e331f30def00d4369d4e792c7454963d8c4e/compiler/vmgen.nim + 23 more
+
+each of these calls can end up in the tryConstExpr
+
+so right here, you have 35 possible paths of how analysis of the expression can go wrong
+
 ***** Magical indices all over the code
 
 Access to  the data in  the AST is  largely performed using  direct indexed
@@ -1017,6 +1041,33 @@ this list is relevant and where it is not:
 [[https://user-images.githubusercontent.com/20562256/202400952-adce6526-a0cd-48f5-acb5-64701c9cd79b.png]]
 #+end_center
 
+Roadmap   provides  a   high-level   overview  of   the  project's   goals.
+Implementation details can be seen in the next section: "our scopes".
+
+- Add structured diagnostic [1] ::  Rewrite diagnostic handling pipeline in
+  the compiler internals.
+- Testament improvements [2] :: TODO
+- Separate parsed and mutated AST [3] ::
+- First-class VM [4] ::
+- Mid-level IR [5] ::
+- Test as specification [6] ::
+- Precise AST structure [7] ::
+- C backend rewrite [8] ::
+- Automatic wrapper generator [9] ::
+- Clean up and organize existing tests [10] ::
+- Untangle Backend and Sem data [11] ::
+- Dod for the while compiler [12] ::
+- C++ /integration/ [13] :: ([[id:b5a161a8-9ea3-434b-87c6-451de4208ddc][scopes]])
+- Code formatting [14] ::
+- Package manager [16] ::
+- Documentation generator [17] ::
+- IC - incremental compilation [18] ::
+- LSP [19] ::
+- Fast recompilatoin [20] ::
+- VSCode extension [21] ::
+- CPS - continuation passing style [22] ::
+
+
 
 #  https://www.google.com/search?q=best%20effort%20principle
 # https://www.investopedia.com/terms/b/bestefforts.asp#:~:text=The%20term%20best%20efforts%20refers,their%20securities%20offering%20as%20possible.
@@ -1102,6 +1153,9 @@ sustainable in the long run as  it disperses the efforts and requires large
 amount of time to coordinate different parts of the language.
 
 ** Structured C and C++ interop
+   :PROPERTIES:
+   :ID:       b5a161a8-9ea3-434b-87c6-451de4208ddc
+   :END:
 
 Right now  C and C++ interop  largely relies on the  fact backend generates
 code listings and not binaries. This  makes it possible to have things such
