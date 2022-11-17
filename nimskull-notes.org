@@ -1013,6 +1013,11 @@ this list is relevant and where it is not:
 
 * Part four: our vision
 
+#+begin_center
+[[https://user-images.githubusercontent.com/20562256/202400952-adce6526-a0cd-48f5-acb5-64701c9cd79b.png]]
+#+end_center
+
+
 #  https://www.google.com/search?q=best%20effort%20principle
 # https://www.investopedia.com/terms/b/bestefforts.asp#:~:text=The%20term%20best%20efforts%20refers,their%20securities%20offering%20as%20possible.
 # https://www.google.com/search?q=work%20ethics%20conduct
