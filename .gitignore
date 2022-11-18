@@ -407,3 +407,4 @@ htmldocs/
 *.tex
 **/*.html
 *.pdf
+!latex_conf.tex

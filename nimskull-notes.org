@@ -1,5 +1,12 @@
 #+title: Why nimskull
-#+options: broken-links:mark
+#+options: broken-links:mark toc:4 ^:nil
+#+latex_header: \include{latex_conf.tex}
+
+# #+latex_header: \usepackage{fontspec}
+# #+latex_header: \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+# #+latex_header: \setmainfont{Times}
+# #+latex_header: \setmonofont{Lucida Sans Typewriter}
+#+latex_compiler: xelatex
 
 # TODO https://matrix.to/#/!alsWvZtOfWkQlHwcHC:envs.net/$InF0jWs3VKmmsZTRa_lzWKMyNQXsdcdJanLunNsTlqc?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com add discussion insights from the discussion
 
@@ -40,6 +47,9 @@ nimskull are the following, in order of my preference:
 3. /"So, nimskull is a project management exercise, carry on then"/
 
 * WIP Part one: "why"
+  :PROPERTIES:
+  :ID:       29e7b85f-c637-4f8a-b9a6-c594f9fe833d
+  :END:
 
 Important  disclaimer before  I  go  into long  and  annoying  list of  all
 failings that  happened over the  years --  I *personally* think  that this
@@ -101,94 +111,6 @@ https://github.com/nim-lang/nimble/pull/913#issuecomment-873565439
 https://discord.com/channels/371759389889003530/371759607934353448/915916352450088961
 
 > the delete circus with nimStrictDelete is something I will probably never understand
-
-** Issues with package management
-
-On July 4th, 2021 I wrote  the [[https://github.com/nim-lang/RFCs/issues/398][RFC]] detailing various issues and suggestions
-for the package management improvements that provided a detailed account of
-most of the things that were wrong with the package manager at the time.
-
-*** UX and implementation issues
-
-*** Non-existent level of interest in package manager improvements
-
-1. Non-existent dependency  resolution algorithm that can  get knocked over
-   at any time, causing bugs and repeated installations.
-2. Bidirectional data  flow between the compiler and package  manager -- it
-   is not  possible to  run the  compiler separately with  the same  set of
-   packages as in command-line.
-
-*** Dead community management
-
-Nimble package  manager is  shipped with default  =choosenim= installation.
-Specific  version of  the package  is hardcoded  in the  ~koch.nim~ builder
-using   git  [[https://github.com/nim-lang/Nim/blob/73680cef953bd9c42b7c7c4e8081d0ae609de772/koch.nim#L13][hash]]   and   currently   points  to   the   [[https://github.com/nim-lang/nimble/commit/d13f3b8ce288b4dc8c34c219a4e050aaeaf43fc9][version]]  that   is
-[2021-02-19 Fri]--[2022-11-13 Sun] => 632 days old.
-
-If you look into git [[https://github.com/nim-lang/Nim/commit/3d7c52f3cd6c08a175a8e8f8ed79757dd027648f][blame]] you can see a very interesting commit message
-
-#+begin_quote
-[backport] Revert "use new Nimble, with lockfiles ([[https://github.com/nim-lang/Nim/pull/18810][#18810]])" ([[https://github.com/nim-lang/Nim/pull/18872][#18872]])
-
-This reverts commit [[https://github.com/nim-lang/Nim/commit/f373c17ad926b669bb3b5819ae1dff4bde1da88a][f373c17]].
-
-For more details, see:
-- [[https://github.com/nim-lang/nimble/issues/940][nim-lang/nimble#940]]
-- [[https://github.com/nim-lang/Nim/issues/18840][#18840]]
-- https://forum.nim-lang.org/t/8404
-#+end_quote
-
-Reverted    [[https://github.com/nim-lang/nimble/commit/795704833ddfd0cdaefb45c60551d3ea205279ef][commit]]   actually    points   to    a   much    newer   version
-([2021-09-03 Fri]--[2022-11-13] =>  436 days). The reason  for reversal can
-be seen in detail in the linked  [[https://forum.nim-lang.org/t/8404][thread]], but tl;dr version: ~v0.14~ broke a
-lot of  people's workflows  and didn't  provide any  reasonable alternative
-that people would be satisfied with.  Almost all changes in v0.14 come from
-the gigantic [[https://github.com/nim-lang/nimble/pull/913][PR]] (+9,187/−2,887)  that originally targeted implementation of
-the  [[https://github.com/nim-lang/nimble/issues/127][lockfiles]] according  to the  [[https://github.com/nim-lang/nimble/issues/127#issuecomment-455612545][specification]] but  later grew  to require
-compiler  [[https://github.com/nim-lang/Nim/pull/12104][modifications]]  (bidirectional  dependency  between  compiler  and
-package manager) and include
-
-- Parallel package download
-- Intermediate package.nim.cfg file
-- Lock files
-- Changes to  the nimble  develop command  -- change  that caused  the most
-  issues.
-- Changes to nimble check
-
-The documentation  wasn't especially  clear as  not a  lot of  people could
-figure  out  that  some  original  features  could  actually  be  emulated,
-according to the [[https://forum.nim-lang.org/t/8404#54497][comment]] from one of the core developers (which I [[https://github.com/nim-lang/nimble/pull/943#issuecomment-922681649][suggested]]
-adding to the documentation, but I guess I wasn't persuasive enough).
-
-Several months  later Nimble  came up  in the discussion  again, in  a very
-interesting  [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][context]]: "development  has been  outsourced, wasn't  ready for
-1.6.0 and I don't know the plan either" (Remember -- this is a core project
-contributor talking about the central piece of the ecosystem)
-
-------------------
-
-Attempted  fixes also  included [[https://github.com/nim-lang/Nim/commit/908fc2a22e7336670173bcd06ab30f440ca6d321][addition]]  of the  ~pkgs2~ directory  to the
-nimble path.
-
-# #+begin_quote
-# By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
-# [fn:either-96] -- this happened moths after long discussion
-# about  added nimble  features, subsequent  reversal  of the  version to  be
-# release https://forum.nim-lang.org/t/8404#54511 and we still don't have any
-# concrete roadmap about plans to roll out 14.0.
-
-# So these are my two cents on how having a good roadmap could've prevented a
-# almost  a year's  worth  of  effort (pattern  matching)  to  not lose  it's
-# maintainer, and how you managed to loose a single person who was interested
-# enough to really  try to compose the plans,  suggestions, improvement ideas
-# and  vision for  the  package  manager into  something  coherent, not  "the
-# discussions were  spread through  multiple Github  issues, IRC  and private
-# chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889003530/753721959308853319/892742985626824734][discord link]].
-
-# This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
-
-# P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
-# #+end_quote
 
 ** TODO Issues with the implementation
 
@@ -543,7 +465,6 @@ information link  during compilation.  Macros get different  AST structure,
 code generation  can work out  two varying code structures,  later compiler
 stages need to anticipate AST variations.
 
-
 ** TODO General issues with the management
 ** TODO Tooling implementation issues
 
@@ -585,7 +506,7 @@ core project existence since 1.0.
 
 *** Managing specific projects
 
-**** c2nim
+**** ~c2nim~ automatic wrapper generator
 
 Nim interop a *big*  topic when someone starts using nim,  but it there has
 never been  any official effort aside  from a *[[https://forum.nim-lang.org/t/8020][handwritten]]* C++  parser (if
@@ -596,6 +517,20 @@ Aside from  questionable UX this project  itself has no direct  issues with
 management.
 
 **** standard library
+
+There are no clear guidelines or  rules on how packages in standard library
+need  to be  updated,  deprecated  or improved.  Some  of  them have  known
+long-standing performance or usability issues (TODO link json, tables, what
+else there is? TODO scour logs for in-depth discussions).
+
+------
+
+- [[https://forum.nim-lang.org/t/9627][Procedure to remove modules from stdlib?]] -- a nim forum thread
+- [[https://github.com/nim-lang/RFCs/issues/473][Candidates for separation from standard library · Issue #473 ·
+  nim-lang/RFCs · GitHub]]
+
+
+
 **** Nim forum
 
 - [[https://github.com/nim-lang/nimforum/issues/180][searching posts by user should not be limited to 1st 10 posts/threads ·
@@ -651,6 +586,10 @@ Then "Preview of the coming attractions"  [[https://forum.nim-lang.org/t/8627][t
 [[https://forum.nim-lang.org/t/8627#56155][above]], then got a fantastic exchange that I'm going to simply paste here in
 it's entirety,  it is too  good to  slice and dice  into parts. I  will add
 footnotes instead.
+
+And, to summarize  -- in a span of  about a month since I got  my PR merged
+the project silently moved from  the "official implementation" to "we don't
+bundle it anymore" and then continued to rot from there.
 
 -------
 
@@ -899,9 +838,116 @@ on Nim's issue tracker instead.
 Last [[https://github.com/nim-lang/RFCs/issues/476][discussion]]  about fusion talked  of its  deprecation. [[https://github.com/nim-lang/fusion/pull/16][PR]] took  about a
 year to be reviewed.
 
-So, to summarize -- in a span of about a month since I got my PR merged the
-project  silently moved  from the  "official implementation"  to "we  don't
-bundle it anymore" and then continued to rot from there.
+**** ~nimble~ package manager
+     :LOGBOOK:
+     - Refiled on [2022-11-18 Fri 13:29:01] from [[id:29e7b85f-c637-4f8a-b9a6-c594f9fe833d][nimskull-notes:Part one: "why"]]
+     :END:
+
+
+On July 4th, 2021 I wrote  the [[https://github.com/nim-lang/RFCs/issues/398][RFC]] detailing various issues and suggestions
+for the package management improvements that provided a detailed account of
+most of the things that were wrong with the package manager at the time.
+
+***** UX and implementation issues
+
+***** Non-existent level of interest in package manager improvements
+
+1. Non-existent dependency  resolution algorithm that can  get knocked over
+   at any time, causing bugs and repeated installations.
+2. Bidirectional data  flow between the compiler and package  manager -- it
+   is not  possible to  run the  compiler separately with  the same  set of
+   packages as in command-line.
+
+- There [[https://forum.nim-lang.org/t/8147][were]]  (thread [[https://archive.is/vqBcG][archive]])[fn:archive-846] [[https://github.com/bung87/slim][several]]  alternative package
+  managers that tried  to solve various issues over the  years. Thread also
+  has some important sentiments about state of the ecosystem in general
+
+  #+begin_quote
+
+  #+end_quote
+
+
+[fn:archive-846] Discord [[https://discord.com/channels/371759389889003530/753721959308853319/843776451693903884][link]] for message mentioned by =Clonkk=
+
+***** Dead community management
+
+****** No strategic roadmap for a long time
+
+[[https://forum.nim-lang.org/t/8147#52417][Sentiment]] from Jun 2021
+
+****** Two-year-old version is shipped
+
+Nimble package  manager is  shipped with default  =choosenim= installation.
+Specific  version of  the package  is hardcoded  in the  ~koch.nim~ builder
+using   git  [[https://github.com/nim-lang/Nim/blob/73680cef953bd9c42b7c7c4e8081d0ae609de772/koch.nim#L13][hash]]   and   currently   points  to   the   [[https://github.com/nim-lang/nimble/commit/d13f3b8ce288b4dc8c34c219a4e050aaeaf43fc9][version]]  that   is
+[2021-02-19 Fri]--[2022-11-13 Sun] => 632 days old.
+
+If you look into git [[https://github.com/nim-lang/Nim/commit/3d7c52f3cd6c08a175a8e8f8ed79757dd027648f][blame]] you can see a very interesting commit message
+
+------
+#+begin_quote
+[backport] Revert "use new Nimble, with lockfiles ([[https://github.com/nim-lang/Nim/pull/18810][#18810]])" ([[https://github.com/nim-lang/Nim/pull/18872][#18872]])
+
+This reverts commit [[https://github.com/nim-lang/Nim/commit/f373c17ad926b669bb3b5819ae1dff4bde1da88a][f373c17]].
+
+For more details, see:
+- [[https://github.com/nim-lang/nimble/issues/940][nim-lang/nimble#940]]
+- [[https://github.com/nim-lang/Nim/issues/18840][#18840]]
+- https://forum.nim-lang.org/t/8404
+#+end_quote
+-------
+
+Reverted    [[https://github.com/nim-lang/nimble/commit/795704833ddfd0cdaefb45c60551d3ea205279ef][commit]]   actually    points   to    a   much    newer   version
+([2021-09-03 Fri]--[2022-11-13] =>  436 days). The reason  for reversal can
+be seen in detail in the linked  [[https://forum.nim-lang.org/t/8404][thread]], but tl;dr version: ~v0.14~ broke a
+lot of  people's workflows  and didn't  provide any  reasonable alternative
+that people would be satisfied with.  Almost all changes in v0.14 come from
+the gigantic [[https://github.com/nim-lang/nimble/pull/913][PR]] (+9,187/−2,887)  that originally targeted implementation of
+the  [[https://github.com/nim-lang/nimble/issues/127][lockfiles]] according  to the  [[https://github.com/nim-lang/nimble/issues/127#issuecomment-455612545][specification]] but  later grew  to require
+compiler  [[https://github.com/nim-lang/Nim/pull/12104][modifications]]  (bidirectional  dependency  between  compiler  and
+package manager) and include
+
+1) Parallel package download
+2) Intermediate package.nim.cfg file
+3) Lock files
+4) Changes to  the nimble  develop command  -- change  that caused  the most
+   issues.
+5) Changes to nimble check
+
+The documentation  wasn't especially  clear as  not a  lot of  people could
+figure  out  that  some  original  features  could  actually  be  emulated,
+according to the [[https://forum.nim-lang.org/t/8404#54497][comment]] from one of the core developers (which I [[https://github.com/nim-lang/nimble/pull/943#issuecomment-922681649][suggested]]
+adding to the documentation, but I guess I wasn't persuasive enough).
+
+Several months  later Nimble  came up  in the discussion  again, in  a very
+interesting  [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][context]]: "development  has been  outsourced, wasn't  ready for
+1.6.0 and I don't know the plan either" (Remember -- this is a core project
+contributor talking about the central piece of the ecosystem)
+
+------------------
+
+Attempted  fixes also  included [[https://github.com/nim-lang/Nim/commit/908fc2a22e7336670173bcd06ab30f440ca6d321][addition]]  of the  ~pkgs2~ directory  to the
+nimble path.
+
+# #+begin_quote
+# By  the  way,   speaking  of  roadmap  and  project   [[https://irclogs.nim-lang.org/03-11-2021.html#11:44:14][management]]  -  nimble
+# [fn:either-96] -- this happened moths after long discussion
+# about  added nimble  features, subsequent  reversal  of the  version to  be
+# release https://forum.nim-lang.org/t/8404#54511 and we still don't have any
+# concrete roadmap about plans to roll out 14.0.
+
+# So these are my two cents on how having a good roadmap could've prevented a
+# almost  a year's  worth  of  effort (pattern  matching)  to  not lose  it's
+# maintainer, and how you managed to loose a single person who was interested
+# enough to really  try to compose the plans,  suggestions, improvement ideas
+# and  vision for  the  package  manager into  something  coherent, not  "the
+# discussions were  spread through  multiple Github  issues, IRC  and private
+# chats with the Nim team on Telegram" [[https://discord.com/channels/371759389889003530/753721959308853319/892742985626824734][discord link]].
+
+# This is my personal view of the matter, I'm not going to lie and say that I don't care anymore, but I'm certainly burned out by this indifference and uncertainty to the point I no longer want to do anything unless explicitly asked for - and this certainly would not include "please continue to maintain pattern matching"
+
+# P.S. you can consider it my resignation letter from the fusion/matching maintainer. I wanted it come to become a standard, but well, not like I can continue to work on it if the fusion itself is dead.
+# #+end_quote
 
 ** TODO Ecosystem and community health
 
@@ -953,6 +999,36 @@ more than a few loose ends I personally understand.
   paid  core contributor,  who  is  just a  volunteer  and  who is  getting
   periodically [[https://opencollective.com/nim/expenses/97898][paid]] to work on a  specific [[https://github.com/nim-lang/RFCs/issues/437#issue-1058638395][tasks]] (most checkpoints had been
   closed by the ~@xflywind~).
+
+** TODO Community moderation, code of conduct
+   :LOGBOOK:
+   - State "TODO"       from              [2022-11-18 Fri 13:33:32]
+   :END:
+
+According to Araq the Code of Conduct is a waste of [[https://forum.nim-lang.org/t/2332#14329][time]] (thread [[https://archive.ph/veV0I][archived]]).
+
+#+begin_quote
+Because it's a waste of time. The recent troll attacks wouldn't have been prevented by a CoC. CoCs are naive and actually can start all sort of fights over the precise wording etc. I can already envision this very thread to become a page long discussion with people arguing about the pros and cons about CoCs. I would lock this thread if I could (maybe I'll patch nimforum) to save everybody's time ("safety first"). Please! -- Araq
+#+end_quote
+
+There  are  some  internal  moderation  [[https://forum.nim-lang.org/t/8629][guidelines]]  that  have  never  been
+[[https://irclogs.nim-lang.org/18-11-2022.html#09:34:53][published]] ([[https://archive.is/YIpVo#09:34:53][archive]]) after all this time.
+
+---------
+
+- [[https://nitter.snopyta.org/d0m96/status/1592827547582332929][dom96]]
+  #+begin_quote
+  I've been  moving away from Nim  for a while  now, and sadly this  is the
+  reason why.  I want  to be  a part  of a  community that's  inclusive and
+  welcoming. Just to be clear, Araq is completely wrong, and these kinds of
+  statements have hurt the Nim community in the past.
+  #+end_quote
+
+  twitter  [[https://twitter.com/d0m96/status/1592827547582332929][link]],  dlang  thread   [[https://forum.dlang.org/post/wzoecavcswedkiebcjft@forum.dlang.org][live]],  archived,  reddit  [[https://old.reddit.com/r/nim/comments/ywxsbz/this_is_disappointing_to_read_coming_from_the_nim/][discussion]]  (75
+  comments, apparently most [[https://old.reddit.com/search?q=subreddit%3Anim&restrict_sr=&sort=comments&t=all][commented]] thread on the forum), archived). Araq
+  [[https://www.google.com/search?q=site:https://forum.dlang.org+Araq][actually]]  [[https://forum.dlang.org/post/lhhxvlxfddxnreyfhbct@forum.dlang.org][frequents]]  [[https://forum.dlang.org/post/ljlapidqpiyafzclbreo@forum.dlang.org][dlang]]  forum,  although  most of  it  is  usually  a
+  technical discussion.
+
 
 * Part two: "nimskull"
 
@@ -1051,21 +1127,24 @@ Implementation details can be seen in the next section: "our scopes".
 - First-class VM [4] ::
 - Mid-level IR [5] ::
 - Test as specification [6] ::
-- Precise AST structure [7] ::
+- Precise AST structure [7] :: ([[id:3747c453-d22f-41de-b0b3-9f2c8fbe32d9][scopes]])
 - C backend rewrite [8] ::
-- Automatic wrapper generator [9] ::
+- Automatic wrapper generator [9] :: ([[id:71e3dd81-5fd0-43b4-871f-9dbad57571e4][scopes]])
 - Clean up and organize existing tests [10] ::
 - Untangle Backend and Sem data [11] ::
 - Dod for the while compiler [12] ::
 - C++ /integration/ [13] :: ([[id:b5a161a8-9ea3-434b-87c6-451de4208ddc][scopes]])
-- Code formatting [14] ::
-- Package manager [16] ::
+- Code formatting [14] :: ([[id:06f149af-0064-4176-aef6-1668e276afa4][scopes]])
+- Package manager [16] :: ([[id:718bfd67-5f93-4b54-89f4-32ff864b79fb][scopes]])
 - Documentation generator [17] ::
 - IC - incremental compilation [18] ::
 - LSP [19] ::
 - Fast recompilatoin [20] ::
 - VSCode extension [21] ::
 - CPS - continuation passing style [22] ::
+- Build system [23] ::
+- Layered approach to bundling [24] :: ([[id:274807cd-8a54-46c4-97ec-babc2959eec8][scopes]])
+- Native pattern matching [25] ::
 
 
 
@@ -1085,6 +1164,8 @@ the newly discovered knowledge to help better define the direction.
 
 This section does  not focus on the specific technical  details -- they are
 provided in section five, "our scopes".
+
+TODO cleanup
 
 >>>>>>>>>>>>>
 
@@ -1106,6 +1187,15 @@ https://github.com/nim-lang/Nim/tree/3469f37a56c31623eff473c65fd231bb5a77d5d8/te
 
 <<<<<<<<<<<<<
 
+** Layered approach to language design
+
+TODO  elaborate,  tl;dr:  start  with  core spec  and  compiler,  then  add
+libraries on top, tools and so on. Things that don't have to be in the core
+repo  can be  placed somewhere  else, other  packages so  things don't  rot
+alive.
+
+** Interaction
+
 * Part five: our scopes
 
 In this section  I will provide a more technical  explanation about current
@@ -1117,7 +1207,12 @@ the  readme,  but  provides  a  lot more  historical  elaborations  on  the
 implementation details.  I try  to keep  the most  relevant details  of the
 reimplementation progress updated in the [[https://github.com/nim-works/nimskull/discussions/142?sort=new][thread]].
 
-** Proper intermediate representation for compiler stages
+** TODO Precise AST structure :project##target:
+   :PROPERTIES:
+   :ID:       3747c453-d22f-41de-b0b3-9f2c8fbe32d9
+   :END:
+*** TODO definition of done :project##dod:
+** Proper intermediate representation for compiler stages :project##target:
 
 *** Data-oriented design
 
@@ -1137,6 +1232,8 @@ in-placed using multiple of variations of different
 
 *** Backend data
 
+** TODO Incremental compilation :project##target:
+*** TODO Definition of done :project##dod:
 ** Removing language dialects
 
 Mainline has  a large number of  language dialects that affect  how code is
@@ -1152,7 +1249,7 @@ from  the  implementation.  Optimizing  for  "what  if"  use  case  is  not
 sustainable in the long run as  it disperses the efforts and requires large
 amount of time to coordinate different parts of the language.
 
-** Structured C and C++ interop
+** Structured C and C++ interop :project##target:
    :PROPERTIES:
    :ID:       b5a161a8-9ea3-434b-87c6-451de4208ddc
    :END:
@@ -1217,7 +1314,7 @@ simple ~rg  | wc -l~  shows that number  of ~importcpp~ patterns  listed is
 14503 (12490 unique).
 
 #+caption: Clone all nimble packages
-#+begin_src elvish
+#+begin_src
 set E:GIT_TERMINAL_PROMPT = 0
 for url [(cat packages.json | jq '.[].url' --raw-output)] {
     try {
@@ -1229,7 +1326,7 @@ for url [(cat packages.json | jq '.[].url' --raw-output)] {
 #+end_src
 
 #+caption: Count importcpp uses
-#+begin_src elvish
+#+begin_src
 rg -g "*.nim" --no-filename ^
     --no-line-number --only-matching 'importcpp:\s*".*?"' |
     sd 'importcpp:\s*"' '' | sd '"$' '' | wc -l
@@ -1240,13 +1337,13 @@ total number. And  large number of these patterns is  not exactly "special"
 either:
 
 #+caption: Filter out common patterns
-#+begin_src elvish
+#+begin_src
 rg -g "*.nim" --no-filename --no-line-number --only-matching 'importcpp:\s*".*?"' |
     sd 'importcpp:\s*"' '' | sd '"$' '' | sed -r -f importcpp_remove.sed
 #+end_src
 
 #+caption: Some of the more trivial examples that weren't matched by sed
-#+begin_example
+#+begin_example cpp
 std::basic_string<'*0>(@)
 std::pair <'0,'1>
 std::make_shared<'*0>(#)
@@ -1257,7 +1354,7 @@ at::detail::getCUDAHooks().compiledWithCuDNN()
 There are, however, some very questionable constructs such as
 
 #+caption: Unusual code
-#+begin_example
+#+begin_example cpp
 std::shared_ptr<'*0>(@, []('*0* ptr) { callCppPtrDestructor(ptr); nimPointerDeleter(ptr); })
 std::unique_ptr<'*0, std::function<void('*0*)>>(@, []('*0* ptr) { callCppPtrDestructor(ptr); nimPointerDeleter(ptr); })
 _InterlockedExchange(reinterpret_cast<LONG volatile *>(#), static_cast<LONG>(#))
@@ -1298,8 +1395,16 @@ generation. All of this will be possible if writings are made structured.
 *** TODO Interfacing with complicated C++ code
 
 *** TODO Automatic binding generation
+    :PROPERTIES:
+    :ID:       71e3dd81-5fd0-43b4-871f-9dbad57571e4
+    :END:
 
-** Code formatting solution
+*** TODO Definition of done :project##dod:
+
+** Code formatting solution :project##target:
+   :PROPERTIES:
+   :ID:       06f149af-0064-4176-aef6-1668e276afa4
+   :END:
 
 Official stance on  the improvement of the code  formatting solutions seems
 to be somewhere in the neighborhood of "just format the code manually".
@@ -1339,6 +1444,7 @@ not loose positional and structural information  -- and then format it back
 into the source code. We already  [[https://github.com/nim-works/nimskull/pull/361][implemented]] the code layout algorithm and
 continuing the work in this direction.
 
+*** TODO Definition of done
 ** Improving testing workflow
 
 The  "language" project  consists  of several  parts  that are  effectively
@@ -1445,11 +1551,31 @@ to the master plan from the part five.
 In  most cases  they  have  already been  discussed  /somewhat/ in  various
 places, but are currently too far from the present state of things.
 
-** Standard library
+** Standard library and ~system.nim~ :project##target:
+   :PROPERTIES:
+   :ID:       274807cd-8a54-46c4-97ec-babc2959eec8
+   :END:
 
-https://matrix.to/#/!alsWvZtOfWkQlHwcHC:envs.net/$_Kp6CVZzg7CEFIG55dWU11I5vyi9dAphJj89dzYnypo?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+# https://discord.com/channels/371759389889003530/371759389889003532/903972578773839892
 
-** Documentation generation
+# https://matrix.to/#/!alsWvZtOfWkQlHwcHC:envs.net/$_Kp6CVZzg7CEFIG55dWU11I5vyi9dAphJj89dzYnypo?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
+# https://github.com/nim-lang/Nim/pull/18711#discussion_r695650857
+
+#+begin_quote
+if we take as a given that a working package manager is a requirement, then the stdlib really only needs to serve the compiler and any bundled tools.
+#+end_quote
+
+"Batteries included" can  be achieved by creating a  default release bundle
+which includes "common" things.
+
+- TODO What is "batteries included" anyway?
+- NOTE some  of the complaints  about dependency on package  manager worked
+  off the assumption  it would be all-encompassing tool that  you can't get
+  around, ~nim.cfg~ is a pretty questionable solution.
+- TODO status rewrote half of the stdlib for themselves anyway
+
+** Documentation generation :project##target:
 
 *** Problem
 
@@ -1486,6 +1612,8 @@ proc pickBestCandidate(c: PContext,
   Note -- the whole  codebase has a single procedure with  this name, so it
   is entirely possible to just resolve it from the name alone.
 
+  TODO link PMunch's PR for json export, link article from gradha again
+
 - It  is not  possible  to  get structured  output  from the  documentation
   generator. Produced 'structured' json  internally contains formatted HTML
   pieces instead of a structured information.
@@ -1506,6 +1634,8 @@ proc thing*() =
   ## *?
   #+end_src
 - Implementation of the documentation generator is pre
+- TODO runnable examples are not parallelized
+- TODO ~define()~-hidden conditionals are not documented
 
 *** Solution
 
@@ -1521,6 +1651,13 @@ output.  Because  documentation generator  effectively  needs  to create  a
 database of the whole project the  most obvious solution would be to create
 an sqlite database from the code.
 
+**** TODO Specific details of the documentation database
+**** TODO How it will solve some issues right away
+**** TODO Interesting new features
+     :LOGBOOK:
+     - State "TODO"       from              [2022-11-18 Fri 12:21:10]
+     :END:
+
 *** Extra features that solution would enable
 
 - Because public API can now be  stored in a fixed-format database it might
@@ -1528,6 +1665,9 @@ an sqlite database from the code.
   public API.
 
 ** Package management solution
+   :PROPERTIES:
+   :ID:       718bfd67-5f93-4b54-89f4-32ff864b79fb
+   :END:
 
 *** Problem
 
