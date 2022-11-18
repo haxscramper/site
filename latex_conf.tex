@@ -16,6 +16,17 @@
             bindingoffset=0.2in,
             left=1cm,
             right=1cm,
-            top=1cm,
-            bottom=1cm,
+            top=2cm,
+            bottom=1.5cm,
             footskip=.25cm]{geometry}
+
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{.4mm} % header line width
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhfoffset[L]{1cm} % left extra length
+\fancyhfoffset[R]{1cm} % right extra length
+\rhead{\today\ \currenttime}
+\lhead{haxscramper}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[CO,LE]{\thepage}
