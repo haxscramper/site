@@ -1393,6 +1393,20 @@ to the master plan from the part five.
 In  most cases  they  have  already been  discussed  /somewhat/ in  various
 places, but are currently too far from the present state of things.
 
+** Automatic migration and refactoring tool
+
+Automatic migration tool with code  rewriting patterns would make it easier
+to implement language changes.
+
+- NOTE related to [[id:06f149af-0064-4176-aef6-1668e276afa4][Code formatting solution]] --  you need to be able to parse
+  code in, edit the tree and render it back reliably.
+- TODO find with  other languages implement similar solutions:  I think elm
+  (or some web/haskell-like thing) had this.
+- TODO  Different types  of automatic  code rewriting  -- based  on untyped
+  tree, on typed tree.
+- TODO  clang  AST  tooling  solutions  --  document,  detail.  Large-scale
+  refactoring problems.
+
 ** Standard library and ~system.nim~ :project##target:
    :PROPERTIES:
    :ID:       274807cd-8a54-46c4-97ec-babc2959eec8
@@ -1478,23 +1492,89 @@ proc thing*() =
 - Implementation of the documentation generator is pre
 - TODO runnable examples are not parallelized
 - TODO ~define()~-hidden conditionals are not documented
+- Just as  most of the other  core tools documentation generator  lacks any
+  form of intermediate  representation that can be used to  easily create a
+  structured  output.  Things are  often  [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1204][formatted]]  in-place or  converted
+  [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1117][directly]] from ~PNode~ [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1108][to]] json, HTML or LaTeX with [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L379][two]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L477][hardcoded]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L515][outputs]].
+
+  Lack of  IR is  an obvious  issue that  prevents any  sort of  the output
+  customization.  A better  solution  would be  to  have some  intermediate
+  machine-readable format that can then  be converted into a human-readable
+  output.  Because documentation  generator effectively  needs to  create a
+  database  of the  whole project  the most  obvious solution  would be  to
+  create an sqlite database from the code.
 
 *** Solution
 
-Just as most of the other core tools documentation generator lacks any form
-of  intermediate  representation  that  can  be used  to  easily  create  a
-structured  output.  Things  are  often  [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1204][formatted]]  in-place  or  converted
-[[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1117][directly]] from ~PNode~ [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L1108][to]] json, HTML or LaTeX with [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L379][two]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L477][hardcoded]] [[https://github.com/nim-lang/Nim/blob/daf35c6d1b4bc1377bf278aa265dab30c9f5867e/compiler/docgen.nim#L515][outputs]].
+Instead of merging  code analysis and HTML/Latex generation  steps into one
+tool it is  much better to split into two  stages: analysis with subsequent
+database generation and output formatting.
 
-Lack  of IR  is an  obvious  issue that  prevents  any sort  of the  output
-customization.  A  better  solution  would be  to  have  some  intermediate
-machine-readable format  that can then  be converted into  a human-readable
-output.  Because  documentation generator  effectively  needs  to create  a
-database of the whole project the  most obvious solution would be to create
-an sqlite database from the code.
+**** Specific details of the documentation database
 
-**** TODO Specific details of the documentation database
+The database should be generated in the  SQLite format as it is the easiest
+form of  data serialization if DOD  structures are used. The  whole project
+can be  represented using two main  tables (and a handful  of supplementary
+ones):
+
+- entries :: central table of the database, holds /Documentable Entries/ --
+  any piece of code that  can have attached documentation. Objects, macros,
+  procedures /and  their arguments/,  files, /directories/,  /packages/ and
+  much more.
+
+  Each documentable entry stores ID of it's parent, documentation, range in
+  the source code and any  other additional information if applicable (such
+  as deprecation status and message, "since" semantic annotation).
+
+  In conventional  documentation generators this table  (and it's auxiliary
+  elements) would  be the  only one.  End user is  able to  read explicitly
+  available documentation formatted to their preference.
+
+- references :: List of inter-entry references. Which procedure calls which
+  function, what exceptions are raised, what objects are constructed, where
+  the variable is read.
+
+  This table  provides information that  is very important  for documenting
+  the inner  workings of the projects.  This is the part  that conventional
+  documentation generators don't address --  aside from tools such as woboq
+  and sourcetrail.
+
+  One of the most important long-term objectives of the nimskull project is
+  to make compiler code base approachable to the newcomers and this sort of
+  information would  make it  much easier  for them to  get the  answers to
+  questions such  as /"what are  the possible  paths between this  point in
+  code and  this point[fn:point-1545]"/,  /"Where this function  is used"/,
+  /"Starting from  this point, is it  possible something is written  to the
+  global variable?"/ and many others.
+
+[fn:point-1545] Can  be visualized using  call information --  two function
+"reference" each other when the call is in the code.
+
 **** TODO How it will solve some issues right away
+
+- runnable  examples  can   be  stored  in  the  database  as   a  part  of
+  documentation   and  executed   in  parallel   later,  no   more  layered
+  interruptions in the documentation generation pipeline.
+
+**** TODO Documentation markup format
+
+Mainline uses =ReStructured= text with  large number of markdown extensions
+that  were requested  by people  over the  years such  as links,  headings,
+tables, code blocks. Aside from rather cumbersome syntax RST is well-suited
+for writing documentation: it  provides customizable interpreted text notes
+(~:cmd:~), admonitions.
+
+Most  of  the  programming  languages are  currently  using  markdown  with
+different   flavors  and   customized  extensions:   Rust,  C++   (Doxygen,
+clang-doc), Java, Zig  and so on. In each case  developers add non-standard
+syntactical extensions for things such as:
+
+- admonitions: TODO link Doxygen, rust-doc
+- description lists:
+- file includes
+- a syntax to link other entries in the documentation
+
+
 **** TODO Interesting new features
      :LOGBOOK:
      - State "TODO"       from              [2022-11-18 Fri 12:21:10]
