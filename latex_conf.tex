@@ -2,6 +2,8 @@
 \newfontfamily{\iosevka}{Iosevka}
 \setmainfont{Iosevka}
 
+\usepackage[yyyymmdd]{datetime}
+\renewcommand{\dateseparator}{-}
 \usepackage{minted}
 \usepackage{xcolor}
 
@@ -18,15 +20,15 @@
             right=1cm,
             top=2cm,
             bottom=1.5cm,
-            footskip=.25cm]{geometry}
+            footskip=0.5cm]{geometry}
 
 \usepackage{fancyhdr}
 \renewcommand{\headrulewidth}{.4mm} % header line width
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhfoffset[L]{1cm} % left extra length
-\fancyhfoffset[R]{1cm} % right extra length
+\fancyhfoffset[L]{.5cm} % left extra length
+\fancyhfoffset[R]{.5cm} % right extra length
 \rhead{\today\ \currenttime}
 \lhead{haxscramper}
-\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{.4mm}
 \fancyfoot[CO,LE]{\thepage}
