@@ -485,7 +485,6 @@ information link  during compilation.  Macros get different  AST structure,
 code generation  can work out  two varying code structures,  later compiler
 stages need to anticipate AST variations.
 
-** TODO General issues with the management
 ** TODO Tooling implementation issues
 
 [[https://github.com/nim-lang/RFCs/issues/300][Developer    tooling   ·    Issue   #300]]    ([[https://web.archive.org/web/20221024162725/https://github.com/nim-lang/RFCs/issues/300][archive]])   is    second   most
@@ -614,19 +613,31 @@ Then "Preview of the coming attractions"  [[https://forum.nim-lang.org/t/8627][t
    just completely neglected.
 
 
-Almost two  weeks later, fusion still  wasn't tagged tagged (surely  it was
-hard to do),  released roadmap does not even mention  it, nimble is briefly
-described as "We hope to be able to  ship a new Nimble with the 2.0 release
-but we  are happy  to ship  it whenever  it's ready."  (probably my  RFC is
-either  implied as  "you  should know  about it"  or  something like  that,
-definition of ready is not provided, no idea what state is it in now)
+Almost two weeks later after this thread, fusion still wasn't tagged tagged
+(surely it  was hard  to do),  released roadmap does  not even  mention it[fn:it-618],
+nimble is briefly  described as /"We hope  to be able to ship  a new Nimble
+with the  2.0 release but  we are happy to  ship it whenever  it's ready."/
+(probably  my [[https://github.com/nim-lang/RFCs/issues/437][RFC]]  is  either implied  as  "you should  know  about it"  or
+something like  that, definition  of ready  is not  provided, no  idea what
+state is it in now[fn:now-623])
 
 ------
 
 Last [[https://github.com/nim-lang/RFCs/issues/476][discussion]] about  fusion talked of its deprecation.  The next reviewed
 [[https://github.com/nim-lang/fusion/pull/16][PR]] took about a year until it was noticed.
 
+[fn:now-623] See [[id:fbd820bb-9a38-4eba-ad53-8f75e018aea5][nimble package manager]] section for more details, but tl;dr
+is: it after about a year it is no  more ready than it was back then and my
+RFC still remains the only piece  of strategic planning that have ever been
+proposed.
+
+[fn:it-618]  The  edit was  added  on  [2021-12-01  Wed]  -- only  after  I
+mentioned it on the forum.
+
 **** ~nimble~ package manager
+     :PROPERTIES:
+     :ID:       fbd820bb-9a38-4eba-ad53-8f75e018aea5
+     :END:
      :LOGBOOK:
      - Refiled on [2022-11-18 Fri 13:29:01] from [[id:29e7b85f-c637-4f8a-b9a6-c594f9fe833d][nimskull-notes:Part one: "why"]]
      :END:
@@ -793,18 +804,31 @@ more than a few loose ends I personally understand.
    - State "TODO"       from              [2022-11-18 Fri 13:33:32]
    :END:
 
+# TODO Cabbose ban "keeping the flames burning"
+
 According to Araq the Code of Conduct is a waste of [[https://forum.nim-lang.org/t/2332#14329][time]] (thread [[https://archive.ph/veV0I][archived]]).
 
 #+begin_quote
-Because it's a waste of time. The recent troll attacks wouldn't have been prevented by a CoC. CoCs are naive and actually can start all sort of fights over the precise wording etc. I can already envision this very thread to become a page long discussion with people arguing about the pros and cons about CoCs. I would lock this thread if I could (maybe I'll patch nimforum) to save everybody's time ("safety first"). Please! -- Araq
+Because it's a  waste of time[fn:C-810]. The recent  troll attacks wouldn't
+have been  prevented by a  CoC[fn:C-810]. CoCs are  naive[fn:naive-811] and
+actually  can start  all sort  of fights  over the  precise[fn:precise-813]
+wording etc. I can already envision this  very thread to become a page long
+discussion[fn:discussion-813] with  people arguing about the  pros and cons
+about CoCs.  I would lock[fn:lock-815] this  thread if I could  (maybe I'll
+patch nimforum) to save everybody's time ("safety first"). Please! -- Araq
 #+end_quote
 
 There  are  some  internal  moderation  [[https://forum.nim-lang.org/t/8629][guidelines]]  that  have  never  been
-[[https://irclogs.nim-lang.org/18-11-2022.html#09:34:53][published]] ([[https://archive.is/YIpVo#09:34:53][archive]]) after all this time.
+[[https://irclogs.nim-lang.org/18-11-2022.html#09:34:53][published]] ([[https://archive.is/YIpVo#09:34:53][archive]]) after all this time.  The best resource is a forum [[https://forum.nim-lang.org/t/9138#59679][post]]
+-- why not put it in as an official guideline is beyond me.
 
----------
 
-- [[https://nitter.snopyta.org/d0m96/status/1592827547582332929][dom96]]
+After  fifteen  years  of  nim's  existence  many  people  had  joined  the
+community, attempting to contribute to  the language and greater ecosystem,
+but  eventually moved  away because  of  the negligence  of their  efforts,
+inflexible attitude towards technical details.
+
+- [[https://nitter.snopyta.org/d0m96/status/1592827547582332929][dom96]] (package manager, async implementation)
   #+begin_quote
   I've been  moving away from Nim  for a while  now, and sadly this  is the
   reason why.  I want  to be  a part  of a  community that's  inclusive and
@@ -813,10 +837,40 @@ There  are  some  internal  moderation  [[https://forum.nim-lang.org/t/8629][gui
   #+end_quote
 
   twitter  [[https://twitter.com/d0m96/status/1592827547582332929][link]],  dlang  thread   [[https://forum.dlang.org/post/wzoecavcswedkiebcjft@forum.dlang.org][live]],  archived,  reddit  [[https://old.reddit.com/r/nim/comments/ywxsbz/this_is_disappointing_to_read_coming_from_the_nim/][discussion]]  (75
-  comments, apparently most [[https://old.reddit.com/search?q=subreddit%3Anim&restrict_sr=&sort=comments&t=all][commented]] thread on the forum), archived). Araq
+  comments, apparently most [[https://old.reddit.com/search?q=subreddit%3Anim&restrict_sr=&sort=comments&t=all][commented]] thread on the forum), [[https://old.reddit.com/search?q=subreddit%3Anim&restrict_sr=&sort=comments&t=all][archived]]). Araq
   [[https://www.google.com/search?q=site:https://forum.dlang.org+Araq][actually]]  [[https://forum.dlang.org/post/lhhxvlxfddxnreyfhbct@forum.dlang.org][frequents]]  [[https://forum.dlang.org/post/ljlapidqpiyafzclbreo@forum.dlang.org][dlang]]  forum,  although  most of  it  is  usually  a
   technical discussion.
+- leorize (vim plugin) -- moved to nimskull
+- saem (VSCode plugin) -- moved to nimskull
+- disruptek (CPS  implementation, alternative package manager)  -- moved to
+  nimskull
+- gradha
+- lemonboy
+- StephanSalewski
+- timotheecour
+- clyybber
+- krux02
 
+
+[fn:C-810] Yes, code of conduct does not provide a universal troll defense,
+it just  documents that people  have actually agreed  to be a  decent human
+beings towards each other -- of course trolls don't agree with this.
+
+[fn:naive-811] Yes, code  of conduct is a rather loose  document, not meant
+to be used a rigid prosecution tool.
+
+[fn:discussion-813] Yes, if core teams explicitly refuses to write down any
+laws there is going to be anarchy, thread derailing, spam, trolling and god
+knows what.
+
+[fn:lock-815]   But the  solution is  not  to force  your perspective  onto
+everything, but to either moderate  the discussion or actually consider how
+much alleged "damage" code of conduct "can" inflict.
+
+[fn:precise-813] We've been  running the project with [[https://github.com/nim-works/nimskull/blob/devel/CODE_OF_CONDUCT.md][CoC]] for  about a year
+now and so far we haven't been  drowned in the endless debate over specific
+wording. If you don't treat the  community guidelines as blunt weapons that
+either work or don't then it becomes a lot easier to accept.
 
 * Part two: "nimskull"
 
@@ -955,7 +1009,7 @@ provided in section five, "our scopes".
 
 TODO cleanup
 
->>>>>>>>>>>>>
+~>>>>>>>>>>>>>~
 
 One of the most important goal is to make it easier for contributors on all
 levels. Writing documentation and reorganizing the code is pretty good, but
@@ -973,7 +1027,7 @@ link), continue testing with ~echo~
 
 https://github.com/nim-lang/Nim/tree/3469f37a56c31623eff473c65fd231bb5a77d5d8/tests/misc
 
-<<<<<<<<<<<<<
+~<<<<<<<<<<<<<~
 
 ** Layered approach to language design
 
