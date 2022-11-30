@@ -549,6 +549,9 @@ else there is? TODO scour logs for in-depth discussions).
   nim-lang/RFCs · GitHub]]
 
 
+**** threading
+
+# https://matrix.to/#/!HhesJmZLBWquxVVdnD:matrix.org/$z_NWwjbp7Q7AJhDUpUd2gvETjfjdExNDUzEou4sDTZk?via=libera.chat&via=matrix.org&via=gacko.pl
 
 **** Nim forum
 
@@ -955,6 +958,25 @@ this list is relevant and where it is not:
 
 * Part four: our vision
 
+#+begin_quote
+I believe  I can get us  to a language where  it's nice to work  with data;
+write  and  compose  functions; make  memory,  io,  concurrency/parallelism
+manageable; with  decent tools; works  on the broadest targets  (native and
+JS);  is useful  from compile  through to  runtime; and  feels conceptually
+light.
+
+What I believe I can't do is make the Nim in other people's heads.
+
+What I believe I can't do right now, and can consider when other things are
+further, is  easy embedding into  other projects, do  absolutely everything
+macros  without hosing  the  compiler,  support arbitrary  memory/computing
+models, make everything pluggable (packaging, stdlib, etc), keep random Nim
+things people want in place.
+
+But structs and functions, memory, and control flow... these gotta be right
+first.
+#+end_quote
+
 #+begin_center
 [[./nimskull_roadmap.drawio.pdf]]
 #+end_center
@@ -988,6 +1010,32 @@ Implementation details can be seen in the next section: "our scopes".
 - Layered approach to bundling [24] :: ([[id:274807cd-8a54-46c4-97ec-babc2959eec8][scopes]])
 - Native pattern matching [25] ::
 
+** Backends
+
+# https://matrix.to/#/!MAXxvfCYnfYgZqSizw:matrix.org/$Tkb5dKxePtNXhL2w0Jzfa267hszY1rOnoA7ChhGvnJI?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
+C let's us:
+
+- create native binaries
+- generate a bootstrap C compiler
+
+JS let's us:
+
+- create "JS/web native" artifacts (that is JS itself)
+- vscode/etc IDE tools
+- eventually able to do a JS bootstrap
+
+VM let's us:
+
+- compile time/metaprogram/partial eval
+- defines the canonical abstract machine
+- eventually able to VM bootstrap
+
+That  covers the  most  important  targets (native,  JS,  & self),  jumping
+between targets for bootstrapping, compile  time facilities, and making the
+key usable things (compiler, tests, tools, etc).
+
+** TODO other ??
 
 
 #  https://www.google.com/search?q=best%20effort%20principle
@@ -1233,6 +1281,8 @@ constructor  calling  (using  placement   new)  and  even  customized  code
 generation. All of this will be possible if writings are made structured.
 
 # https://matrix.to/#/!MAXxvfCYnfYgZqSizw:matrix.org/$xQc8dhoTg3rHL4xbF6OlHKVyQegSwHm9cRRUfO0ZX4k?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
+# https://discord.com/channels/371759389889003530/371759389889003532/1045582831180599326
 
 *** TODO Interfacing with complicated C++ code
 
@@ -1631,7 +1681,11 @@ compiler or any other tool that can be put in the compilation pipeline.
 - After  all  of your  packages  are  correctly  (1) *downloaded*  and  (2)
   *installed*, you can start compiling your code using nim compiler.
 
-*** Dependency resolution algorithm solution
+*** LATER Dependency resolution algorithm solution
+    :LOGBOOK:
+    - State "LATER"      from              [2022-11-20 Sun 12:29:02]
+    - State "LATER"      from "LATER"      [2022-11-20 Sun 12:29:04]
+    :END:
 
 There  are many  counterpoints  to the  minimum  version selection  package
 managers, most of  which talk about how things are  "usually" done and that
@@ -1647,7 +1701,7 @@ management is done.
   selection  is  a  complicated  task  because  the  problem  itself  is  a
   NP-complete. There have  been [[https://github.com/nim-lang/nimble/issues/890][discussions]] about using  a better algorithm
   for the resolution,  but it is still pretty  sophisticated, [[https://nex3.medium.com/pubgrub-2fb6470504f][especially]] if
-  you want to get a [[ for the resolution failures][good]] UX.
+  you want to get a good UX.
 
   Minimum  version selection,  on the  other hand,  is a  trivial and  very
   predictable algorithm that  can be written in a hundred  lines of code or
