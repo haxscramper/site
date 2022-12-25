@@ -15,6 +15,25 @@
 # edited.  How long  has  drnim been  staying in  the  compiler code  base.
 # Interesting attitude for the "code rot" implementation.
 
+# TODO https://matrix.to/#/!MAXxvfCYnfYgZqSizw:matrix.org/$MnoSjYZ0nVuVpizbsdx4MHeU0jmnsWMRoZU3GsGsR9U?via=libera.chat&via=matrix.org&via=matrix.shaggypeak.com
+
+# TODO https://discord.com/channels/371759389889003530/371759607934353448/1054094517290147840
+
+# https://github.com/nim-lang/Nim/commit/16260b23c7f08888320b0323e3cbc4a46f98c818 make tests green on windows by disabling some tests, what could go wrong. Six years later they are still not enabled https://github.com/nim-lang/Nim/blob/3812d91390633113061ceb2b4f3fc61f563a66fb/testament/categories.nim#L100
+
+
+# TODO
+# https://github.com/nim-works/nimskull/commit/8a0509b3b255c2aef10b9db468810d98ae0d4215
+# https://github.com/nim-works/nimskull/commit/3ccc9c467d84dc8c3412acbea20fc10b5335eaa8
+
+# https://archive.is/Tsh4k
+# https://archive.is/kq0yJ
+
+# It seems  to have something  to do with  constraints on a  distinct type.
+# There don't seem to exist any tests  for it. Araq turned with and without
+# from  keywords into  normal  identifiers 5  years ago  and  left a  to-do
+# comment in the parser to "document this feature".
+
 After another round  of discussions about possible  objectives, reasons and
 merits of the Nim fork I've been working  on I decided to write down my own
 thoughts on this matter, elaborate  on the decision-making process that has
@@ -264,7 +283,7 @@ implementation of the compiler in order to make sense out of it.
   thanks to  the necessity to  edit the test suite  each time it  becomes a
   major chore.
 
-***** Random hacks all over the place
+**** Random hacks all over the place
 
 Proliferation of hard-to-spot hacks that  are at best sparingly documented,
 at  worst  require  a  lot  of  guesswork  got  figure  out.  For  example,
@@ -297,6 +316,14 @@ clusterfuck  where you  could spot  this little  shit is  implementation of
 [[https://github.com/nim-works/nimskull/commit/74a80988d9289e8147a791c4b0939d4287baaff3][74a8098]] (=sigmatch= ~704) and then further "improved" in [[https://github.com/nim-lang/Nim/commit/fe48dd1cbec500298f7edeb75f1d6fef8490346c][fe48dd1]] by slicing
 out  parts  of  the  error  message with  ~let  msg  =  s.replace("Error:",
 errorPrefix)~
+
+
+**** I-don't-use-or-use-it-based development
+
+- Spelling suggestion error is implemented as a whacky unusable mess? Well,
+  "can   we  just   disable   'did   you  mean'   for   v2  in   compiler?"
+  ([[https://archive.is/1xXKV][Nim  Internals  -  Public  Room  Timeline  -
+  Matrix Static]])
 
 *** Quality of the source code
 
