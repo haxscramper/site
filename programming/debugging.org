@@ -1,0 +1,203 @@
+#+title: On software debugging
+
+
+* Invalid data at some point
+
+** Is the data duplicated?
+
+- If data source  is parametric, check if requests are  different from each
+  other
+
+  - In languages that  allow funny things with default  variables, check if
+    you are not shadowing anything, the  parameter value is indeed what you
+    expect (for example  ~curl~ with ~$SOME_VAR~ in bash might  be a source
+    of bugs)
+
+  - Is cache involved  somehow? Maybe there is a bug  in the caching layer,
+    and it  considers requests to  be identical, returning stale  data each
+    time.
+
+- If data  is filtered  somewhere, check  if results are  not added  to the
+  resulting set multiple times
+
+  - *Some filter is  too  broad* :: If  the data can be created in multiple
+    places add  debugging information in some  way to check where  the data
+    came from (for  example, if there is an ~if~  conditions that check for
+    "can handle conversion" it might be  possible there are two checks that
+    match for the same input, so the  pipeline looks like this: ~IN -> "can
+    process @ 1? ->  yes" -> OUT1~ and ~IN -> "can process  @ 2? -> yes" ->
+    OUT2~, which leads to ~[OUT1, OUT2]~ passing into the pipeline at later
+    points)
+
+** Is data missing?
+
+- If data is filtered, check for pattern strictness
+- For HTTP:
+  - Are you making a request to the correct URL? Typos, wrong parameters
+  - Is  requester placed  in the  correct network?  Maybe you  need to  use
+    VPN/proxy to get access, check if it is functioning properly
+
+** Is data malformed?
+
+- Is input valid?
+- Is each transform valid?
+  - Transform stage  debugging can be done  from the head or  from the tail
+    (start at sink or start at source), or at any other random point.
+
+-
+
+* Debugging
+
+** ~printf~ of course, but there is more
+
+- ~&> /tmp/app-logs~  to store stderr  and stdout data,  open it in  a text
+  editor, grep it etc.
+- ~tail -f /tmp/app-logs~ to view all the output
+- ~tail -f  /tmp/app-logs | grep "pattern"~  - if the application  does not
+  support log filtering
+  - ~sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'~ filter out color codes from the
+    terminal output
+
+  - ~cat /tmp/loki-log | rg 'JSON = .*' | grep -v "OLDERR" | sed 's!^\(.*JSON = \)!{"location": "\1"}\n!' | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | jq > /tmp/loki-jsons.json~
+     for more esoteric use cases
+
+  - Output looks like ~<location>JSON = <json>~  and needs to be split into
+    two parts, then fed into ~jq~ for formatting and finally to the file
+
+  - ~tail  -f   /tmp/app-logs  |  sed  -E   's@'$E:HOME'/(workspace/)?@@  ;
+    s@\[something-else\]@@'~ remove absolute paths from logs
+
+  - ~sed  -u -E  "s@A@B@"~ or  ~sd "A"  "B"~ for  debugging replacement  in
+    general. Note the  ~-u~ option on ~sed~ -- it  disables line buffering,
+    so application output  is displayed as soon as  possible. It sacrifices
+    some performance, but makes the overall experience a smoother.
+
+  - ~rg -v  "remove something"~ can be  used to cut unnecessary  stuff from
+    the logs. ~--line-buffered~  to remove content buffering,  just like in
+    ~sed~
+
+- ~ts~ from ~moreutils~ to add timestamps, ~ts -i~ for incremental
+- ~strace -o <run application>~ to check for additional logs
+- ~lldb     --batch    --one-line     'run'    --one-line-on-crash     'bt'
+  --one-line-on-crash 'quit'-- <app>  <args>~ automatically run application
+  under LLDB and report failures when they occur
+- ~rr record  <app> <args>~ followed by  ~rr replay -s 5050  -k~ allows for
+  consistent, reversible and reproducible debugging.
+  - Trace  information  is  stored in  the  ~~/.local/share/rr~  directory,
+    latest trace is pointed to by ~latest-trace~ symlink.
+
+- ~stdbuf -oL -eL uniq -c~ to remove strides of repeated logging output and
+  instead count  it. ~stdbuf  -oL -eL~  is used to  reduce buffer  size for
+  ~uniq~ and make it closer to a real-time output.
+
+** Encapsulating execution
+
+- ~export DISPLAY=:2~ with  ~Xephyr -resizeable :2~ allow  running GUI apps
+  without annoying window  jumping all over the place, sometimes  it is not
+  needed
+
+** Saving time on re-running
+
+
+- ~fd | entr -rc bash -c '<bash to run the program>~ - automatically re-run
+  the program if anything has changed
+
+  - TODO: run command when specific pattern is written to a file
+
+- Traces, differential debugging TODO
+
+* Stupid syntactic errors
+
+- "The code does not work as written"
+  - For languages that have different syntax for assigning and reading from
+    variables  (bash,  perl,  other  shells  etc):  check  that  you  wrote
+    ~$VARIABLE_TO_READ~ and not ~VARIABLE_TO_READ~
+
+* Asking for help/describing issue
+
+** Meaningless false phrases that don't help to solve any problems
+
+*** "Nothing" works
+
+Unless  your PC  burns  down the  second  you do  something,  this is  most
+certainly false. There  are more than two steps in  the 'works' scale, such
+as:
+
+  - The actions execute indefinitely (application starts but does not load,
+    after I call a function it  does not terminate, interface freezes under
+    certain conditions)
+
+  - Expected action is not performed under specific conditions (clicking on
+    a button does  not have any effect on the  interface, function does not
+    return the value  expected, shell command does not  print expected text
+    etc.)
+
+  - Configuration is not read properly,  environment in general seems to be
+    ignored (shared library is not  loaded, configuration file is not read,
+    environment variable has no effect)
+
+*** "Always" crashes
+
+
+Unless you  are dealing with a  'hello world' that causes  kernel panic and
+spontaneous  combustion,  the  application  has  more  than  one  state  of
+execution and saying it 'always' crashes might imply virtually anything.
+
+- Instantly crashes at startup (issue with shared library loading, pre-main
+  code execution etc.).
+
+- After some specific action on login
+
+*** Looks "Weird"
+
+*** Has "unexpected" behavior
+
+** Useful data that might help other people understand what is going on
+
+- Execution logs
+- Error message from the application
+- Exception description
+- ~strace~ output
+
+** Suggestions for error message authors
+
+- Consider someone  who does not  have perfect understanding of  the system
+  might read the message at one point
+- Five tiers of error messages:
+  - Crash application without any elaboration
+  - Show "got error" and exit
+  - /"Expected  X"/, /"Invalid  input"/  --  most people  consider  this to  be
+    acceptable,  but it  does not  provide any  explanation about  what was
+    actually received
+    - ~fmt::v8::format_error:  invalid  format   string~  --  invalid  how?
+      Missing  closing  ~}~,  not  enough arguments,  too  many  arguments,
+      malformed integer formatting directive?
+    - 'Unexpected character'  -- and  what /is/  expected? ASCII  table has
+      ~100 characters that can actually be  printed, you want me to try all
+      of them at once?
+  - /"Expected  X but  got Y"/  -- at  least here  we don't  have to  run own
+    debugger/printf in order to figure out what is going on
+  - /"Expected X  but got Y,  which is different because  Z"/ -- the  one you
+    should aim for,  but this requires some upfront  thinking, because just
+    diffing random pieces of content is not always easy. If you can't get a
+    proper diff displayed, at least ensure  that LvL 4 error formats things
+    in a way that would allow user to compare content by themselves
+
+
+* Working with existing applications
+
+- If some part  of the application exhibits wrong behavior,  try to find if
+  there is any similar element that does things correctly.
+
+  - EXAMPLE: Notification was missing in one part of the application, and I
+    tried  to  figure  out  what  was wrong  based  only  on  the  internal
+    implementation interactions. Instead, I should have looked at the other
+    parts of the application.  As soon as I did this, I  found a piece that
+    worked correctly and did almost the same thing as I needed.
+
+- Process new assigned issues (1) check creation date, IF it is old THEN it
+  might  have  a  fixed  duplicate.  Search  for  the  duplicate.  (2)  Try
+  reproducing  issue locally,  trace the  implementation. Look  for changed
+  code that might be related to fix  of the similar issue (IF there were no
+  explicit duplicates, THEN  you might find it now). (3)  go on with fixing
+  the issue etc.

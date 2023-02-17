@@ -21,6 +21,7 @@
 
 # https://github.com/nim-lang/Nim/commit/16260b23c7f08888320b0323e3cbc4a46f98c818 make tests green on windows by disabling some tests, what could go wrong. Six years later they are still not enabled https://github.com/nim-lang/Nim/blob/3812d91390633113061ceb2b4f3fc61f563a66fb/testament/categories.nim#L100
 
+# https://github.com/FedericoCeratto/nim-package-directory/pull/48
 
 # TODO
 # https://github.com/nim-works/nimskull/commit/8a0509b3b255c2aef10b9db468810d98ae0d4215
@@ -33,6 +34,8 @@
 # There don't seem to exist any tests  for it. Araq turned with and without
 # from  keywords into  normal  identifiers 5  years ago  and  left a  to-do
 # comment in the parser to "document this feature".
+
+# https://github.com/nim-works/nimskull/discussions/106
 
 After another round  of discussions about possible  objectives, reasons and
 merits of the Nim fork I've been working  on I decided to write down my own
@@ -230,7 +233,8 @@ to 2018 this question was not being asked.
 Priority of  the tooling  improvement had  been asked  only twice,  but the
 declining trend is present here, although not as drastically.
 
-Documentation quality is steadily improving year-over-year.
+Documentation quality is steadily improving year-over-year. In 2019 50%
+considered it a "high" priority with only 40% now.
 
 *** TODO Compiler documentation
 
@@ -1011,31 +1015,40 @@ first.
 Roadmap   provides  a   high-level   overview  of   the  project's   goals.
 Implementation details can be seen in the next section: "our scopes".
 
-- Add structured diagnostic [1] ::  Rewrite diagnostic handling pipeline in
-  the compiler internals.
-- Testament improvements [2] :: TODO
-- Separate parsed and mutated AST [3] ::
-- First-class VM [4] ::
-- Mid-level IR [5] ::
-- Test as specification [6] ::
+- Add  structured  diagnostic  [1]  ::  (PR)  Rewrite  diagnostic  handling
+  pipeline in the compiler internals.
+- Testament improvements [2] :: (scopes, [[https://github.com/nim-works/nimskull/discussions/60][discussion]]) TODO
+- Separate  parsed   and  Sem  AST  [3]    :: (PR) Parsed  AST should  be a
+  lossless construct that  can be formatted back into the  source code. Sem
+  AST  does not  have to  hold all  of this  information --  those are  two
+  distinct states of analysis.
+- First-class VM [4] :: (PR)
+- Mid-level IR [5] :: (PR)
+- Test as specification [6] :: (PR 1, 2, 3, ...)
 - Precise AST structure [7] :: ([[id:3747c453-d22f-41de-b0b3-9f2c8fbe32d9][scopes]])
-- C backend rewrite [8] ::
+- C backend rewrite [8] :: (PR)
 - Automatic wrapper generator [9] :: ([[id:71e3dd81-5fd0-43b4-871f-9dbad57571e4][scopes]])
-- Clean up and organize existing tests [10] ::
+- Clean up and organize existing tests [10] :: (WIP)
 - Untangle Backend and Sem data [11] ::
 - Dod for the while compiler [12] ::
 - C++ /integration/ [13] :: ([[id:b5a161a8-9ea3-434b-87c6-451de4208ddc][scopes]])
-- Code formatting [14] :: ([[id:06f149af-0064-4176-aef6-1668e276afa4][scopes]])
-- Package manager [16] :: ([[id:718bfd67-5f93-4b54-89f4-32ff864b79fb][scopes]])
-- Documentation generator [17] ::
+- Code formatting [14] :: ([[id:06f149af-0064-4176-aef6-1668e276afa4][scopes]], [[https://github.com/nim-works/nimskull/discussions/113][discussion]])
+- Package manager [16] :: ([[id:718bfd67-5f93-4b54-89f4-32ff864b79fb][scopes]], [[https://github.com/nim-works/nimskull/discussions/462][discussion]])
+- Documentation generator [17] :: (scopes, [[https://github.com/nim-works/nimskull/discussions/75][discussion]])
 - IC - incremental compilation [18] ::
-- LSP [19] ::
+- LSP [19] :: Language server protocol implementation. Depends on the IC in
+  order to provide
 - Fast recompilatoin [20] ::
 - VSCode extension [21] ::
 - CPS - continuation passing style [22] ::
 - Build system [23] ::
 - Layered approach to bundling [24] :: ([[id:274807cd-8a54-46c4-97ec-babc2959eec8][scopes]])
 - Native pattern matching [25] ::
+- JS backend and cleanup [26] ::
+- Clarify  foreign  vs  native  language    semantics  [27]  ::  Make clear
+  distinction between  parts of the  language that are  native (procedures,
+  objects, iterators)  and foreign (imported methods,  wrapped C++ classes,
+  JS prototypes).
 
 ** Backends
 
@@ -1114,6 +1127,23 @@ alive.
 ** Interaction
 
 * Part five: our scopes
+
+# I understand there is a natural desire to have these answers. But they're not ready to be answered. We really are in a subtractive phase where things are being dropped. Before additions or major overhauls are considered.
+
+# I think a good place to start would be to itemize some of the changes that already exist. Such as:
+
+#     pragmas on tuple unpacking sections are disallowed
+#     macro API has had a change and more will happen
+#     dialects/features that have been dropped
+#     we don't have package management on purpose (not ready)
+#     C++ and objective c backends are gone and transpiling isn't a goal (we treat them as backends)
+#     the VM is a first class backend
+
+# One major change, I'd be willing to entertain earlier if someone has the bandwidth is turning on nil safety by default. Also drops a dialect.
+# HCR is gone, so are for and case statement macros
+# Refc will drop
+# Fixed a bunch of bugs.
+# Compiler errors tend to be more precise and typically more progress is made (nkError consequence).
 
 In this section  I will provide a more technical  explanation about current
 stage of the development, how it correlates with a vision from the previous
